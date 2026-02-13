@@ -1,0 +1,174 @@
+name: Docker
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: opensensor/lightnvr
+  REGISTRY_IMAGE: ghcr.io/opensensor/lightnvr
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - linux/amd64
+          - linux/arm64
+          - linux/arm/v7
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set platform pair
+        run: |
+          platform="${{ matrix.platform }}"
+          echo "PLATFORM_PAIR=${platform/linux\//}" | sed 's/\//-/' >> $GITHUB_ENV
+
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=raw,value=latest,enable=true
+            type=ref,event=pr
+          labels: |
+            org.opencontainers.image.title=LightNVR
+            org.opencontainers.image.description=Lightweight Network Video Recorder with go2rtc integration
+            org.opencontainers.image.vendor=OpenSensor
+
+      - name: Login to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Build only (no push) for PRs - verifies the build works
+      - name: Build (PR verification)
+        if: github.event_name == 'pull_request'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ matrix.platform }}
+          labels: ${{ steps.meta.outputs.labels }}
+          push: false
+
+      # Build and push by digest for tags and manual triggers
+      - name: Build and push by digest
+        if: github.event_name != 'pull_request'
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ matrix.platform }}
+          labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,push-by-digest=true,name=${{ env.REGISTRY_IMAGE }},name-canonical=true,push=true
+
+      - name: Save digest
+        if: github.event_name != 'pull_request'
+        run: |
+          mkdir -p ${{ runner.temp }}/digests
+          platform="${{ matrix.platform }}"
+          digest="${{ steps.build.outputs.digest }}"
+          echo "$digest" > "${{ runner.temp }}/digests/${platform//\//-}.digest"
+          echo "Saved digest for $platform: $digest"
+
+      - name: Upload digest
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-${{ env.PLATFORM_PAIR }}
+          path: ${{ runner.temp }}/digests/*.digest
+          retention-days: 1
+
+  manifest:
+    needs: build
+    runs-on: ubuntu-latest
+    # Only create and push manifest for non-PR events
+    if: github.event_name != 'pull_request'
+
+    steps:
+      - name: Download all digests
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digests-*
+          merge-multiple: true
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=raw,value=latest,enable=true
+            type=ref,event=pr
+          labels: |
+            org.opencontainers.image.title=LightNVR
+            org.opencontainers.image.description=Lightweight Network Video Recorder with go2rtc integration
+            org.opencontainers.image.vendor=OpenSensor
+
+      - name: Create and push manifest
+        run: |
+          # Print current directory for debugging
+          echo "Current directory: $(pwd)"
+          echo "Listing runner.temp directory: $(ls -la ${{ runner.temp }})"
+          
+          DIGEST_DIR="${{ runner.temp }}/digests"
+          echo "Contents of digest directory: $(ls -la $DIGEST_DIR || echo 'Directory not found')"
+          
+          # Don't change directory, just use the full path
+          DIGEST_ARGS=""
+          for file in $DIGEST_DIR/*.digest; do
+            if [ -f "$file" ]; then
+              DIGEST=$(cat "$file")
+              DIGEST_ARGS="$DIGEST_ARGS ${{ env.REGISTRY_IMAGE }}@$DIGEST"
+            else
+              echo "No digest files found in $DIGEST_DIR"
+              exit 1
+            fi
+          done
+          
+          for tag in $(jq -r '.tags[]' <<< "$DOCKER_METADATA_OUTPUT_JSON"); do
+            echo "Creating and pushing manifest: $tag"
+            echo "Using digests: $DIGEST_ARGS"
+            docker buildx imagetools create -t "$tag" $DIGEST_ARGS
+          done
+
+      - name: Inspect final image
+        run: |
+          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}

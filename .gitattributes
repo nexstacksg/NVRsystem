@@ -1,0 +1,11 @@
+## Default: normalize text files to LF
+* text eol=lf
+
+## Binary assets - never treat these as text (must come AFTER the * rule)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.mp4 binary
+*.webm binary

@@ -1,0 +1,134 @@
+/* LightNVR Layout Styles - Tailwind-based */
+
+/*
+ * This file contains Tailwind-compatible styles for layout components.
+ * Using @apply to leverage Tailwind's utility classes while maintaining
+ * the component-based structure.
+ */
+
+/* Header styles */
+header {
+    @apply py-2 px-4 flex justify-between items-center shadow-md;
+    background-color: hsl(var(--card));
+    color: hsl(var(--card-foreground));
+    /* Ensure header is always on top and clickable */
+    position: relative;
+    z-index: 1000;
+}
+
+.logo {
+    @apply flex items-baseline;
+}
+
+.logo h1 {
+    @apply m-0 text-2xl font-bold;
+}
+
+.version {
+    @apply text-xs ml-2;
+    color: hsl(var(--muted-foreground));
+}
+
+nav ul {
+    @apply flex list-none;
+}
+
+nav a {
+    @apply no-underline py-2 px-4 mx-0.5 rounded transition-colors duration-300;
+    color: hsl(var(--card-foreground));
+    /* Ensure navigation links are always clickable */
+    position: relative;
+    z-index: 1001;
+    pointer-events: auto;
+}
+
+nav a:hover,
+nav a.active {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+}
+
+.user-menu {
+    @apply flex items-center;
+}
+
+.user-menu span {
+    @apply mr-4;
+}
+
+.user-menu a {
+    @apply no-underline;
+    color: hsl(var(--card-foreground));
+}
+
+/* Footer styles */
+footer {
+    @apply py-3 px-4 flex justify-between items-center text-sm;
+}
+
+footer a {
+    @apply no-underline hover:underline;
+    color: hsl(var(--primary));
+}
+
+/* Table styles */
+table {
+    @apply w-full border-collapse mb-4;
+}
+
+th, td {
+    @apply py-3 px-6 text-left border-b border-border;
+}
+
+th {
+    @apply bg-muted font-semibold;
+}
+
+.empty-message {
+    @apply text-center text-muted-foreground py-8;
+}
+
+/* Pagination styles */
+.pagination-controls {
+    @apply flex justify-between items-center py-4 flex-wrap gap-4;
+}
+
+.pagination-info {
+    @apply text-muted-foreground text-sm;
+}
+
+.pagination-buttons {
+    @apply flex items-center gap-2;
+}
+
+.pagination-buttons button {
+    @apply min-w-8 h-8 p-0 flex items-center justify-center bg-secondary border border-input rounded cursor-pointer text-base disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.pagination-buttons button:hover:not(:disabled) {
+    background-color: hsl(var(--secondary) / 0.8);
+}
+
+.pagination-buttons button.active {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+}
+
+#pagination-current {
+    @apply px-2 text-sm text-foreground;
+}
+
+/* Responsive layout styles */
+@media (max-width: 768px) {
+    header {
+        @apply flex-col items-start;
+    }
+
+    nav ul {
+        @apply flex-wrap mt-2;
+    }
+
+    .user-menu {
+        @apply mt-2 self-end;
+    }
+}
