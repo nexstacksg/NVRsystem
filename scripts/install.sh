@@ -392,7 +392,7 @@ Wants=network-online.target
 
 [Service]
 Type=forking
-PIDFile=/var/run/lightnvr.pid
+PIDFile=$DATA_DIR/data/lightnvr.pid
 User=root
 Group=root
 # Set environment variables for proper operation

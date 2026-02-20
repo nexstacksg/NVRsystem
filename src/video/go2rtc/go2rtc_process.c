@@ -331,10 +331,50 @@ bool go2rtc_process_generate_config(const char *config_path, int api_port) {
                     global_config->go2rtc_external_ip,
                     global_config->go2rtc_webrtc_listen_port > 0 ? global_config->go2rtc_webrtc_listen_port : 8555);
         } else {
-            // Auto-detect external IP using wildcard
-            // Use separate entries for IPv4 and IPv6 to handle both
-            fprintf(config_file, "    - \"*:%d\"\n",
-                    global_config->go2rtc_webrtc_listen_port > 0 ? global_config->go2rtc_webrtc_listen_port : 8555);
+            // Auto-detect local IP address for ICE candidates
+            // The "*" wildcard is NOT properly resolved by go2rtc and gets put literally in the SDP,
+            // causing ICE connection failures. We must use an actual IP address.
+            int webrtc_port = global_config->go2rtc_webrtc_listen_port > 0 ? global_config->go2rtc_webrtc_listen_port : 8555;
+            char local_ip[64] = {0};
+            bool got_ip = false;
+
+            // Method 1: Use "ip route get 1" to find the default route source IP
+            FILE *ip_fp = popen("ip route get 1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i==\"src\") print $(i+1); exit}'", "r");
+            if (ip_fp) {
+                if (fgets(local_ip, sizeof(local_ip), ip_fp)) {
+                    // Remove trailing newline
+                    size_t len = strlen(local_ip);
+                    if (len > 0 && local_ip[len-1] == '\n') local_ip[len-1] = '\0';
+                    if (strlen(local_ip) > 0 && strcmp(local_ip, "127.0.0.1") != 0) {
+                        got_ip = true;
+                    }
+                }
+                pclose(ip_fp);
+            }
+
+            // Method 2: Fall back to "hostname -I"
+            if (!got_ip) {
+                ip_fp = popen("hostname -I 2>/dev/null | awk '{print $1}'", "r");
+                if (ip_fp) {
+                    if (fgets(local_ip, sizeof(local_ip), ip_fp)) {
+                        size_t len = strlen(local_ip);
+                        if (len > 0 && local_ip[len-1] == '\n') local_ip[len-1] = '\0';
+                        if (strlen(local_ip) > 0 && strcmp(local_ip, "127.0.0.1") != 0) {
+                            got_ip = true;
+                        }
+                    }
+                    pclose(ip_fp);
+                }
+            }
+
+            if (got_ip) {
+                log_info("Auto-detected local IP for WebRTC candidates: %s", local_ip);
+                fprintf(config_file, "    - \"%s:%d\"\n", local_ip, webrtc_port);
+            } else {
+                // Last resort: use 0.0.0.0 which tells go2rtc to listen on all interfaces
+                log_warn("Could not auto-detect local IP, using 0.0.0.0 for WebRTC candidates");
+                fprintf(config_file, "    - \"0.0.0.0:%d\"\n", webrtc_port);
+            }
         }
 
         // Add STUN server as candidate for ICE gathering
