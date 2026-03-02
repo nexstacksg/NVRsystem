@@ -518,20 +518,9 @@ int main(int argc, char *argv[]) {
     init_schema_cache();
     log_info("Schema cache initialized");
 
-    // Initialize storage manager
-    if (init_storage_manager(config.storage_path, config.max_storage_size) != 0) {
-        log_error("Failed to initialize storage manager");
-        goto cleanup;
-    }
-    log_info("Storage manager initialized");
-
-    // Start recording sync thread to ensure database file sizes are accurate
-    log_info("Starting recording sync thread...");
-    if (start_recording_sync_thread(60) != 0) {
-        log_warn("Failed to start recording sync thread, file sizes may not be accurate");
-    } else {
-        log_info("Recording sync thread started");
-    }
+    // NOTE: Storage manager and recording sync thread initialization moved to after
+    // daemonize() because fork() only copies the calling thread - any threads created
+    // before fork() are silently killed in the child process, causing hangs.
 
     // Load stream configurations from database
     if (load_stream_configs(&config) < 0) {
@@ -656,6 +645,23 @@ int main(int argc, char *argv[]) {
             log_error("Failed to create PID file");
             return EXIT_FAILURE;
         }
+    }
+
+    // Initialize storage manager - MUST be after daemonize() since it creates threads
+    // fork() only copies the calling thread, so threads started before fork() are lost
+    if (init_storage_manager(config.storage_path, config.max_storage_size) != 0) {
+        log_error("Failed to initialize storage manager");
+        goto cleanup;
+    }
+    log_info("Storage manager initialized");
+
+    // Start recording sync thread to ensure database file sizes are accurate
+    // MUST be after daemonize() for the same reason as storage manager
+    log_info("Starting recording sync thread...");
+    if (start_recording_sync_thread(60) != 0) {
+        log_warn("Failed to start recording sync thread, file sizes may not be accurate");
+    } else {
+        log_info("Recording sync thread started");
     }
 
     // Initialize stream state manager

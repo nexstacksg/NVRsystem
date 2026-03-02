@@ -310,7 +310,11 @@ void mg_handle_get_recordings_worker(struct mg_connection *c, struct mg_http_mes
         detection_label_summary_t labels[MAX_DETECTION_LABELS];
         int label_count = 0;
 
-        if (recordings[i].start_time > 0 && recordings[i].end_time > 0) {
+        // Only do per-recording detection queries for small page sizes (limit <= 50).
+        // For large page sizes, skip to avoid N+1 query performance issues
+        // (100+ sequential DB queries with mutex locks cause 2+ minute response times).
+        // The trigger_type field already provides the detection flag without extra queries.
+        if (limit <= 50 && recordings[i].start_time > 0 && recordings[i].end_time > 0) {
             // Get detection labels summary for this recording's time range
             label_count = get_detection_labels_summary(recordings[i].stream_name,
                                                        recordings[i].start_time,
