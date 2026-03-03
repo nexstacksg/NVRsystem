@@ -381,7 +381,7 @@ export function StreamConfigModal({
                         onChange={onInputChange}
                       />
                       <div>
-                        <span className="text-sm font-medium">Enable AI Detection-Based Recording</span>
+                        <span className="text-sm font-medium">Enable AI Detection-Based Recording <span className="bg-primary/20 text-primary text-[10px] uppercase px-1.5 py-0.5 rounded ml-2">Coming Soon</span></span>
                         <p className="text-xs text-muted-foreground mt-1">
                           Only record when AI detects objects (person, car, etc.)
                         </p>
@@ -450,7 +450,7 @@ export function StreamConfigModal({
                 {/* AI Detection Settings - nested under recording */}
                 {currentStream.detectionEnabled && (
                   <div className="border-t border-border pt-4">
-                    <h5 className="text-sm font-semibold mb-3">AI Detection Settings</h5>
+                    <h5 className="text-sm font-semibold mb-3">AI Detection Settings <span className="bg-primary/20 text-primary text-[10px] uppercase px-1.5 py-0.5 rounded ml-2">Coming Soon</span></h5>
                     <div className="space-y-4">
                       <div>
                         <label htmlFor="stream-detection-model" className="block text-sm font-medium mb-2">
@@ -780,7 +780,7 @@ export function StreamConfigModal({
             {/* Motion Recording Section (ONVIF only) */}
             {currentStream.isOnvif && (
               <AccordionSection
-                title="Motion Recording (ONVIF)"
+                title="Motion Recording (ONVIF) - Coming Soon"
                 isExpanded={expandedSections.motion}
                 onToggle={() => onToggleSection('motion')}
                 badge="ONVIF Only"

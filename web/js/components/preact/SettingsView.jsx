@@ -502,7 +502,7 @@ export function SettingsView() {
           </div>
 
           <div class="settings-group bg-card text-card-foreground rounded-lg shadow p-4">
-          <h3 class="text-lg font-semibold mb-4 pb-2 border-b border-border">Detection-Based Recording</h3>
+          <h3 class="text-lg font-semibold mb-4 pb-2 border-b border-border">Detection-Based Recording <span className="bg-primary/20 text-primary text-[10px] uppercase px-1.5 py-0.5 rounded ml-2">Coming Soon</span></h3>
           <div class="setting mb-4">
             <p class="setting-description mb-2 text-gray-700 dark:text-gray-300">
               Configure detection-based recording for streams. When enabled, recordings will only be saved when objects are detected.
@@ -613,7 +613,7 @@ export function SettingsView() {
 
           {/* MQTT Settings */}
           <div class="settings-group bg-card rounded-lg shadow p-6 mb-6">
-            <h3 class="text-lg font-semibold mb-4 pb-2 border-b border-border">MQTT Event Streaming</h3>
+            <h3 class="text-lg font-semibold mb-4 pb-2 border-b border-border">MQTT Event Streaming <span className="bg-primary/20 text-primary text-[10px] uppercase px-1.5 py-0.5 rounded ml-2">Coming Soon</span></h3>
             <p class="text-sm text-muted-foreground mb-4">
               Publish detection events to an MQTT broker for integration with Home Assistant or other systems.
             </p>
