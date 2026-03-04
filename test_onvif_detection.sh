@@ -118,7 +118,7 @@ main() {
     echo "Next Steps"
     echo "========================================="
     echo ""
-    echo "To add these streams to your LightNVR instance:"
+    echo "To add these streams to your Oneberry instance:"
     echo "1. Use the web interface to add a new stream"
     echo "2. Or use the API to POST the JSON configuration"
     echo ""

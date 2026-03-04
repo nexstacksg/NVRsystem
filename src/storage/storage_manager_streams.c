@@ -32,7 +32,7 @@ int get_stream_storage_usage(const char *storage_path, stream_storage_info_t *st
         return -1;
     }
     
-    // Based on user feedback, the recordings are in /var/lib/lightnvr/recordings/mp4/[stream_name]/
+    // Based on user feedback, the recordings are in /var/lib/oneberry/recordings/mp4/[stream_name]/
     // Construct the mp4 directory path
     char mp4_path[512];
     snprintf(mp4_path, sizeof(mp4_path), "%s/mp4", storage_path);

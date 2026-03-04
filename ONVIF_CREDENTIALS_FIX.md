@@ -2,7 +2,7 @@
 
 ## Problem
 
-Some IP cameras support ONVIF events but don't require authentication. Previously, LightNVR required non-empty ONVIF credentials, which prevented these cameras from working with ONVIF-based motion detection.
+Some IP cameras support ONVIF events but don't require authentication. Previously, Oneberry required non-empty ONVIF credentials, which prevented these cameras from working with ONVIF-based motion detection.
 
 The issues were:
 1. **Validation too strict**: Code checked for non-empty username and password strings before attempting ONVIF detection

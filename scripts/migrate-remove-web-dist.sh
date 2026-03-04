@@ -52,7 +52,7 @@ check_web_dist_tracked() {
 
 # Main script
 main() {
-    print_info "LightNVR Web Assets Migration"
+    print_info "Oneberry Web Assets Migration"
     print_info "=============================="
     echo
     

@@ -1,5 +1,5 @@
 /**
- * Comprehensive LightNVR API Integration Tests
+ * Comprehensive Oneberry API Integration Tests
  * 
  * Extended API tests for all endpoints with various scenarios.
  * @tags @api
@@ -10,7 +10,7 @@ import { CONFIG, USERS, getAuthHeader } from '../fixtures/test-fixtures';
 
 const AUTH_HEADER = getAuthHeader(USERS.admin);
 
-test.describe('LightNVR API Comprehensive Tests @api', () => {
+test.describe('Oneberry API Comprehensive Tests @api', () => {
   let request: APIRequestContext;
 
   test.beforeAll(async ({ playwright }) => {

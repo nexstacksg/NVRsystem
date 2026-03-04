@@ -1,5 +1,5 @@
 config BR2_PACKAGE_LIGHTNVR
-	bool "lightnvr"
+	bool "oneberry"
 	select BR2_PACKAGE_HOST_NODEJS
 	select BR2_PACKAGE_THINGINO_FFMPEG
 	select BR2_PACKAGE_SQLITE

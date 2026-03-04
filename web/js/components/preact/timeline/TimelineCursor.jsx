@@ -1,5 +1,5 @@
 /**
- * LightNVR Timeline Cursor Component
+ * Oneberry Timeline Cursor Component
  * Displays the playback cursor on the timeline
  */
 

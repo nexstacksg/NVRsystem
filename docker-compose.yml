@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  lightnvr:
+  oneberry:
     build: .
-    container_name: lightnvr
+    container_name: oneberry
     restart: unless-stopped
     ports:
       - "8080:8080"     # Web UI
@@ -13,9 +13,9 @@ services:
       - "1984:1984"     # go2rtc API
     volumes:
       # Only mount what needs persistence
-      # DO NOT mount /var/lib/lightnvr directly - it will overwrite web assets!
-      - ./config:/etc/lightnvr
-      - ./data:/var/lib/lightnvr/data
+      # DO NOT mount /var/lib/oneberry directly - it will overwrite web assets!
+      - ./config:/etc/oneberry
+      - ./data:/var/lib/oneberry/data
     environment:
       # Timezone configuration
       - TZ=UTC  # Change to your timezone (e.g., America/New_York, Europe/London)
@@ -33,9 +33,9 @@ services:
       # - LIGHTNVR_ONVIF_NETWORK=192.168.82.0/24
 
     networks:
-      - lightnvr
+      - oneberry
 
 networks:
-  lightnvr:
+  oneberry:
     driver: bridge
 

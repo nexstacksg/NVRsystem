@@ -1,59 +1,59 @@
-# LightNVR Configuration Guide
+# Oneberry Configuration Guide
 
-This document describes the configuration options for LightNVR.
+This document describes the configuration options for Oneberry.
 
 ## Configuration File
 
-LightNVR supports two configuration file formats:
+Oneberry supports two configuration file formats:
 
 1. **INI format** (recommended): A structured configuration format with sections and key-value pairs.
 2. **Legacy key-value format**: A simple key-value configuration format.
 
-By default, LightNVR looks for a configuration file in the following locations (in order):
+By default, Oneberry looks for a configuration file in the following locations (in order):
 
-1. `./lightnvr.ini` (INI format in current directory)
-2. `/etc/lightnvr/lightnvr.ini` (INI format in system directory)
-3. `./lightnvr.conf` (legacy format in current directory)
-4. `/etc/lightnvr/lightnvr.conf` (legacy format in system directory)
+1. `./oneberry.ini` (INI format in current directory)
+2. `/etc/oneberry/oneberry.ini` (INI format in system directory)
+3. `./oneberry.conf` (legacy format in current directory)
+4. `/etc/oneberry/oneberry.conf` (legacy format in system directory)
 
 You can specify a different configuration file using the `-c` option:
 
 ```bash
-./lightnvr -c /path/to/config.conf
+./oneberry -c /path/to/config.conf
 ```
 
-When saving configuration changes through the web interface, LightNVR will prefer to use the INI format.
+When saving configuration changes through the web interface, Oneberry will prefer to use the INI format.
 
 ## INI Format
 
 The INI format is a structured configuration format that organizes settings into sections. Here's an example of the same configuration in INI format:
 
 ```ini
-; LightNVR Configuration File (INI format)
+; Oneberry Configuration File (INI format)
 
 [general]
-pid_file = /var/run/lightnvr.pid
-log_file = /var/log/lightnvr.log
+pid_file = /var/run/oneberry.pid
+log_file = /var/log/oneberry.log
 log_level = 2  ; 0=ERROR, 1=WARN, 2=INFO, 3=DEBUG
 syslog_enabled = false  ; Enable logging to syslog
-syslog_ident = lightnvr  ; Syslog identifier
+syslog_ident = oneberry  ; Syslog identifier
 syslog_facility = LOG_USER  ; Syslog facility
 
 [storage]
-path = /var/lib/lightnvr/recordings
+path = /var/lib/oneberry/recordings
 max_size = 0  ; 0 means unlimited, otherwise bytes
 retention_days = 30
 auto_delete_oldest = true
 
 [database]
-path = /var/lib/lightnvr/lightnvr.db
+path = /var/lib/oneberry/oneberry.db
 
 [models]
-path = /var/lib/lightnvr/models
+path = /var/lib/oneberry/models
 
 [web]
 port = 8080
-root = /var/lib/lightnvr/www
+root = /var/lib/oneberry/www
 auth_enabled = true
 username = admin
 password = admin  ; IMPORTANT: Change this default password!
@@ -80,7 +80,7 @@ max_streams = 16
 [memory]
 buffer_size = 1024  ; Buffer size in KB
 use_swap = true
-swap_file = /var/lib/lightnvr/swap
+swap_file = /var/lib/oneberry/swap
 swap_size = 134217728  ; 128MB in bytes
 
 [hardware]
@@ -103,11 +103,11 @@ The configuration file is divided into several sections:
 
 ```ini
 [general]
-pid_file = /var/run/lightnvr.pid
-log_file = /var/log/lightnvr.log
+pid_file = /var/run/oneberry.pid
+log_file = /var/log/oneberry.log
 log_level = 2  ; 0=ERROR, 1=WARN, 2=INFO, 3=DEBUG
 syslog_enabled = false  ; Enable logging to syslog
-syslog_ident = lightnvr  ; Syslog identifier (application name)
+syslog_ident = oneberry  ; Syslog identifier (application name)
 syslog_facility = LOG_USER  ; Syslog facility
 ```
 
@@ -115,7 +115,7 @@ syslog_facility = LOG_USER  ; Syslog facility
 - `log_file`: Path to the log file
 - `log_level`: Logging level (0=ERROR, 1=WARN, 2=INFO, 3=DEBUG)
 - `syslog_enabled`: Enable logging to syslog for easier system integration and centralized log management (default: false)
-- `syslog_ident`: Syslog identifier/application name used in syslog messages (default: "lightnvr")
+- `syslog_ident`: Syslog identifier/application name used in syslog messages (default: "oneberry")
 - `syslog_facility`: Syslog facility for categorizing messages. Valid values:
   - `LOG_USER` (default): User-level messages
   - `LOG_DAEMON`: System daemon messages
@@ -123,7 +123,7 @@ syslog_facility = LOG_USER  ; Syslog facility
 
 #### Syslog Integration
 
-When `syslog_enabled` is set to `true`, LightNVR will send log messages to the system's syslog daemon in addition to the regular log file and console output. This provides several benefits:
+When `syslog_enabled` is set to `true`, Oneberry will send log messages to the system's syslog daemon in addition to the regular log file and console output. This provides several benefits:
 
 - **Centralized Logging**: Integrate with system-wide log management tools
 - **Remote Logging**: Forward logs to remote syslog servers for centralized monitoring
@@ -134,21 +134,21 @@ Example syslog configuration for production use:
 
 ```ini
 syslog_enabled = true
-syslog_ident = lightnvr
+syslog_ident = oneberry
 syslog_facility = LOG_LOCAL0
 ```
 
-To view LightNVR logs via syslog on systemd-based systems:
+To view Oneberry logs via syslog on systemd-based systems:
 
 ```bash
-# View all LightNVR logs
-journalctl -t lightnvr
+# View all Oneberry logs
+journalctl -t oneberry
 
 # Follow logs in real-time
-journalctl -t lightnvr -f
+journalctl -t oneberry -f
 
 # View logs from the last hour
-journalctl -t lightnvr --since "1 hour ago"
+journalctl -t oneberry --since "1 hour ago"
 ```
 
 On traditional syslog systems, logs will appear in `/var/log/syslog` or `/var/log/messages` depending on your syslog configuration.
@@ -157,7 +157,7 @@ On traditional syslog systems, logs will appear in `/var/log/syslog` or `/var/lo
 
 ```
 # Storage Settings
-storage_path=/var/lib/lightnvr/recordings
+storage_path=/var/lib/oneberry/recordings
 max_storage_size=0  # 0 means unlimited, otherwise bytes
 retention_days=30
 auto_delete_oldest=true
@@ -172,7 +172,7 @@ auto_delete_oldest=true
 
 ```
 # Models Settings
-models_path=/var/lib/lightnvr/models
+models_path=/var/lib/oneberry/models
 ```
 
 - `models_path`: Directory where detection models are stored
@@ -181,7 +181,7 @@ models_path=/var/lib/lightnvr/models
 
 ```
 # Database Settings
-db_path=/var/lib/lightnvr/lightnvr.db
+db_path=/var/lib/oneberry/oneberry.db
 ```
 
 - `db_path`: Path to the SQLite database file
@@ -191,7 +191,7 @@ db_path=/var/lib/lightnvr/lightnvr.db
 ```
 # Web Server Settings
 web_port=8080
-web_root=/var/lib/lightnvr/www
+web_root=/var/lib/oneberry/www
 web_auth_enabled=true
 web_username=admin
 web_password=admin  # IMPORTANT: Change this default password!
@@ -218,7 +218,7 @@ max_streams=16
 # Memory Optimization
 buffer_size=1024  # Buffer size in KB
 use_swap=true
-swap_file=/var/lib/lightnvr/swap
+swap_file=/var/lib/oneberry/swap
 swap_size=134217728  # 128MB in bytes
 ```
 
@@ -272,28 +272,28 @@ stream.0.segment_duration=900  # 15 minutes in seconds
 Here's a complete example configuration file:
 
 ```
-# LightNVR Configuration File
+# Oneberry Configuration File
 
 # General Settings
-pid_file=/var/run/lightnvr.pid
-log_file=/var/log/lightnvr.log
+pid_file=/var/run/oneberry.pid
+log_file=/var/log/oneberry.log
 log_level=2  # 0=ERROR, 1=WARN, 2=INFO, 3=DEBUG
 
 # Storage Settings
-storage_path=/var/lib/lightnvr/recordings
+storage_path=/var/lib/oneberry/recordings
 max_storage_size=0  # 0 means unlimited, otherwise bytes
 retention_days=30
 auto_delete_oldest=true
 
 # Database Settings
-db_path=/var/lib/lightnvr/lightnvr.db
+db_path=/var/lib/oneberry/oneberry.db
 
 # Models Settings
-models_path=/var/lib/lightnvr/models
+models_path=/var/lib/oneberry/models
 
 # Web Server Settings
 web_port=8080
-web_root=/var/lib/lightnvr/www
+web_root=/var/lib/oneberry/www
 web_auth_enabled=true
 web_username=admin
 web_password=admin  # IMPORTANT: Change this default password!
@@ -304,7 +304,7 @@ max_streams=16
 # Memory Optimization
 buffer_size=1024  # Buffer size in KB
 use_swap=true
-swap_file=/var/lib/lightnvr/swap
+swap_file=/var/lib/oneberry/swap
 swap_size=134217728  # 128MB in bytes
 
 # Hardware Acceleration
@@ -337,7 +337,7 @@ stream.1.segment_duration=900  # 15 minutes in seconds
 
 ## Command Line Options
 
-LightNVR supports the following command line options:
+Oneberry supports the following command line options:
 
 - `-c, --config FILE`: Use the specified configuration file
 - `-d, --daemon`: Run as a daemon
@@ -356,7 +356,7 @@ The Ingenic A1 SoC has limited memory (256MB), so it's important to optimize mem
 2. Enable swap file for additional memory:
    ```
    use_swap=true
-   swap_file=/var/lib/lightnvr/swap
+   swap_file=/var/lib/oneberry/swap
    swap_size=134217728  # 128MB in bytes
    ```
 
@@ -382,7 +382,7 @@ If you encounter issues with your configuration:
 
 1. Check the log file for error messages:
    ```
-   tail -f /var/log/lightnvr/lightnvr.log
+   tail -f /var/log/oneberry/oneberry.log
    ```
 
 2. Verify that all paths in the configuration file exist and have the correct permissions
@@ -394,4 +394,4 @@ If you encounter issues with your configuration:
 
 4. Monitor memory usage to ensure you're not exceeding the available memory:
    ```
-   top -p $(pgrep lightnvr)
+   top -p $(pgrep oneberry)

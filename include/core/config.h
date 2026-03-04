@@ -75,7 +75,7 @@ typedef struct {
 
     // Syslog settings
     bool syslog_enabled;           // Whether to log to syslog
-    char syslog_ident[64];         // Syslog identifier (default: "lightnvr")
+    char syslog_ident[64];         // Syslog identifier (default: "oneberry")
     int syslog_facility;           // Syslog facility (default: LOG_USER)
     
     // Storage settings
@@ -165,8 +165,8 @@ typedef struct {
     int mqtt_broker_port;                 // MQTT broker port (default: 1883)
     char mqtt_username[64];               // MQTT username (optional)
     char mqtt_password[128];              // MQTT password (optional)
-    char mqtt_client_id[64];              // MQTT client ID (default: lightnvr)
-    char mqtt_topic_prefix[128];          // MQTT topic prefix (default: lightnvr)
+    char mqtt_client_id[64];              // MQTT client ID (default: oneberry)
+    char mqtt_topic_prefix[128];          // MQTT topic prefix (default: oneberry)
     bool mqtt_tls_enabled;                // Enable TLS for MQTT connection (default: false)
     int mqtt_keepalive;                   // MQTT keepalive interval in seconds (default: 60)
     int mqtt_qos;                         // MQTT QoS level 0, 1, or 2 (default: 1)
@@ -176,8 +176,8 @@ typedef struct {
 /**
  * Load configuration from default locations
  * Searches in this order:
- * 1. ./lightnvr.ini
- * 2. /etc/lightnvr/lightnvr.ini
+ * 1. ./oneberry.ini
+ * 2. /etc/oneberry/oneberry.ini
  * 3. If not found, looks for old format and converts it
  * 
  * @param config Pointer to config structure to fill

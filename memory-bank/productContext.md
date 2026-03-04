@@ -1,14 +1,14 @@
-# Product Context: LightNVR
+# Product Context: Oneberry
 
 ## Problem Solved
 
 Standard NVR software often requires significant system resources (CPU, RAM), making it unsuitable for low-power, resource-constrained devices like Single Board Computers (SBCs) or specific System-on-Chips (SoCs) like the Ingenic A1. Users with such hardware need a reliable NVR solution that operates efficiently within tight memory limits (e.g., 256MB RAM).
 
-LightNVR addresses this by providing a lightweight, memory-optimized NVR specifically designed for these environments, while still being usable on more powerful Linux systems.
+Oneberry addresses this by providing a lightweight, memory-optimized NVR specifically designed for these environments, while still being usable on more powerful Linux systems.
 
 ## How It Should Work (User Experience)
 
-- **Setup:** Simple installation (build from source or Docker) and straightforward configuration via a text file (`/etc/lightnvr/lightnvr.conf`) or the web UI.
+- **Setup:** Simple installation (build from source or Docker) and straightforward configuration via a text file (`/etc/oneberry/oneberry.conf`) or the web UI.
 - **Management:** Users should be able to easily add, configure, and manage IP camera streams (RTSP/ONVIF) through the web interface.
 - **Live Viewing:** Provide a stable live view of connected camera streams via the web interface (HLS or MJPEG).
 - **Recording:** Reliably record streams to local storage (MP4/MKV) based on user configuration (continuous or event-based if detection is enabled).

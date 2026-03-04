@@ -6,23 +6,23 @@ The container was stuck in a restart loop with the following error in the logs:
 
 ```
 [INFO] Copying default models...
-cp: cannot stat '/usr/share/lightnvr/models/*': No such file or directory
+cp: cannot stat '/usr/share/oneberry/models/*': No such file or directory
 ```
 
 The container would exit with code 1 and continuously restart.
 
 ## Root Cause
 
-The entrypoint script (`docker-entrypoint.sh`) was attempting to copy models from `/usr/share/lightnvr/models/*` without properly checking if:
+The entrypoint script (`docker-entrypoint.sh`) was attempting to copy models from `/usr/share/oneberry/models/*` without properly checking if:
 1. The directory exists
 2. The directory contains any files
 
 The original code:
 ```bash
 # Set up models if needed
-if [ -d /usr/share/lightnvr/models ] && [ -z "$(ls -A /var/lib/lightnvr/data/models 2>/dev/null)" ]; then
+if [ -d /usr/share/oneberry/models ] && [ -z "$(ls -A /var/lib/oneberry/data/models 2>/dev/null)" ]; then
     log_info "Copying default models..."
-    cp -r /usr/share/lightnvr/models/* /var/lib/lightnvr/data/models/
+    cp -r /usr/share/oneberry/models/* /var/lib/oneberry/data/models/
     log_info "Models copied successfully"
 fi
 ```
@@ -35,17 +35,17 @@ Updated the entrypoint script to check if the source directory has files before 
 
 ```bash
 # Set up models if needed
-if [ -d /usr/share/lightnvr/models ] && [ -n "$(ls -A /usr/share/lightnvr/models 2>/dev/null)" ]; then
-    if [ -z "$(ls -A /var/lib/lightnvr/data/models 2>/dev/null)" ]; then
+if [ -d /usr/share/oneberry/models ] && [ -n "$(ls -A /usr/share/oneberry/models 2>/dev/null)" ]; then
+    if [ -z "$(ls -A /var/lib/oneberry/data/models 2>/dev/null)" ]; then
         log_info "Copying default models..."
-        cp -r /usr/share/lightnvr/models/* /var/lib/lightnvr/data/models/
+        cp -r /usr/share/oneberry/models/* /var/lib/oneberry/data/models/
         log_info "Models copied successfully"
     fi
 fi
 ```
 
 **Changes:**
-1. Added check: `[ -n "$(ls -A /usr/share/lightnvr/models 2>/dev/null)" ]` - ensures source directory has files
+1. Added check: `[ -n "$(ls -A /usr/share/oneberry/models 2>/dev/null)" ]` - ensures source directory has files
 2. Nested the destination check inside - only checks destination if source has files
 3. No error message if models directory is empty - this is expected behavior
 
@@ -53,9 +53,9 @@ fi
 
 ### Before (Broken)
 ```
-1. Check if /usr/share/lightnvr/models directory exists ✓
+1. Check if /usr/share/oneberry/models directory exists ✓
 2. Check if destination is empty ✓
-3. Try to copy /usr/share/lightnvr/models/* ✗ (fails if source is empty)
+3. Try to copy /usr/share/oneberry/models/* ✗ (fails if source is empty)
 4. Container exits with code 1
 5. Docker restarts container
 6. Loop continues...
@@ -63,7 +63,7 @@ fi
 
 ### After (Fixed)
 ```
-1. Check if /usr/share/lightnvr/models directory exists ✓
+1. Check if /usr/share/oneberry/models directory exists ✓
 2. Check if source directory has files ✓ (empty, so skip)
 3. Skip copy operation (no error)
 4. Continue with startup
@@ -76,9 +76,9 @@ The models directory is created in the Dockerfile but intentionally left empty:
 
 ```dockerfile
 RUN mkdir -p \
-    /usr/share/lightnvr/web-template \
-    /usr/share/lightnvr/models \
-    /etc/lightnvr \
+    /usr/share/oneberry/web-template \
+    /usr/share/oneberry/models \
+    /etc/oneberry \
     ...
 ```
 
@@ -109,7 +109,7 @@ Entrypoint checks for models
     ↓
 Source has files, destination empty
     ↓
-Copy models to /var/lib/lightnvr/data/models/
+Copy models to /var/lib/oneberry/data/models/
     ↓
 Container continues startup ✓
 ```
@@ -143,7 +143,7 @@ docker-compose logs | grep models
 # Expected: No "cp: cannot stat" error
 
 # Verify container is running
-docker ps | grep lightnvr
+docker ps | grep oneberry
 # Expected: Container running, not restarting
 ```
 
@@ -151,19 +151,19 @@ docker ps | grep lightnvr
 ```bash
 # Build custom image with models
 cat > Dockerfile.custom << 'EOF'
-FROM ghcr.io/opensensor/lightnvr:latest
-COPY my-models/* /usr/share/lightnvr/models/
+FROM ghcr.io/opensensor/oneberry:latest
+COPY my-models/* /usr/share/oneberry/models/
 EOF
 
-docker build -f Dockerfile.custom -t lightnvr:with-models .
-docker run -d --name lightnvr-test lightnvr:with-models
+docker build -f Dockerfile.custom -t oneberry:with-models .
+docker run -d --name oneberry-test oneberry:with-models
 
 # Check logs
-docker logs lightnvr-test | grep models
+docker logs oneberry-test | grep models
 # Expected: "Copying default models..." and "Models copied successfully"
 
 # Verify models copied
-docker exec lightnvr-test ls -la /var/lib/lightnvr/data/models/
+docker exec oneberry-test ls -la /var/lib/oneberry/data/models/
 # Expected: Model files present
 ```
 
@@ -182,7 +182,7 @@ docker-compose logs | grep -c "cp: cannot stat"
 # Expected: 0 (no errors)
 
 # Verify container is healthy
-docker ps | grep lightnvr
+docker ps | grep oneberry
 # Expected: Container running, not restarting
 ```
 
@@ -227,17 +227,17 @@ This fix also prevents similar issues with other optional components:
 # In entrypoint script
 if [ "$LIGHTNVR_DOWNLOAD_MODELS" = "true" ]; then
     log_info "Downloading default models..."
-    wget -O /var/lib/lightnvr/data/models/yolov5s.pt \
+    wget -O /var/lib/oneberry/data/models/yolov5s.pt \
         https://github.com/ultralytics/yolov5/releases/download/v6.0/yolov5s.pt
 fi
 ```
 
 ### Option 2: Model Management Command
 ```bash
-# Add to lightnvr CLI
-lightnvr models list
-lightnvr models download yolov5s
-lightnvr models remove yolov5s
+# Add to oneberry CLI
+oneberry models list
+oneberry models download yolov5s
+oneberry models remove yolov5s
 ```
 
 ### Option 3: Web UI Model Management

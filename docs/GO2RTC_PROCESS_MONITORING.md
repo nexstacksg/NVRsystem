@@ -10,7 +10,7 @@ go2rtc can enter a "zombie" state where:
 - The process is still running (visible in `ps`)
 - The API on port 1984 becomes unresponsive
 - All stream connections fail
-- lightNVR remains healthy and operational
+- oneberry remains healthy and operational
 
 This creates a situation where streams appear to be down, but the root cause is the go2rtc service itself.
 

@@ -1,8 +1,8 @@
 /**
  * @file db_migrations.h
- * @brief Database migration runner for lightNVR
+ * @brief Database migration runner for oneberry
  * 
- * Integrates the sqlite_migrate library with lightNVR's database system.
+ * Integrates the sqlite_migrate library with oneberry's database system.
  * Runs migrations from db/migrations/ directory at startup.
  */
 

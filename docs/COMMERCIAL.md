@@ -1,8 +1,8 @@
-# lightNVR - Commercial Licensing & Professional Support
+# oneberry - Commercial Licensing & Professional Support
 
 ## Overview
 
-lightNVR is a lightweight, high-performance network video recorder designed for embedded systems, edge deployments, and resource-constrained environments. The project is developed and maintained by **OpenSensor Engineering** and released under the [GNU General Public License v3 (GPLv3)](../LICENSE).
+oneberry is a lightweight, high-performance network video recorder designed for embedded systems, edge deployments, and resource-constrained environments. The project is developed and maintained by **OpenSensor Engineering** and released under the [GNU General Public License v3 (GPLv3)](../LICENSE).
 
 As the sole copyright holder, OpenSensor Engineering offers flexible licensing options to meet diverse deployment needs — from hobbyist projects to enterprise-scale commercial products.
 
@@ -12,7 +12,7 @@ As the sole copyright holder, OpenSensor Engineering offers flexible licensing o
 
 ### Community License (GPLv3)
 
-lightNVR is freely available under GPLv3 for open-source projects, personal use, research, and any deployment where GPL compliance is maintained. Under this license:
+oneberry is freely available under GPLv3 for open-source projects, personal use, research, and any deployment where GPL compliance is maintained. Under this license:
 
 - ✅ Full access to all features and source code
 - ✅ Freedom to modify, extend, and distribute
@@ -24,7 +24,7 @@ lightNVR is freely available under GPLv3 for open-source projects, personal use,
 
 For organizations that require proprietary deployment, integration into closed-source products, or cannot comply with GPL obligations, OpenSensor Engineering offers commercial licensing. This license provides:
 
-- ✅ Freedom to integrate lightNVR into proprietary products without GPL disclosure requirements
+- ✅ Freedom to integrate oneberry into proprietary products without GPL disclosure requirements
 - ✅ Ability to keep modifications and extensions private
 - ✅ No requirement to distribute source code to customers
 - ✅ Clean IP chain for acquisition, investment, or compliance requirements
@@ -34,7 +34,7 @@ For organizations that require proprietary deployment, integration into closed-s
 
 ## Professional Support
 
-Whether you're using lightNVR under GPL or commercial license, professional support ensures your deployment succeeds. Support is available independently or bundled with commercial licensing.
+Whether you're using oneberry under GPL or commercial license, professional support ensures your deployment succeeds. Support is available independently or bundled with commercial licensing.
 
 | Feature | Community | Professional |
 |---------|-----------|--------------|
@@ -51,7 +51,7 @@ Whether you're using lightNVR under GPL or commercial license, professional supp
 
 ## Consulting & Development Services
 
-OpenSensor Engineering offers hands-on consulting for organizations deploying lightNVR or building video surveillance infrastructure. Services include:
+OpenSensor Engineering offers hands-on consulting for organizations deploying oneberry or building video surveillance infrastructure. Services include:
 
 ### Deployment Architecture
 
@@ -59,7 +59,7 @@ Multi-camera deployment patterns, storage planning, retention strategies, and ha
 
 ### Integration Development
 
-Custom integrations via API, webhooks, or MQTT to connect lightNVR with your existing infrastructure — alarm systems, access control, analytics platforms, or business applications.
+Custom integrations via API, webhooks, or MQTT to connect oneberry with your existing infrastructure — alarm systems, access control, analytics platforms, or business applications.
 
 ### Custom Feature Development
 
@@ -88,7 +88,7 @@ Deep experience with Ingenic SoCs, neural network accelerators, ISP tuning, and 
 Ready to discuss your project? Contact OpenSensor Engineering to schedule a discovery call:
 
 - 📧 **Email**: [matt@opensensor.io](mailto:matt@opensensor.io)
-- 🐙 **GitHub**: [github.com/opensensor/lightnvr](https://github.com/opensensor/lightnvr)
+- 🐙 **GitHub**: [github.com/opensensor/oneberry](https://github.com/opensensor/oneberry)
 - 🌐 **Web**: [www.opensensor.io](https://www.opensensor.io)
 
 ---

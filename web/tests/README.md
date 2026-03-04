@@ -1,6 +1,6 @@
-# LightNVR Automated Testing
+# Oneberry Automated Testing
 
-This directory contains automated tests for the LightNVR web interface.
+This directory contains automated tests for the Oneberry web interface.
 
 ## Test Structure
 

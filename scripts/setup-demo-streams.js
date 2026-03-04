@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
 /**
- * LightNVR Demo Stream Setup
+ * Oneberry Demo Stream Setup
  * 
- * This script configures demo camera streams in LightNVR for documentation
+ * This script configures demo camera streams in Oneberry for documentation
  * screenshot and video capture.
  * 
  * Usage:
  *   node scripts/setup-demo-streams.js [options]
  * 
  * Options:
- *   --url <url>          LightNVR URL (default: http://localhost:8080)
+ *   --url <url>          Oneberry URL (default: http://localhost:8080)
  *   --username <user>    Username (default: admin)
  *   --password <pass>    Password (default: admin)
  */
@@ -91,7 +91,7 @@ async function makeRequest(method, path, data = null, token = null) {
       timeout: 30000, // 30 second timeout
     };
 
-    // LightNVR uses session cookies, not Bearer tokens
+    // Oneberry uses session cookies, not Bearer tokens
     if (token) {
       options.headers['Cookie'] = `session=${token}`;
     }
@@ -234,7 +234,7 @@ async function setupDemoZones(token, streamName, zones) {
 }
 
 async function main() {
-  console.log('LightNVR Demo Stream Setup');
+  console.log('Oneberry Demo Stream Setup');
   console.log('==========================\n');
   console.log('Configuration:');
   console.log(`  URL: ${config.url}`);
@@ -272,7 +272,7 @@ async function main() {
     
     console.log('\n✓ Demo stream setup complete!');
     console.log('\nNext steps:');
-    console.log('  1. Verify streams are working in LightNVR UI');
+    console.log('  1. Verify streams are working in Oneberry UI');
     console.log('  2. Adjust detection zones if needed');
     console.log('  3. Run screenshot capture: ./scripts/update-documentation-media.sh');
     

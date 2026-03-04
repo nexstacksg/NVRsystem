@@ -1,4 +1,4 @@
-# Active Context: LightNVR (Initialization)
+# Active Context: Oneberry (Initialization)
 
 ## Current Focus
 

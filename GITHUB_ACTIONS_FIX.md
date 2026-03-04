@@ -5,7 +5,7 @@
 The GitHub Actions workflow was failing during the manifest creation step with the error:
 
 ```
-Creating and pushing manifest: ghcr.io/opensensor/lightnvr:-a397c50
+Creating and pushing manifest: ghcr.io/opensensor/oneberry:-a397c50
 ERROR: invalid reference format
 Error: Process completed with exit code 1.
 ```
@@ -50,23 +50,23 @@ Now when triggered by tag `0.12.6`:
 ### For Tag Builds (e.g., `git tag 0.12.6`)
 
 The workflow will create these tags:
-- `ghcr.io/opensensor/lightnvr:0.12.6` (full version)
-- `ghcr.io/opensensor/lightnvr:0.12` (major.minor)
-- `ghcr.io/opensensor/lightnvr:0` (major)
-- `ghcr.io/opensensor/lightnvr:latest` (if on default branch)
-- `ghcr.io/opensensor/lightnvr:sha-a397c50` (git commit SHA)
+- `ghcr.io/opensensor/oneberry:0.12.6` (full version)
+- `ghcr.io/opensensor/oneberry:0.12` (major.minor)
+- `ghcr.io/opensensor/oneberry:0` (major)
+- `ghcr.io/opensensor/oneberry:latest` (if on default branch)
+- `ghcr.io/opensensor/oneberry:sha-a397c50` (git commit SHA)
 
 ### For Main Branch Builds (e.g., `git push origin main`)
 
 The workflow will create these tags:
-- `ghcr.io/opensensor/lightnvr:latest`
-- `ghcr.io/opensensor/lightnvr:sha-a397c50` (git commit SHA)
+- `ghcr.io/opensensor/oneberry:latest`
+- `ghcr.io/opensensor/oneberry:sha-a397c50` (git commit SHA)
 
 ### For Pull Request Builds
 
 The workflow will create these tags:
-- `ghcr.io/opensensor/lightnvr:pr-123` (PR number)
-- `ghcr.io/opensensor/lightnvr:sha-a397c50` (git commit SHA)
+- `ghcr.io/opensensor/oneberry:pr-123` (PR number)
+- `ghcr.io/opensensor/oneberry:sha-a397c50` (git commit SHA)
 
 ## Benefits of SHA Tags
 
@@ -98,9 +98,9 @@ To test this fix:
 
 3. **Check generated tags:**
    ```bash
-   docker pull ghcr.io/opensensor/lightnvr:0.12.7
-   docker pull ghcr.io/opensensor/lightnvr:sha-a397c50
-   docker pull ghcr.io/opensensor/lightnvr:latest
+   docker pull ghcr.io/opensensor/oneberry:0.12.7
+   docker pull ghcr.io/opensensor/oneberry:sha-a397c50
+   docker pull ghcr.io/opensensor/oneberry:latest
    ```
 
 ## Alternative Solutions Considered

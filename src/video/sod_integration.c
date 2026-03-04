@@ -80,7 +80,7 @@ void* load_sod_model_for_detection(const char *model_path, float threshold,
             snprintf(full_model_path, max_path_length, "%s/%s", g_config.models_path, model_path);
         } else {
             // Fall back to default path if INI config doesn't exist
-            snprintf(full_model_path, max_path_length, "/etc/lightnvr/models/%s", model_path);
+            snprintf(full_model_path, max_path_length, "/etc/oneberry/models/%s", model_path);
         }
 
         // Validate path exists
@@ -94,7 +94,7 @@ void* load_sod_model_for_detection(const char *model_path, float threshold,
             char cwd[MAX_PATH_LENGTH];
             if (getcwd(cwd, sizeof(cwd)) != NULL) {
                 const char *locations[] = {
-                    "/var/lib/lightnvr/models/", // Default system location
+                    "/var/lib/oneberry/models/", // Default system location
                 };
 
                 for (int i = 0; i < sizeof(locations)/sizeof(locations[0]); i++) {

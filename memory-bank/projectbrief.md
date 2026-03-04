@@ -1,8 +1,8 @@
-# Project Brief: LightNVR
+# Project Brief: Oneberry
 
 ## Core Goal
 
-Develop and maintain LightNVR, a tiny, memory-optimized Network Video Recorder (NVR) software written in C. The primary focus is efficiency and reliability, especially on resource-constrained Linux devices like the Ingenic A1 SoC (256MB RAM), while remaining functional on standard Linux systems.
+Develop and maintain Oneberry, a tiny, memory-optimized Network Video Recorder (NVR) software written in C. The primary focus is efficiency and reliability, especially on resource-constrained Linux devices like the Ingenic A1 SoC (256MB RAM), while remaining functional on standard Linux systems.
 
 ## Key Features & Requirements
 

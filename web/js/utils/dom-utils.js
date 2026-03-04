@@ -1,5 +1,5 @@
 /**
- * LightNVR Web Interface DOM Utilities
+ * Oneberry Web Interface DOM Utilities
  * Provides abstracted methods for DOM manipulation to avoid direct DOM access
  */
 

@@ -1,10 +1,10 @@
 # PRD: Sophisticated Per-Stream Recording Retention Policies
 
 ## Executive Summary
-Implement comprehensive, per-stream recording retention and deletion policies for lightNVR that provide fine-grained control over recording lifecycle management while maintaining the project's core principles of lightweight design and C best practices.
+Implement comprehensive, per-stream recording retention and deletion policies for oneberry that provide fine-grained control over recording lifecycle management while maintaining the project's core principles of lightweight design and C best practices.
 
 ## Background
-Currently, lightNVR has:
+Currently, oneberry has:
 - Global retention policy (30 days default) in `storage_manager.c`
 - Basic time-based cleanup in storage manager thread
 - Motion recording config with `retention_days` and `max_storage_mb` per stream

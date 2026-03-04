@@ -1,7 +1,7 @@
 import { test, expect, Page } from '@playwright/test';
 
 /**
- * LightNVR UI Tests
+ * Oneberry UI Tests
  *
  * Adapted from scripts/capture-screenshots.js for robust page navigation.
  * Run with: npx playwright test --project=ui --headed
@@ -67,10 +67,10 @@ async function navigateTo(page: Page, path: string, options?: { waitForNetworkId
   }
 }
 
-test.describe('LightNVR Login', () => {
+test.describe('Oneberry Login', () => {
   test('should display login page', async ({ page }) => {
     await page.goto('/login.html', { waitUntil: 'networkidle', timeout: 10000 });
-    await expect(page).toHaveTitle(/LightNVR/i);
+    await expect(page).toHaveTitle(/Oneberry/i);
 
     // Should see login form elements
     await page.waitForSelector('input[name="username"], input[type="text"]', { timeout: 5000 });
@@ -87,7 +87,7 @@ test.describe('LightNVR Login', () => {
   });
 });
 
-test.describe('LightNVR Web Interface', () => {
+test.describe('Oneberry Web Interface', () => {
   // Login once before all tests in this describe block
   test.beforeEach(async ({ page }) => {
     await login(page);
@@ -96,7 +96,7 @@ test.describe('LightNVR Web Interface', () => {
   test('should load the main dashboard', async ({ page }) => {
     await navigateTo(page, '/index.html');
     const title = await page.title();
-    expect(title.toLowerCase()).toContain('lightnvr');
+    expect(title.toLowerCase()).toContain('oneberry');
     await page.screenshot({ path: 'test-results/dashboard.png' });
   });
 

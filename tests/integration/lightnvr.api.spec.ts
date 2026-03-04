@@ -1,5 +1,5 @@
 /**
- * LightNVR API Integration Tests
+ * Oneberry API Integration Tests
  * @tags @api
  */
 
@@ -8,7 +8,7 @@ import { test, expect, APIRequestContext } from '@playwright/test';
 const LIGHTNVR_URL = process.env.LIGHTNVR_URL || 'http://localhost:18080';
 const AUTH_HEADER = 'Basic ' + Buffer.from('admin:admin').toString('base64');
 
-test.describe('LightNVR API @api', () => {
+test.describe('Oneberry API @api', () => {
   let request: APIRequestContext;
 
   test.beforeAll(async ({ playwright }) => {

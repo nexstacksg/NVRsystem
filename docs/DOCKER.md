@@ -1,6 +1,6 @@
 # Docker Deployment Guide
 
-This guide provides comprehensive information about deploying LightNVR using Docker.
+This guide provides comprehensive information about deploying Oneberry using Docker.
 
 ## Table of Contents
 
@@ -20,8 +20,8 @@ This guide provides comprehensive information about deploying LightNVR using Doc
 
 ```bash
 # Clone the repository
-git clone https://github.com/opensensor/lightNVR.git
-cd lightNVR
+git clone https://github.com/opensensor/oneberry.git
+cd oneberry
 
 # Start the container
 docker-compose up -d
@@ -38,24 +38,24 @@ docker-compose logs -f
 
 ```bash
 docker run -d \
-  --name lightnvr \
+  --name oneberry \
   --restart unless-stopped \
   -p 8080:8080 \
   -p 8554:8554 \
   -p 8555:8555 \
   -p 8555:8555/udp \
   -p 1984:1984 \
-  -v ./config:/etc/lightnvr \
-  -v ./data:/var/lib/lightnvr/data \
+  -v ./config:/etc/oneberry \
+  -v ./data:/var/lib/oneberry/data \
   -e TZ=America/New_York \
-  ghcr.io/opensensor/lightnvr:latest
+  ghcr.io/opensensor/oneberry:latest
 ```
 
 ## Container Architecture
 
-The LightNVR Docker container is built using a multi-stage build process:
+The Oneberry Docker container is built using a multi-stage build process:
 
-1. **Builder Stage** - Compiles LightNVR and go2rtc from source
+1. **Builder Stage** - Compiles Oneberry and go2rtc from source
 2. **Runtime Stage** - Minimal Debian-based image with only runtime dependencies
 
 ### Key Features
@@ -73,14 +73,14 @@ The LightNVR Docker container is built using a multi-stage build process:
 The container uses two primary volume mounts:
 
 ```
-/etc/lightnvr/              # Configuration files
-├── lightnvr.ini            # Main configuration
+/etc/oneberry/              # Configuration files
+├── oneberry.ini            # Main configuration
 └── go2rtc/
     └── go2rtc.yaml         # go2rtc configuration
 
-/var/lib/lightnvr/data/     # Persistent data
+/var/lib/oneberry/data/     # Persistent data
 ├── database/
-│   └── lightnvr.db         # SQLite database
+│   └── oneberry.db         # SQLite database
 ├── recordings/
 │   ├── hls/                # HLS recordings
 │   └── mp4/                # MP4 recordings
@@ -89,22 +89,22 @@ The container uses two primary volume mounts:
 
 ### Important Volume Notes
 
-⚠️ **DO NOT mount `/var/lib/lightnvr` directly!**
+⚠️ **DO NOT mount `/var/lib/oneberry` directly!**
 
-Mounting the entire `/var/lib/lightnvr` directory will overwrite the web assets and break the web UI. Always mount only the subdirectories you need:
+Mounting the entire `/var/lib/oneberry` directory will overwrite the web assets and break the web UI. Always mount only the subdirectories you need:
 
 ✅ **Correct:**
 ```yaml
 volumes:
-  - ./config:/etc/lightnvr
-  - ./data:/var/lib/lightnvr/data
+  - ./config:/etc/oneberry
+  - ./data:/var/lib/oneberry/data
 ```
 
 ❌ **Incorrect:**
 ```yaml
 volumes:
-  - ./config:/etc/lightnvr
-  - ./data:/var/lib/lightnvr  # This will break the web UI!
+  - ./config:/etc/oneberry
+  - ./data:/var/lib/oneberry  # This will break the web UI!
 ```
 
 ### NFS Volume Considerations
@@ -122,7 +122,7 @@ NFS volumes may have different permission models than local filesystems. If you 
        driver_opts:
          type: "nfs"
          o: "nfsvers=4,addr=192.168.1.100,rw,nolock"  # Add nolock if needed
-         device: ":/volume1/docker/lightnvr/config"
+         device: ":/volume1/docker/oneberry/config"
    ```
 
 2. **UID/GID mapping**: The container runs as root by default. Ensure your NFS export allows root access or map UIDs appropriately:
@@ -132,11 +132,11 @@ NFS volumes may have different permission models than local filesystems. If you 
 3. **Directory pre-creation**: For better reliability with NFS, pre-create the directory structure on your NAS:
    ```bash
    # On your NAS or NFS server
-   mkdir -p /volume1/docker/lightnvr/config/go2rtc
-   mkdir -p /volume1/docker/lightnvr/data/recordings/mp4
-   mkdir -p /volume1/docker/lightnvr/data/database
-   mkdir -p /volume1/docker/lightnvr/data/models
-   chmod -R 755 /volume1/docker/lightnvr
+   mkdir -p /volume1/docker/oneberry/config/go2rtc
+   mkdir -p /volume1/docker/oneberry/data/recordings/mp4
+   mkdir -p /volume1/docker/oneberry/data/database
+   mkdir -p /volume1/docker/oneberry/data/models
+   chmod -R 755 /volume1/docker/oneberry
    ```
 
 #### Recording Issues on NFS
@@ -146,12 +146,12 @@ If recordings are not being created:
 1. **Check write permissions**: The container logs will show write permission test results on startup
 2. **Verify NFS mount**: Ensure the NFS volume is actually mounted inside the container:
    ```bash
-   docker exec lightnvr-latest ls -la /var/lib/lightnvr/data/recordings/mp4
+   docker exec oneberry-latest ls -la /var/lib/oneberry/data/recordings/mp4
    ```
 3. **Check available space**: Ensure your NAS has sufficient free space
 4. **Review logs**: Check for "Failed to open input" or "Operation not permitted" errors:
    ```bash
-   docker logs lightnvr-latest | grep -i error
+   docker logs oneberry-latest | grep -i error
    ```
 
 #### Example NFS Configuration
@@ -164,20 +164,20 @@ volumes:
     driver_opts:
       type: "nfs"
       o: "nfsvers=4,addr=${IpAddressNFS},rw,nolock"
-      device: ":/${NFSVolumePath}/${SystemId}/lightnvr-config"
+      device: ":/${NFSVolumePath}/${SystemId}/oneberry-config"
 
   data:
     driver_opts:
       type: "nfs"
       o: "nfsvers=4,addr=${IpAddressNFS},rw,nolock"
-      device: ":/${NFSVolumePath}/${SystemId}/lightnvr-data"
+      device: ":/${NFSVolumePath}/${SystemId}/oneberry-data"
 ```
 
 **Note**: The `nolock` option can help with some NFS permission issues but may reduce file locking safety. Use with caution in production environments.
 
 ### Web Assets
 
-Web assets are stored in `/var/lib/lightnvr/web` and are automatically copied from `/usr/share/lightnvr/web-template/` on first run. This ensures:
+Web assets are stored in `/var/lib/oneberry/web` and are automatically copied from `/usr/share/oneberry/web-template/` on first run. This ensures:
 
 - Web UI works immediately after container start
 - Updates to the container image update the web UI
@@ -200,7 +200,7 @@ Web assets are stored in `/var/lib/lightnvr/web` and are automatically copied fr
 
 ```yaml
 services:
-  lightnvr:
+  oneberry:
     ports:
       - "8080:8080"
       - "8554:8554"
@@ -213,7 +213,7 @@ services:
 
 ```yaml
 services:
-  lightnvr:
+  oneberry:
     network_mode: host
 ```
 
@@ -228,7 +228,7 @@ services:
 | `TZ` | `UTC` | Container timezone |
 | `GO2RTC_CONFIG_PERSIST` | `true` | Persist go2rtc config across restarts |
 | `LIGHTNVR_AUTO_INIT` | `true` | Auto-initialize config files on first run |
-| `LIGHTNVR_WEB_ROOT` | `/var/lib/lightnvr/web` | Web assets directory |
+| `LIGHTNVR_WEB_ROOT` | `/var/lib/oneberry/web` | Web assets directory |
 | `LIGHTNVR_ONVIF_NETWORK` | (none) | Override ONVIF discovery network (e.g., `192.168.1.0/24`) |
 
 ### Example Usage
@@ -247,7 +247,7 @@ When running in a container, ONVIF auto-detection skips Docker bridge interfaces
 
 ```yaml
 services:
-  lightnvr:
+  oneberry:
     environment:
       # Specify the network where your cameras are located
       - LIGHTNVR_ONVIF_NETWORK=192.168.1.0/24
@@ -274,19 +274,19 @@ On first container start, the entrypoint script automatically:
 
 1. **Creates Directory Structure**
    ```
-   /etc/lightnvr/
-   /var/lib/lightnvr/web/
-   /var/lib/lightnvr/data/database/
-   /var/lib/lightnvr/data/recordings/
-   /var/lib/lightnvr/data/models/
+   /etc/oneberry/
+   /var/lib/oneberry/web/
+   /var/lib/oneberry/data/database/
+   /var/lib/oneberry/data/recordings/
+   /var/lib/oneberry/data/models/
    ```
 
 2. **Copies Web Assets**
-   - Copies from `/usr/share/lightnvr/web-template/` to `/var/lib/lightnvr/web/`
+   - Copies from `/usr/share/oneberry/web-template/` to `/var/lib/oneberry/web/`
    - Only if web directory is empty
 
 3. **Creates Default Configuration**
-   - `lightnvr.ini` with sensible defaults
+   - `oneberry.ini` with sensible defaults
    - `go2rtc.yaml` with WebRTC/STUN configuration
 
 4. **Initializes Database**
@@ -351,7 +351,7 @@ If running behind NAT/firewall, forward these ports:
 **Symptom:** Accessing `http://localhost:8080` shows nothing or 404 error
 
 **Causes:**
-1. Mounted `/var/lib/lightnvr` directly (overwrote web assets)
+1. Mounted `/var/lib/oneberry` directly (overwrote web assets)
 2. Web assets not copied during initialization
 
 **Solution:**
@@ -360,7 +360,7 @@ If running behind NAT/firewall, forward these ports:
 docker-compose down
 
 # Remove incorrect volume mount
-# Edit docker-compose.yml to use /var/lib/lightnvr/data instead
+# Edit docker-compose.yml to use /var/lib/oneberry/data instead
 
 # Remove web directory to force re-initialization
 rm -rf ./data/web
@@ -378,11 +378,11 @@ docker-compose up -d
 **Solution:**
 ```bash
 # Verify volume mounts
-docker inspect lightnvr | grep -A 10 Mounts
+docker inspect oneberry | grep -A 10 Mounts
 
 # Should show:
-# /etc/lightnvr
-# /var/lib/lightnvr/data
+# /etc/oneberry
+# /var/lib/oneberry/data
 ```
 
 ### WebRTC Not Working
@@ -397,13 +397,13 @@ docker inspect lightnvr | grep -A 10 Mounts
 **Solution:**
 ```bash
 # Check if go2rtc is running
-docker exec lightnvr ps aux | grep go2rtc
+docker exec oneberry ps aux | grep go2rtc
 
 # Check go2rtc logs
-docker exec lightnvr cat /var/log/lightnvr/go2rtc.log
+docker exec oneberry cat /var/log/oneberry/go2rtc.log
 
 # Test STUN connectivity
-docker exec lightnvr nc -vzu stun.l.google.com 19302
+docker exec oneberry nc -vzu stun.l.google.com 19302
 ```
 
 ### go2rtc Config Keeps Resetting
@@ -426,40 +426,40 @@ Mount a custom config file:
 
 ```bash
 docker run -d \
-  --name lightnvr \
-  -v /path/to/custom/lightnvr.ini:/etc/lightnvr/lightnvr.ini \
-  -v ./data:/var/lib/lightnvr/data \
-  ghcr.io/opensensor/lightnvr:latest
+  --name oneberry \
+  -v /path/to/custom/oneberry.ini:/etc/oneberry/oneberry.ini \
+  -v ./data:/var/lib/oneberry/data \
+  ghcr.io/opensensor/oneberry:latest
 ```
 
 ### Running Multiple Instances
 
 ```yaml
 services:
-  lightnvr-1:
-    image: ghcr.io/opensensor/lightnvr:latest
+  oneberry-1:
+    image: ghcr.io/opensensor/oneberry:latest
     ports:
       - "8080:8080"
       - "8554:8554"
     volumes:
-      - ./config-1:/etc/lightnvr
-      - ./data-1:/var/lib/lightnvr/data
+      - ./config-1:/etc/oneberry
+      - ./data-1:/var/lib/oneberry/data
 
-  lightnvr-2:
-    image: ghcr.io/opensensor/lightnvr:latest
+  oneberry-2:
+    image: ghcr.io/opensensor/oneberry:latest
     ports:
       - "8081:8080"
       - "8555:8554"
     volumes:
-      - ./config-2:/etc/lightnvr
-      - ./data-2:/var/lib/lightnvr/data
+      - ./config-2:/etc/oneberry
+      - ./data-2:/var/lib/oneberry/data
 ```
 
 ### Resource Limits
 
 ```yaml
 services:
-  lightnvr:
+  oneberry:
     deploy:
       resources:
         limits:
@@ -474,7 +474,7 @@ services:
 
 ```yaml
 services:
-  lightnvr:
+  oneberry:
     logging:
       driver: "json-file"
       options:
@@ -484,30 +484,30 @@ services:
 
 ## Migration from Previous Versions
 
-If you're upgrading from an older version that mounted `/var/lib/lightnvr` directly, see [DOCKER_MIGRATION_GUIDE.md](../DOCKER_MIGRATION_GUIDE.md) for detailed migration instructions.
+If you're upgrading from an older version that mounted `/var/lib/oneberry` directly, see [DOCKER_MIGRATION_GUIDE.md](../DOCKER_MIGRATION_GUIDE.md) for detailed migration instructions.
 
 ## Building from Source
 
 ```bash
 # Clone repository
-git clone https://github.com/opensensor/lightNVR.git
-cd lightNVR
+git clone https://github.com/opensensor/oneberry.git
+cd oneberry
 
 # Build image
-docker build -t lightnvr:local .
+docker build -t oneberry:local .
 
 # Run locally built image
 docker run -d \
-  --name lightnvr \
+  --name oneberry \
   -p 8080:8080 \
-  -v ./config:/etc/lightnvr \
-  -v ./data:/var/lib/lightnvr/data \
-  lightnvr:local
+  -v ./config:/etc/oneberry \
+  -v ./data:/var/lib/oneberry/data \
+  oneberry:local
 ```
 
 ## Support
 
 For issues and questions:
-- GitHub Issues: https://github.com/opensensor/lightNVR/issues
-- Documentation: https://github.com/opensensor/lightNVR/tree/main/docs
+- GitHub Issues: https://github.com/opensensor/oneberry/issues
+- Documentation: https://github.com/opensensor/oneberry/tree/main/docs
 

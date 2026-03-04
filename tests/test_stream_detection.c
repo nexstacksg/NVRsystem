@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
     log_info("Initial state: no thread running for test stream");
 
     // Test parameters
-    const char *model_path = "/var/lib/lightnvr/models/tiny20.sod";
+    const char *model_path = "/var/lib/oneberry/models/tiny20.sod";
     float threshold = 0.5f;
     int pre_buffer = 5;
     int post_buffer = 10;

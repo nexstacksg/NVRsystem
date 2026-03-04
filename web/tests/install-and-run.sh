@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script to install dependencies and run tests for LightNVR
+# Script to install dependencies and run tests for Oneberry
 
 # Change to the web directory
 cd "$(dirname "$0")/.."

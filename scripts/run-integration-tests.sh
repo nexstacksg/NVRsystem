@@ -1,7 +1,7 @@
 #!/bin/bash
 # run-integration-tests.sh - Run integration tests locally
 #
-# This script runs integration tests using go2rtc test streams and lightNVR.
+# This script runs integration tests using go2rtc test streams and oneberry.
 # It can be used for local development or CI/CD testing.
 #
 # Usage:
@@ -10,11 +10,11 @@
 # Options:
 #   --start-go2rtc       Start go2rtc standalone with test config (for go2rtc-only tests)
 #   --stop-go2rtc        Stop go2rtc after tests (standalone mode only)
-#   --start-lightnvr     Start lightNVR with test config (lightNVR will start go2rtc)
-#   --stop-lightnvr      Stop lightNVR after tests
-#   --skip-build         Skip building lightNVR
-#   --go2rtc-only        Only run go2rtc tests (skip lightNVR tests)
-#   --full               Run full integration tests (lightNVR + go2rtc + test streams)
+#   --start-oneberry     Start oneberry with test config (oneberry will start go2rtc)
+#   --stop-oneberry      Stop oneberry after tests
+#   --skip-build         Skip building oneberry
+#   --go2rtc-only        Only run go2rtc tests (skip oneberry tests)
+#   --full               Run full integration tests (oneberry + go2rtc + test streams)
 #   --verbose            Show verbose output
 
 set -e
@@ -24,13 +24,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 GO2RTC_BIN="${PROJECT_ROOT}/go2rtc/go2rtc"
 GO2RTC_TEST_CONFIG="${PROJECT_ROOT}/config/go2rtc/go2rtc-test.yaml"
-LIGHTNVR_BIN="${PROJECT_ROOT}/build/bin/lightnvr"
-LIGHTNVR_TEST_CONFIG="${PROJECT_ROOT}/config/lightnvr-test.ini"
+LIGHTNVR_BIN="${PROJECT_ROOT}/build/bin/oneberry"
+LIGHTNVR_TEST_CONFIG="${PROJECT_ROOT}/config/oneberry-test.ini"
 GO2RTC_API_PORT=11984
 GO2RTC_RTSP_PORT=18554
 LIGHTNVR_PORT=18080
-TEST_OUTPUT_DIR="/tmp/lightnvr-integration-tests"
-LIGHTNVR_TEST_DIR="/tmp/lightnvr-test"
+TEST_OUTPUT_DIR="/tmp/oneberry-integration-tests"
+LIGHTNVR_TEST_DIR="/tmp/oneberry-test"
 
 # Colors for output
 RED='\033[0;31m'
@@ -58,8 +58,8 @@ while [[ $# -gt 0 ]]; do
     case $1 in
         --start-go2rtc) START_GO2RTC=true; shift ;;
         --stop-go2rtc) STOP_GO2RTC=true; shift ;;
-        --start-lightnvr) START_LIGHTNVR=true; shift ;;
-        --stop-lightnvr) STOP_LIGHTNVR=true; shift ;;
+        --start-oneberry) START_LIGHTNVR=true; shift ;;
+        --stop-oneberry) STOP_LIGHTNVR=true; shift ;;
         --skip-build) SKIP_BUILD=true; shift ;;
         --go2rtc-only) GO2RTC_ONLY=true; shift ;;
         --full) FULL_TEST=true; START_LIGHTNVR=true; STOP_LIGHTNVR=true; shift ;;
@@ -89,7 +89,7 @@ cleanup() {
         kill $GO2RTC_PID 2>/dev/null || true
     fi
     if [ "$STOP_LIGHTNVR" = true ] && [ -n "$LIGHTNVR_PID" ]; then
-        log_info "Stopping lightNVR (PID: $LIGHTNVR_PID)..."
+        log_info "Stopping oneberry (PID: $LIGHTNVR_PID)..."
         kill $LIGHTNVR_PID 2>/dev/null || true
         sleep 1
         kill -9 $LIGHTNVR_PID 2>/dev/null || true
@@ -124,11 +124,11 @@ check_prerequisites() {
         missing=1
     fi
 
-    # Check lightNVR binary if we need to test it
+    # Check oneberry binary if we need to test it
     if [ "$LIGHTNVR_ONLY" = true ] || [ "$START_LIGHTNVR" = true ]; then
         if [ ! -f "$LIGHTNVR_BIN" ]; then
-            log_error "lightNVR binary not found at $LIGHTNVR_BIN"
-            log_info "Build lightNVR first: ./scripts/build.sh"
+            log_error "oneberry binary not found at $LIGHTNVR_BIN"
+            log_info "Build oneberry first: ./scripts/build.sh"
             missing=1
         fi
     fi
@@ -140,9 +140,9 @@ check_prerequisites() {
     log_info "Prerequisites check passed"
 }
 
-# Setup lightNVR test directories
+# Setup oneberry test directories
 setup_lightnvr_dirs() {
-    log_info "Setting up lightNVR test directories..."
+    log_info "Setting up oneberry test directories..."
     mkdir -p "${LIGHTNVR_TEST_DIR}/recordings"
     mkdir -p "${LIGHTNVR_TEST_DIR}/recordings/mp4"
     mkdir -p "${LIGHTNVR_TEST_DIR}/recordings/hls"
@@ -192,53 +192,53 @@ check_go2rtc() {
     log_info "go2rtc is accessible"
 }
 
-# Start lightNVR if requested
+# Start oneberry if requested
 start_lightnvr() {
     if [ "$START_LIGHTNVR" = true ]; then
         setup_lightnvr_dirs
 
         # Check if already running
         if curl -s -u admin:admin "http://localhost:${LIGHTNVR_PORT}/api/v1/system" > /dev/null 2>&1; then
-            log_info "lightNVR already running on port ${LIGHTNVR_PORT}"
+            log_info "oneberry already running on port ${LIGHTNVR_PORT}"
             return 0
         fi
 
-        log_info "Starting lightNVR with test configuration..."
+        log_info "Starting oneberry with test configuration..."
         cd "$PROJECT_ROOT"
         "$LIGHTNVR_BIN" -c "$LIGHTNVR_TEST_CONFIG" &
         LIGHTNVR_PID=$!
 
-        # Wait for lightNVR to start
+        # Wait for oneberry to start
         for i in {1..30}; do
             if curl -s -u admin:admin "http://localhost:${LIGHTNVR_PORT}/api/v1/system" > /dev/null 2>&1; then
-                log_info "lightNVR started successfully (PID: $LIGHTNVR_PID)"
+                log_info "oneberry started successfully (PID: $LIGHTNVR_PID)"
                 return 0
             fi
             sleep 1
         done
 
-        log_error "lightNVR failed to start within 30 seconds"
+        log_error "oneberry failed to start within 30 seconds"
         # Show logs for debugging
-        if [ -f "${LIGHTNVR_TEST_DIR}/lightnvr.log" ]; then
+        if [ -f "${LIGHTNVR_TEST_DIR}/oneberry.log" ]; then
             log_error "Last 20 lines of log:"
-            tail -20 "${LIGHTNVR_TEST_DIR}/lightnvr.log"
+            tail -20 "${LIGHTNVR_TEST_DIR}/oneberry.log"
         fi
         exit 1
     fi
 }
 
-# Check lightNVR is running
+# Check oneberry is running
 check_lightnvr() {
-    log_info "Checking lightNVR connectivity..."
+    log_info "Checking oneberry connectivity..."
 
     if ! curl -s -u admin:admin "http://localhost:${LIGHTNVR_PORT}/api/v1/system" > /dev/null 2>&1; then
-        log_error "Cannot connect to lightNVR API on port ${LIGHTNVR_PORT}"
-        log_info "Start lightNVR with: $LIGHTNVR_BIN -c $LIGHTNVR_TEST_CONFIG"
-        log_info "Or run with --start-lightnvr flag"
+        log_error "Cannot connect to oneberry API on port ${LIGHTNVR_PORT}"
+        log_info "Start oneberry with: $LIGHTNVR_BIN -c $LIGHTNVR_TEST_CONFIG"
+        log_info "Or run with --start-oneberry flag"
         exit 1
     fi
 
-    log_info "lightNVR is accessible"
+    log_info "oneberry is accessible"
 }
 
 # Register virtual test streams with go2rtc
@@ -246,7 +246,7 @@ check_lightnvr() {
 register_test_streams() {
     log_info "Registering virtual test streams with go2rtc..."
 
-    # Wait for go2rtc to be ready (lightNVR starts it)
+    # Wait for go2rtc to be ready (oneberry starts it)
     local retries=30
     while [ $retries -gt 0 ]; do
         if curl -s "http://localhost:${GO2RTC_API_PORT}/api/streams" > /dev/null 2>&1; then
@@ -406,12 +406,12 @@ test_webrtc_endpoint() {
 }
 
 #############################################
-# lightNVR Tests
+# oneberry Tests
 #############################################
 
-# Test: lightNVR system API endpoint
+# Test: oneberry system API endpoint
 test_lightnvr_system_api() {
-    log_info "Test: lightNVR system API..."
+    log_info "Test: oneberry system API..."
 
     local response=$(curl -s -u admin:admin "http://localhost:${LIGHTNVR_PORT}/api/v1/system")
     local failed=0
@@ -436,9 +436,9 @@ test_lightnvr_system_api() {
     return $failed
 }
 
-# Test: lightNVR streams API - list streams
+# Test: oneberry streams API - list streams
 test_lightnvr_streams_list() {
-    log_info "Test: lightNVR streams list API..."
+    log_info "Test: oneberry streams list API..."
 
     local response=$(curl -s -u admin:admin "http://localhost:${LIGHTNVR_PORT}/api/v1/streams")
 
@@ -453,9 +453,9 @@ test_lightnvr_streams_list() {
     fi
 }
 
-# Test: lightNVR add stream via API
+# Test: oneberry add stream via API
 test_lightnvr_add_stream() {
-    log_info "Test: lightNVR add stream API..."
+    log_info "Test: oneberry add stream API..."
 
     # Add a test stream pointing to go2rtc test stream
     local stream_data='{
@@ -492,9 +492,9 @@ test_lightnvr_add_stream() {
     fi
 }
 
-# Test: lightNVR settings API
+# Test: oneberry settings API
 test_lightnvr_settings() {
-    log_info "Test: lightNVR settings API..."
+    log_info "Test: oneberry settings API..."
 
     local response=$(curl -s -u admin:admin "http://localhost:${LIGHTNVR_PORT}/api/v1/settings")
     local failed=0
@@ -519,9 +519,9 @@ test_lightnvr_settings() {
     return $failed
 }
 
-# Test: lightNVR recordings API
+# Test: oneberry recordings API
 test_lightnvr_recordings() {
-    log_info "Test: lightNVR recordings API..."
+    log_info "Test: oneberry recordings API..."
 
     local response=$(curl -s -u admin:admin "http://localhost:${LIGHTNVR_PORT}/api/v1/recordings")
 
@@ -536,9 +536,9 @@ test_lightnvr_recordings() {
     fi
 }
 
-# Test: lightNVR authentication
+# Test: oneberry authentication
 test_lightnvr_auth() {
-    log_info "Test: lightNVR authentication..."
+    log_info "Test: oneberry authentication..."
     local failed=0
 
     # Test with valid credentials
@@ -598,9 +598,9 @@ run_go2rtc_tests() {
     echo "$passed $total"
 }
 
-# Run lightNVR tests
+# Run oneberry tests
 run_lightnvr_tests() {
-    log_section "Running lightNVR tests..."
+    log_section "Running oneberry tests..."
     echo ""
 
     local total=0
@@ -636,7 +636,7 @@ run_lightnvr_tests() {
     if test_lightnvr_recordings; then passed=$((passed + 1)); fi
     echo ""
 
-    echo "lightNVR tests: $passed/$total passed"
+    echo "oneberry tests: $passed/$total passed"
     echo "$passed $total"
 }
 
@@ -645,7 +645,7 @@ run_tests() {
     local total_passed=0
     local total_tests=0
 
-    # Run go2rtc tests unless lightNVR-only mode
+    # Run go2rtc tests unless oneberry-only mode
     if [ "$LIGHTNVR_ONLY" != true ]; then
         local go2rtc_result=$(run_go2rtc_tests | tail -1)
         local go2rtc_passed=$(echo "$go2rtc_result" | cut -d' ' -f1)
@@ -654,7 +654,7 @@ run_tests() {
         total_tests=$((total_tests + go2rtc_total))
     fi
 
-    # Run lightNVR tests if started or in lightNVR-only mode
+    # Run oneberry tests if started or in oneberry-only mode
     if [ "$START_LIGHTNVR" = true ] || [ "$LIGHTNVR_ONLY" = true ]; then
         if [ "$LIGHTNVR_ONLY" = true ]; then
             check_lightnvr
@@ -683,17 +683,17 @@ run_tests() {
 # Main
 main() {
     echo "========================================"
-    echo "lightNVR Integration Tests"
+    echo "oneberry Integration Tests"
     echo "========================================"
     echo ""
 
     # Show test mode
     if [ "$FULL_TEST" = true ]; then
-        log_info "Mode: Full integration test (lightNVR manages go2rtc)"
+        log_info "Mode: Full integration test (oneberry manages go2rtc)"
     elif [ "$GO2RTC_ONLY" = true ]; then
         log_info "Mode: go2rtc standalone tests"
     elif [ "$START_LIGHTNVR" = true ]; then
-        log_info "Mode: lightNVR + go2rtc tests"
+        log_info "Mode: oneberry + go2rtc tests"
     else
         log_info "Mode: go2rtc standalone tests (use --full for complete integration)"
     fi
@@ -703,10 +703,10 @@ main() {
 
     # Start services based on mode
     if [ "$START_LIGHTNVR" = true ]; then
-        # lightNVR mode: lightNVR will start and manage go2rtc
+        # oneberry mode: oneberry will start and manage go2rtc
         start_lightnvr
 
-        # Register test streams with go2rtc (lightNVR started it)
+        # Register test streams with go2rtc (oneberry started it)
         register_test_streams
 
         # Wait a moment for streams to initialize

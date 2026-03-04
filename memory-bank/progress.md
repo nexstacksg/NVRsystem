@@ -1,4 +1,4 @@
-# Progress: LightNVR (Initialization)
+# Progress: Oneberry (Initialization)
 
 ## Current Status
 
@@ -8,7 +8,7 @@
 ## What Works (Based on Documentation)
 
 - Core application lifecycle (startup, shutdown).
-- Configuration loading (`lightnvr.conf`, database).
+- Configuration loading (`oneberry.conf`, database).
 - Stream management (RTSP/ONVIF connection).
 - Video decoding/processing via FFmpeg.
 - Recording to MP4/HLS formats.

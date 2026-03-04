@@ -1,5 +1,5 @@
 /**
- * LightNVR Web Interface SettingsView Component
+ * Oneberry Web Interface SettingsView Component
  * Preact component for the settings page
  */
 
@@ -18,12 +18,12 @@ export function SettingsView() {
   const [userRole, setUserRole] = useState(null);
   const [settings, setSettings] = useState({
     logLevel: '2',
-    storagePath: '/var/lib/lightnvr/recordings',
+    storagePath: '/var/lib/oneberry/recordings',
     storagePathHls: '', // New field for HLS storage path
     maxStorage: '0',
     retention: '30',
     autoDelete: true,
-    dbPath: '/var/lib/lightnvr/lightnvr.db',
+    dbPath: '/var/lib/oneberry/oneberry.db',
     webPort: '8080',
     authEnabled: true,
     username: 'admin',
@@ -43,8 +43,8 @@ export function SettingsView() {
     mqttBrokerPort: '1883',
     mqttUsername: '',
     mqttPassword: '',
-    mqttClientId: 'lightnvr',
-    mqttTopicPrefix: 'lightnvr',
+    mqttClientId: 'oneberry',
+    mqttTopicPrefix: 'oneberry',
     mqttTlsEnabled: false,
     mqttKeepalive: '60',
     mqttQos: '1',
@@ -149,8 +149,8 @@ export function SettingsView() {
         mqttBrokerPort: settingsData.mqtt_broker_port?.toString() || '1883',
         mqttUsername: settingsData.mqtt_username || '',
         mqttPassword: settingsData.mqtt_password || '',
-        mqttClientId: settingsData.mqtt_client_id || 'lightnvr',
-        mqttTopicPrefix: settingsData.mqtt_topic_prefix || 'lightnvr',
+        mqttClientId: settingsData.mqtt_client_id || 'oneberry',
+        mqttTopicPrefix: settingsData.mqtt_topic_prefix || 'oneberry',
         mqttTlsEnabled: settingsData.mqtt_tls_enabled || false,
         mqttKeepalive: settingsData.mqtt_keepalive?.toString() || '60',
         mqttQos: settingsData.mqtt_qos?.toString() || '1',
@@ -523,7 +523,7 @@ export function SettingsView() {
                 type="text"
                 id="setting-detection-models-path"
                 name="detectionModelsPath"
-                placeholder="/var/lib/lightnvr/models"
+                placeholder="/var/lib/oneberry/models"
                 class="w-full p-2 border border-input rounded bg-background text-foreground disabled:opacity-60 disabled:cursor-not-allowed"
                 value={settings.detectionModelsPath}
                 onChange={handleInputChange}
@@ -707,7 +707,7 @@ export function SettingsView() {
                 value={settings.mqttClientId}
                 onChange={handleInputChange}
                 disabled={!canModifySettings}
-                placeholder="lightnvr"
+                placeholder="oneberry"
               />
               <span class="hint text-sm text-muted-foreground block mt-1">Unique identifier for this client</span>
             </div>
@@ -723,7 +723,7 @@ export function SettingsView() {
                 value={settings.mqttTopicPrefix}
                 onChange={handleInputChange}
                 disabled={!canModifySettings}
-                placeholder="lightnvr"
+                placeholder="oneberry"
               />
               <span class="hint text-sm text-muted-foreground block mt-1">Events published to: {settings.mqttTopicPrefix}/detections/&lt;stream_name&gt;</span>
             </div>

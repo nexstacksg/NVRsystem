@@ -1,12 +1,12 @@
-# System Patterns: LightNVR
+# System Patterns: Oneberry
 
 ## Architecture Overview
 
-LightNVR employs a modular, multi-threaded architecture in C, optimized for low-memory Linux environments. Key subsystems include Core, Video, Storage, Database, and Web Interface.
+Oneberry employs a modular, multi-threaded architecture in C, optimized for low-memory Linux environments. Key subsystems include Core, Video, Storage, Database, and Web Interface.
 
 ```mermaid
 graph TD
-    subgraph LightNVR System
+    subgraph Oneberry System
         Core[Core System] --> Config[Configuration]
         Core --> Lifecycle[App Lifecycle]
         Core --> Logging
@@ -59,7 +59,7 @@ graph TD
 - **Persistence:** SQLite for storing configuration, metadata, and user data due to its lightweight nature and single-file deployment.
 - **Web Server:** Mongoose embedded web server for serving the UI and API.
 - **API:** RESTful API using standard HTTP methods and JSON (parsed with cJSON).
-- **Configuration:** Simple key-value file (`lightnvr.conf`) supplemented by database storage for dynamic settings.
+- **Configuration:** Simple key-value file (`oneberry.conf`) supplemented by database storage for dynamic settings.
 - **Shutdown Coordination:** Priority-based, coordinated shutdown sequence managed by `Shutdown Coordinator` to ensure graceful termination and prevent data corruption. Components register and follow signals.
 - **Modularity:** Code is organized into subsystems (core, video, storage, database, web) with clear responsibilities defined in `src/` and `include/`.
 
@@ -67,7 +67,7 @@ graph TD
 
 - **Stream Processing:** Camera -> Stream Thread (Decode/Process/Buffer) -> Recording Thread (Write to Disk) / Web Server (Live View).
 - **Web Interaction:** User Browser <-> Web Server <-> API Handlers <-> Database/Video Subsystem.
-- **Configuration:** File (`lightnvr.conf`) -> Core System -> Database -> Applied by Subsystems.
+- **Configuration:** File (`oneberry.conf`) -> Core System -> Database -> Applied by Subsystems.
 
 ## Diagrams
 

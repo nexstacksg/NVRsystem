@@ -54,7 +54,7 @@ The updated configuration uses a unified data volume that includes:
    docker-compose up -d
    
    # Copy the database
-   docker cp lightnvr:/var/lib/lightnvr/lightnvr.db ./data/database/
+   docker cp oneberry:/var/lib/oneberry/oneberry.db ./data/database/
    
    # Stop the container
    docker-compose down
@@ -80,24 +80,24 @@ The updated configuration uses a unified data volume that includes:
 
 6. **Update your configuration file:**
    ```bash
-   # Edit config/lightnvr.ini and update the paths:
-   nano config/lightnvr.ini
+   # Edit config/oneberry.ini and update the paths:
+   nano config/oneberry.ini
    ```
    
    Update these sections:
    ```ini
    [storage]
-   path = /var/lib/lightnvr/data/recordings
-   mp4_path = /var/lib/lightnvr/data/recordings/mp4
+   path = /var/lib/oneberry/data/recordings
+   mp4_path = /var/lib/oneberry/data/recordings/mp4
    
    [database]
-   path = /var/lib/lightnvr/data/database/lightnvr.db
+   path = /var/lib/oneberry/data/database/oneberry.db
    
    [models]
-   path = /var/lib/lightnvr/data/models
+   path = /var/lib/oneberry/data/models
    
    [memory]
-   swap_file = /var/lib/lightnvr/data/swap
+   swap_file = /var/lib/oneberry/data/swap
    ```
 
 7. **Pull the latest changes:**
@@ -136,8 +136,8 @@ The updated configuration uses a unified data volume that includes:
 
 1. **Stop the current container:**
    ```bash
-   docker stop lightnvr
-   docker rm lightnvr
+   docker stop oneberry
+   docker rm oneberry
    ```
 
 2. **Backup your existing data:**
@@ -162,18 +162,18 @@ The updated configuration uses a unified data volume that includes:
    ```
 
 5. **Update configuration file:**
-   Edit `/path/to/config/lightnvr.ini` with the paths shown above.
+   Edit `/path/to/config/oneberry.ini` with the paths shown above.
 
 6. **Start the new container:**
    ```bash
    docker run -d \
-     --name lightnvr \
+     --name oneberry \
      --restart unless-stopped \
      -p 8080:8080 \
      -p 1984:1984 \
-     -v /path/to/config:/etc/lightnvr \
-     -v /path/to/data:/var/lib/lightnvr/data \
-     ghcr.io/opensensor/lightnvr:latest
+     -v /path/to/config:/etc/oneberry \
+     -v /path/to/data:/var/lib/oneberry/data \
+     ghcr.io/opensensor/oneberry:latest
    ```
 
 ## Verification
@@ -183,12 +183,12 @@ After migration, verify that:
 1. **Database is persisted:**
    ```bash
    # Check database file exists
-   ls -la ./data/database/lightnvr.db
+   ls -la ./data/database/oneberry.db
    
    # Restart container and verify data persists
    docker-compose restart
    # or
-   docker restart lightnvr
+   docker restart oneberry
    
    # Check that streams and settings are still there
    ```
@@ -228,7 +228,7 @@ If old recordings aren't showing up:
 ls -la ./data/recordings/
 
 # Verify paths in config
-cat config/lightnvr.ini | grep path
+cat config/oneberry.ini | grep path
 ```
 
 ## New Configuration Options
@@ -241,7 +241,7 @@ The updated configuration also adds support for MP4 recording settings that were
 record_mp4_directly = false
 
 ; Path for MP4 recordings
-mp4_path = /var/lib/lightnvr/data/recordings/mp4
+mp4_path = /var/lib/oneberry/data/recordings/mp4
 
 ; Duration of each MP4 segment in seconds (default: 900 = 15 minutes)
 mp4_segment_duration = 900
@@ -255,7 +255,7 @@ These settings are now properly read from the configuration file.
 ## Support
 
 If you encounter issues during migration, please:
-1. Check the container logs: `docker-compose logs -f` or `docker logs lightnvr`
+1. Check the container logs: `docker-compose logs -f` or `docker logs oneberry`
 2. Verify file permissions on the data directory
 3. Open an issue on GitHub with details about the error
 

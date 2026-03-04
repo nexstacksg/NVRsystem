@@ -1,12 +1,12 @@
 # Troubleshooting Web Interface Issues
 
-This guide helps you diagnose and fix common web interface issues with LightNVR.
+This guide helps you diagnose and fix common web interface issues with Oneberry.
 
 ## Blank Page Issue
 
 ### Symptoms
 - Browser shows a blank white page
-- Page title shows "WebRTC View - LightNVR" but no content
+- Page title shows "WebRTC View - Oneberry" but no content
 - No error messages visible on the page
 
 ### Most Common Cause
@@ -42,7 +42,7 @@ This script will:
 
 Then restart the service:
 ```bash
-sudo systemctl restart lightnvr
+sudo systemctl restart oneberry
 ```
 
 ### Manual Fix
@@ -51,25 +51,25 @@ If you prefer to fix it manually:
 
 #### Option 1: Install from prebuilt assets (if available)
 ```bash
-# Navigate to LightNVR source directory
-cd /path/to/lightnvr
+# Navigate to Oneberry source directory
+cd /path/to/oneberry
 
 # Copy prebuilt assets
-sudo mkdir -p /var/lib/lightnvr/www
-sudo cp -r web/dist/* /var/lib/lightnvr/www/
+sudo mkdir -p /var/lib/oneberry/www
+sudo cp -r web/dist/* /var/lib/oneberry/www/
 
 # Set permissions
-sudo chown -R root:root /var/lib/lightnvr/www
-sudo chmod -R 755 /var/lib/lightnvr/www
+sudo chown -R root:root /var/lib/oneberry/www
+sudo chmod -R 755 /var/lib/oneberry/www
 
 # Restart service
-sudo systemctl restart lightnvr
+sudo systemctl restart oneberry
 ```
 
 #### Option 2: Build and install from source
 ```bash
-# Navigate to LightNVR source directory
-cd /path/to/lightnvr
+# Navigate to Oneberry source directory
+cd /path/to/oneberry
 
 # Install Node.js and npm if not already installed
 # On Debian/Ubuntu:
@@ -82,16 +82,16 @@ npm install
 npm run build
 
 # Install to web root
-sudo mkdir -p /var/lib/lightnvr/www
-sudo cp -r dist/* /var/lib/lightnvr/www/
+sudo mkdir -p /var/lib/oneberry/www
+sudo cp -r dist/* /var/lib/oneberry/www/
 
 # Set permissions
-sudo chown -R root:root /var/lib/lightnvr/www
-sudo chmod -R 755 /var/lib/lightnvr/www
+sudo chown -R root:root /var/lib/oneberry/www
+sudo chmod -R 755 /var/lib/oneberry/www
 
 # Restart service
 cd ..
-sudo systemctl restart lightnvr
+sudo systemctl restart oneberry
 ```
 
 ### Verification
@@ -100,7 +100,7 @@ After applying the fix, verify the installation:
 
 1. Check that files exist:
 ```bash
-ls -la /var/lib/lightnvr/www/
+ls -la /var/lib/oneberry/www/
 ```
 
 You should see:
@@ -112,12 +112,12 @@ You should see:
 
 2. Check service status:
 ```bash
-sudo systemctl status lightnvr
+sudo systemctl status oneberry
 ```
 
 3. Check logs for errors:
 ```bash
-sudo tail -f /var/log/lightnvr/lightnvr.log
+sudo tail -f /var/log/oneberry/oneberry.log
 ```
 
 4. Access the web interface:
@@ -138,12 +138,12 @@ Default credentials:
 **Fix**:
 1. Check configuration:
 ```bash
-sudo cat /etc/lightnvr/lightnvr.ini | grep "root"
+sudo cat /etc/oneberry/oneberry.ini | grep "root"
 ```
 
 2. Verify the path exists and contains files:
 ```bash
-ls -la /var/lib/lightnvr/www/
+ls -la /var/lib/oneberry/www/
 ```
 
 3. If path is different, either:
@@ -156,10 +156,10 @@ ls -la /var/lib/lightnvr/www/
 
 **Fix**:
 ```bash
-sudo chown -R root:root /var/lib/lightnvr/www
-sudo chmod -R 755 /var/lib/lightnvr/www
-sudo find /var/lib/lightnvr/www -type f -exec chmod 644 {} \;
-sudo systemctl restart lightnvr
+sudo chown -R root:root /var/lib/oneberry/www
+sudo chmod -R 755 /var/lib/oneberry/www
+sudo find /var/lib/oneberry/www -type f -exec chmod 644 {} \;
+sudo systemctl restart oneberry
 ```
 
 ### Issue: JavaScript Errors in Browser Console
@@ -173,7 +173,7 @@ sudo systemctl restart lightnvr
 2. Reinstall web assets:
 ```bash
 sudo bash scripts/install_web_assets.sh
-sudo systemctl restart lightnvr
+sudo systemctl restart oneberry
 ```
 
 ### Issue: Cannot Connect to Server
@@ -189,7 +189,7 @@ sudo systemctl restart lightnvr
 
 1. Check service status:
 ```bash
-sudo systemctl status lightnvr
+sudo systemctl status oneberry
 ```
 
 2. Check if port is listening:
@@ -214,7 +214,7 @@ sudo firewall-cmd --reload
 
 5. Verify configuration:
 ```bash
-sudo cat /etc/lightnvr/lightnvr.ini | grep "port"
+sudo cat /etc/oneberry/oneberry.ini | grep "port"
 ```
 
 ### Issue: Login Page Doesn't Work
@@ -225,7 +225,7 @@ sudo cat /etc/lightnvr/lightnvr.ini | grep "port"
 
 1. Check default credentials in config:
 ```bash
-sudo cat /etc/lightnvr/lightnvr.ini | grep -A 2 "\[web\]"
+sudo cat /etc/oneberry/oneberry.ini | grep -A 2 "\[web\]"
 ```
 
 2. Try default credentials:
@@ -234,11 +234,11 @@ sudo cat /etc/lightnvr/lightnvr.ini | grep -A 2 "\[web\]"
 
 3. If you changed the password and forgot it, reset in config:
 ```bash
-sudo nano /etc/lightnvr/lightnvr.ini
+sudo nano /etc/oneberry/oneberry.ini
 ```
 Change the password line under `[web]` section, then:
 ```bash
-sudo systemctl restart lightnvr
+sudo systemctl restart oneberry
 ```
 
 ## Getting More Help
@@ -251,8 +251,8 @@ If none of these solutions work:
 sudo bash scripts/diagnose_web_issue.sh > diagnostic_output.txt
 
 # Collect logs
-sudo journalctl -u lightnvr -n 100 --no-pager > service_logs.txt
-sudo tail -n 100 /var/log/lightnvr/lightnvr.log > app_logs.txt 2>/dev/null || true
+sudo journalctl -u oneberry -n 100 --no-pager > service_logs.txt
+sudo tail -n 100 /var/log/oneberry/oneberry.log > app_logs.txt 2>/dev/null || true
 
 # Check browser console
 # Open browser, press F12, go to Console tab, copy any errors

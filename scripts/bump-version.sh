@@ -39,7 +39,7 @@ validate_version() {
 
 # Function to get current version from CMakeLists.txt
 get_current_version() {
-    grep -E "project\s*\(\s*LightNVR\s+VERSION\s+[0-9]+\.[0-9]+\.[0-9]+" "$PROJECT_ROOT/CMakeLists.txt" | \
+    grep -E "project\s*\(\s*Oneberry\s+VERSION\s+[0-9]+\.[0-9]+\.[0-9]+" "$PROJECT_ROOT/CMakeLists.txt" | \
         sed -E 's/.*VERSION\s+([0-9]+\.[0-9]+\.[0-9]+).*/\1/'
 }
 
@@ -53,10 +53,10 @@ update_cmake() {
     # Use sed to replace the version
     if [[ "$OSTYPE" == "darwin"* ]]; then
         # macOS
-        sed -i '' -E "s/(project\s*\(\s*LightNVR\s+VERSION\s+)[0-9]+\.[0-9]+\.[0-9]+/\1$new_version/" "$cmake_file"
+        sed -i '' -E "s/(project\s*\(\s*Oneberry\s+VERSION\s+)[0-9]+\.[0-9]+\.[0-9]+/\1$new_version/" "$cmake_file"
     else
         # Linux
-        sed -i -E "s/(project\s*\(\s*LightNVR\s+VERSION\s+)[0-9]+\.[0-9]+\.[0-9]+/\1$new_version/" "$cmake_file"
+        sed -i -E "s/(project\s*\(\s*Oneberry\s+VERSION\s+)[0-9]+\.[0-9]+\.[0-9]+/\1$new_version/" "$cmake_file"
     fi
     
     print_info "✓ Updated CMakeLists.txt to version $new_version"
@@ -132,7 +132,7 @@ regenerate_version_js() {
     # Generate version.js
     cat > "$version_js" << EOF
 /**
- * LightNVR version information
+ * Oneberry version information
  * This file is auto-generated during version bumping
  * DO NOT EDIT MANUALLY
  */
@@ -147,7 +147,7 @@ EOF
 main() {
     # Check for help flag first
     if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
-        echo "LightNVR Version Bumper"
+        echo "Oneberry Version Bumper"
         echo "======================="
         echo ""
         echo "Usage: $0 <new_version>"
@@ -169,7 +169,7 @@ main() {
         exit 0
     fi
 
-    print_info "LightNVR Version Bumper"
+    print_info "Oneberry Version Bumper"
     print_info "======================="
     echo
 

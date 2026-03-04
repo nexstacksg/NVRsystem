@@ -1,5 +1,5 @@
 /**
- * LightNVR Web Interface Streams Page
+ * Oneberry Web Interface Streams Page
  * Entry point for the streams page
  */
 

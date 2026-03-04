@@ -1,5 +1,5 @@
 /**
- * LightNVR Timeline Controls Component
+ * Oneberry Timeline Controls Component
  * Handles play/pause and zoom controls for the timeline
  */
 

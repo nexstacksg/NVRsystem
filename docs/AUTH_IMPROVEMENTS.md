@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the improvements made to the lightNVR authentication system to address issues with session expiration handling and user experience.
+This document describes the improvements made to the oneberry authentication system to address issues with session expiration handling and user experience.
 
 ## Problems Addressed
 
@@ -232,20 +232,20 @@ To verify the improvements work correctly:
 ### Manual Testing
 
 1. **Session Expiration Test**:
-   - Log in to lightNVR
+   - Log in to oneberry
    - Manually expire session in database: `UPDATE sessions SET expires_at = 0 WHERE token = '<your-token>';`
    - Try to navigate or perform an action
    - Verify: Should redirect to login with "Your session has expired" message
 
 2. **Proactive Validation Test**:
-   - Log in to lightNVR
+   - Log in to oneberry
    - Wait on a page for 5+ minutes
    - Manually expire session in database
    - Wait for next validation cycle (up to 5 minutes)
    - Verify: Should automatically redirect to login
 
 3. **401 Handling Test**:
-   - Log in to lightNVR
+   - Log in to oneberry
    - Clear session cookie in browser dev tools
    - Try to perform an action (e.g., create stream)
    - Verify: Should immediately redirect to login (no retries)
@@ -265,7 +265,7 @@ No action required - improvements are transparent to end users.
 
 ### For Developers
 
-If you're extending lightNVR:
+If you're extending oneberry:
 
 1. **New Pages**: Always call `setupSessionValidation()` in your page entry point
 2. **API Calls**: Use `enhancedFetch` or `fetchJSON` - they handle 401s automatically
@@ -314,7 +314,7 @@ These would be additive - the current session-based auth would remain as the fou
 
 ### Recommendation
 
-The current authentication pattern is solid and well-suited for lightNVR's use case. The improvements made address the immediate UX issues without over-engineering. Future auth connectors can be added as needed, but the current system should be hardened and stable first.
+The current authentication pattern is solid and well-suited for oneberry's use case. The improvements made address the immediate UX issues without over-engineering. Future auth connectors can be added as needed, but the current system should be hardened and stable first.
 
 ## Summary
 

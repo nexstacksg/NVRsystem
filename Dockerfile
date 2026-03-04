@@ -65,7 +65,7 @@ RUN DPKG_ARCH=$(dpkg --print-architecture) && \
     esac && \
     curl -L "https://go.dev/dl/go1.23.4.linux-${GO_ARCH}.tar.gz" | tar -C /usr/local -xzf - && \
     export PATH=$PATH:/usr/local/go/bin && \
-    mkdir -p /bin /etc/lightnvr/go2rtc && \
+    mkdir -p /bin /etc/oneberry/go2rtc && \
     # Clone and build go2rtc from opensensor fork
     cd /tmp && \
     git clone --depth 1 --branch feature/native-jpeg-transcode https://github.com/opensensor/go2rtc.git && \
@@ -74,19 +74,19 @@ RUN DPKG_ARCH=$(dpkg --print-architecture) && \
     cd / && rm -rf /tmp/go2rtc /usr/local/go && \
     chmod +x /bin/go2rtc && \
     # Create basic configuration file
-    echo "# go2rtc configuration file" > /etc/lightnvr/go2rtc/go2rtc.yaml && \
-    echo "api:" >> /etc/lightnvr/go2rtc/go2rtc.yaml && \
-    echo "  listen: :1984" >> /etc/lightnvr/go2rtc/go2rtc.yaml && \
-    echo "" >> /etc/lightnvr/go2rtc/go2rtc.yaml && \
-    echo "webrtc:" >> /etc/lightnvr/go2rtc/go2rtc.yaml && \
-    echo "  ice_servers:" >> /etc/lightnvr/go2rtc/go2rtc.yaml && \
-    echo "    - urls: [stun:stun.l.google.com:19302]" >> /etc/lightnvr/go2rtc/go2rtc.yaml && \
-    echo "" >> /etc/lightnvr/go2rtc/go2rtc.yaml && \
-    echo "log:" >> /etc/lightnvr/go2rtc/go2rtc.yaml && \
-    echo "  level: info" >> /etc/lightnvr/go2rtc/go2rtc.yaml && \
-    echo "" >> /etc/lightnvr/go2rtc/go2rtc.yaml && \
-    echo "streams:" >> /etc/lightnvr/go2rtc/go2rtc.yaml && \
-    echo "  # Streams will be added dynamically by LightNVR" >> /etc/lightnvr/go2rtc/go2rtc.yaml
+    echo "# go2rtc configuration file" > /etc/oneberry/go2rtc/go2rtc.yaml && \
+    echo "api:" >> /etc/oneberry/go2rtc/go2rtc.yaml && \
+    echo "  listen: :1984" >> /etc/oneberry/go2rtc/go2rtc.yaml && \
+    echo "" >> /etc/oneberry/go2rtc/go2rtc.yaml && \
+    echo "webrtc:" >> /etc/oneberry/go2rtc/go2rtc.yaml && \
+    echo "  ice_servers:" >> /etc/oneberry/go2rtc/go2rtc.yaml && \
+    echo "    - urls: [stun:stun.l.google.com:19302]" >> /etc/oneberry/go2rtc/go2rtc.yaml && \
+    echo "" >> /etc/oneberry/go2rtc/go2rtc.yaml && \
+    echo "log:" >> /etc/oneberry/go2rtc/go2rtc.yaml && \
+    echo "  level: info" >> /etc/oneberry/go2rtc/go2rtc.yaml && \
+    echo "" >> /etc/oneberry/go2rtc/go2rtc.yaml && \
+    echo "streams:" >> /etc/oneberry/go2rtc/go2rtc.yaml && \
+    echo "  # Streams will be added dynamically by Oneberry" >> /etc/oneberry/go2rtc/go2rtc.yaml
 
 # Make a slight modification to the install script to skip systemd
 RUN if grep -q "systemctl" scripts/install.sh; then \
@@ -108,8 +108,8 @@ RUN echo "Building web assets..." && \
     echo "Web assets built successfully"
 
 # Clean any existing build files and build the application with go2rtc support
-RUN mkdir -p /etc/lightnvr /var/lib/lightnvr/data /var/log/lightnvr /var/run/lightnvr && \
-    chmod -R 777 /var/lib/lightnvr /var/log/lightnvr /var/run/lightnvr && \
+RUN mkdir -p /etc/oneberry /var/lib/oneberry/data /var/log/oneberry /var/run/oneberry && \
+    chmod -R 777 /var/lib/oneberry /var/log/oneberry /var/run/oneberry && \
     # Clean any existing build files
     rm -rf build/ && \
     # Determine architecture-specific pkgconfig path
@@ -122,8 +122,8 @@ RUN mkdir -p /etc/lightnvr /var/lib/lightnvr/data /var/log/lightnvr /var/run/lig
     esac && \
     # Build the application with go2rtc and SOD dynamic linking
     PKG_CONFIG_PATH=/usr/lib/pkgconfig:$PKG_CONFIG_ARCH_PATH:$PKG_CONFIG_PATH \
-    ./scripts/build.sh --release --with-sod --sod-dynamic --with-go2rtc --go2rtc-binary=/bin/go2rtc --go2rtc-config-dir=/etc/lightnvr/go2rtc --go2rtc-api-port=1984 && \
-    ./scripts/install.sh --prefix=/ --with-go2rtc --go2rtc-config-dir=/etc/lightnvr/go2rtc --without-systemd
+    ./scripts/build.sh --release --with-sod --sod-dynamic --with-go2rtc --go2rtc-binary=/bin/go2rtc --go2rtc-config-dir=/etc/oneberry/go2rtc --go2rtc-api-port=1984 && \
+    ./scripts/install.sh --prefix=/ --with-go2rtc --go2rtc-config-dir=/etc/oneberry/go2rtc --without-systemd
 
 # Stage 2: Minimal runtime image
 FROM debian:trixie-slim AS runtime
@@ -140,17 +140,17 @@ RUN apt-get update && apt-get install -y \
 
 # Create directory structure
 RUN mkdir -p \
-    /usr/share/lightnvr/models \
-    /etc/lightnvr \
-    /etc/lightnvr/go2rtc \
-    /var/lib/lightnvr \
-    /var/lib/lightnvr/www \
-    /var/log/lightnvr \
-    /var/run/lightnvr && \
-    chmod -R 755 /var/lib/lightnvr /var/log/lightnvr /var/run/lightnvr
+    /usr/share/oneberry/models \
+    /etc/oneberry \
+    /etc/oneberry/go2rtc \
+    /var/lib/oneberry \
+    /var/lib/oneberry/www \
+    /var/log/oneberry \
+    /var/run/oneberry && \
+    chmod -R 755 /var/lib/oneberry /var/log/oneberry /var/run/oneberry
 
 # Copy binaries from builder
-COPY --from=builder /bin/lightnvr /bin/lightnvr
+COPY --from=builder /bin/oneberry /bin/oneberry
 COPY --from=builder /bin/go2rtc /bin/go2rtc
 
 # Copy SOD libraries
@@ -158,8 +158,8 @@ COPY --from=builder /lib/libsod.so.1.1.9 /lib/libsod.so.1.1.9
 COPY --from=builder /lib/libsod.so.1 /lib/libsod.so.1
 COPY --from=builder /lib/libsod.so /lib/libsod.so
 
-# Copy web assets (copy CONTENTS of dist into /var/lib/lightnvr/www)
-COPY --from=builder /opt/web/dist/ /var/lib/lightnvr/www/
+# Copy web assets (copy CONTENTS of dist into /var/lib/oneberry/www)
+COPY --from=builder /opt/web/dist/ /var/lib/oneberry/www/
 
 # Copy entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/
@@ -168,22 +168,22 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 # Create a startup script to launch both services
 RUN echo '#!/bin/bash' > /bin/start.sh && \
     echo '# Start go2rtc in the background' >> /bin/start.sh && \
-    echo '/bin/go2rtc --config /etc/lightnvr/go2rtc/go2rtc.yaml &' >> /bin/start.sh && \
+    echo '/bin/go2rtc --config /etc/oneberry/go2rtc/go2rtc.yaml &' >> /bin/start.sh && \
     echo 'GO2RTC_PID=$!' >> /bin/start.sh && \
     echo '' >> /bin/start.sh && \
     echo '# Wait a moment for go2rtc to start' >> /bin/start.sh && \
     echo 'sleep 2' >> /bin/start.sh && \
     echo '' >> /bin/start.sh && \
-    echo '# Start lightnvr in the foreground' >> /bin/start.sh && \
-    echo 'exec /bin/lightnvr -c /etc/lightnvr/lightnvr.ini' >> /bin/start.sh && \
+    echo '# Start oneberry in the foreground' >> /bin/start.sh && \
+    echo 'exec /bin/oneberry -c /etc/oneberry/oneberry.ini' >> /bin/start.sh && \
     echo '' >> /bin/start.sh && \
-    echo '# If lightnvr exits, kill go2rtc' >> /bin/start.sh && \
+    echo '# If oneberry exits, kill go2rtc' >> /bin/start.sh && \
     echo 'kill $GO2RTC_PID 2>/dev/null || true' >> /bin/start.sh && \
     chmod +x /bin/start.sh
 
 # Define volumes for persistent data only
-# Note: Do NOT mount /var/lib/lightnvr directly as it will overwrite web assets
-VOLUME ["/etc/lightnvr", "/var/lib/lightnvr/data"]
+# Note: Do NOT mount /var/lib/oneberry directly as it will overwrite web assets
+VOLUME ["/etc/oneberry", "/var/lib/oneberry/data"]
 
 # Expose ports
 EXPOSE 8080 8554 8555 8555/udp 1984
@@ -191,7 +191,7 @@ EXPOSE 8080 8554 8555 8555/udp 1984
 # Environment variables for configuration
 ENV GO2RTC_CONFIG_PERSIST=true \
     LIGHTNVR_AUTO_INIT=true \
-    LIGHTNVR_WEB_ROOT=/var/lib/lightnvr/www
+    LIGHTNVR_WEB_ROOT=/var/lib/oneberry/www
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \

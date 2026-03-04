@@ -182,7 +182,7 @@ static bool check_rtsp_stream_exists(const char *url) {
     snprintf(request, sizeof(request),
              "OPTIONS %s RTSP/1.0\r\n"
              "CSeq: 1\r\n"
-             "User-Agent: LightNVR\r\n"
+             "User-Agent: Oneberry\r\n"
              "\r\n",
              path);
 

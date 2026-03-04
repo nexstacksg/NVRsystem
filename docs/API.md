@@ -1,10 +1,10 @@
-# LightNVR API Documentation
+# Oneberry API Documentation
 
-This document describes the REST API endpoints provided by LightNVR.
+This document describes the REST API endpoints provided by Oneberry.
 
 ## API Overview
 
-LightNVR provides a RESTful API that allows you to interact with the system programmatically. The API is accessible via HTTP and returns JSON responses using the cJSON library. The API is served by the Mongoose web server.
+Oneberry provides a RESTful API that allows you to interact with the system programmatically. The API is accessible via HTTP and returns JSON responses using the cJSON library. The API is served by the Mongoose web server.
 
 **Note:** As of version 0.11.22, WebSocket support has been removed to simplify the architecture. All real-time updates are now handled via HTTP polling.
 
@@ -14,7 +14,7 @@ If authentication is enabled in the configuration file, all API requests must in
 
 Example:
 ```bash
-curl -u username:password http://your-lightnvr-ip:8080/api/streams
+curl -u username:password http://your-oneberry-ip:8080/api/streams
 ```
 
 ## API Endpoints
@@ -206,7 +206,7 @@ Returns a list of all recordings.
       "duration": 900,
       "size": 45678912,
       "format": "mp4",
-      "path": "/var/lib/lightnvr/recordings/0/20250309_100000.mp4"
+      "path": "/var/lib/oneberry/recordings/0/20250309_100000.mp4"
     },
     {
       "id": 2,
@@ -217,7 +217,7 @@ Returns a list of all recordings.
       "duration": 900,
       "size": 43567890,
       "format": "mp4",
-      "path": "/var/lib/lightnvr/recordings/0/20250309_101500.mp4"
+      "path": "/var/lib/oneberry/recordings/0/20250309_101500.mp4"
     }
   ]
 }
@@ -242,7 +242,7 @@ Returns information about a specific recording.
   "duration": 900,
   "size": 45678912,
   "format": "mp4",
-  "path": "/var/lib/lightnvr/recordings/0/20250309_100000.mp4"
+  "path": "/var/lib/oneberry/recordings/0/20250309_100000.mp4"
 }
 ```
 
@@ -299,7 +299,7 @@ Returns system settings.
 **Response:**
 ```json
 {
-  "storage_path": "/var/lib/lightnvr/recordings",
+  "storage_path": "/var/lib/oneberry/recordings",
   "max_storage_size": 0,
   "retention_days": 30,
   "auto_delete_oldest": true,
@@ -333,7 +333,7 @@ Updates system settings.
 **Response:**
 ```json
 {
-  "storage_path": "/var/lib/lightnvr/recordings",
+  "storage_path": "/var/lib/oneberry/recordings",
   "max_storage_size": 0,
   "retention_days": 15,
   "auto_delete_oldest": true,
@@ -393,24 +393,24 @@ To prevent abuse, the API implements rate limiting. If you exceed the rate limit
 
 List all streams:
 ```bash
-curl -u admin:admin http://your-lightnvr-ip:8080/api/streams
+curl -u admin:admin http://your-oneberry-ip:8080/api/streams
 ```
 
 Get system information:
 ```bash
-curl -u admin:admin http://your-lightnvr-ip:8080/api/system
+curl -u admin:admin http://your-oneberry-ip:8080/api/system
 ```
 
 Add a new stream:
 ```bash
-curl -u admin:admin -X POST -H "Content-Type: application/json" -d '{"name":"New Camera","url":"rtsp://192.168.1.103:554/stream1","enabled":true,"width":1280,"height":720,"fps":10,"codec":"h264","priority":5,"record":true}' http://your-lightnvr-ip:8080/api/streams
+curl -u admin:admin -X POST -H "Content-Type: application/json" -d '{"name":"New Camera","url":"rtsp://192.168.1.103:554/stream1","enabled":true,"width":1280,"height":720,"fps":10,"codec":"h264","priority":5,"record":true}' http://your-oneberry-ip:8080/api/streams
 ```
 
 ### JavaScript Examples
 
 List all streams:
 ```javascript
-fetch('http://your-lightnvr-ip:8080/api/streams', {
+fetch('http://your-oneberry-ip:8080/api/streams', {
   headers: {
     'Authorization': 'Basic ' + btoa('admin:admin')
   }
@@ -421,7 +421,7 @@ fetch('http://your-lightnvr-ip:8080/api/streams', {
 
 Add a new stream:
 ```javascript
-fetch('http://your-lightnvr-ip:8080/api/streams', {
+fetch('http://your-oneberry-ip:8080/api/streams', {
   method: 'POST',
   headers: {
     'Authorization': 'Basic ' + btoa('admin:admin'),

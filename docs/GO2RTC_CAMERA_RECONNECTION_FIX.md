@@ -11,7 +11,7 @@ When a user changes stream settings (URL, protocol, credentials) in the UI, the 
 - After changing stream URL or protocol in the UI, HLS streaming fails
 - Logs show "Server returned 404 Not Found" errors
 - WebRTC may also fail
-- Requires manual restart of lightNVR to fix
+- Requires manual restart of oneberry to fix
 
 ### Issue 2: Camera Reboots Cause Permanent Stream Loss
 When a camera reboots or loses power (common scenario: TP-Link Tapo C320WS cameras reboot daily at 3am), go2rtc does not automatically reconnect to the camera. The HLS thread keeps retrying to connect via go2rtc's RTSP proxy, but go2rtc itself never re-establishes the connection to the upstream camera.
@@ -19,7 +19,7 @@ When a camera reboots or loses power (common scenario: TP-Link Tapo C320WS camer
 **Symptoms:**
 - After camera reboot, HLS and WebRTC streaming stop working
 - Logs show repeated "Server returned 404 Not Found" errors
-- Requires manual restart of lightNVR to restore streaming
+- Requires manual restart of oneberry to restore streaming
 - Recordings may also be affected
 
 ## Root Cause
@@ -138,7 +138,7 @@ These values are defined in `src/video/go2rtc/go2rtc_health_monitor.c` and can b
 ## Benefits
 
 1. **Automatic Recovery**: Cameras that reboot or lose connection will automatically reconnect
-2. **No Manual Intervention**: No need to restart lightNVR when cameras reboot
+2. **No Manual Intervention**: No need to restart oneberry when cameras reboot
 3. **Seamless Updates**: Stream settings can be changed without interrupting service
 4. **Improved Reliability**: Handles common scenarios like scheduled camera reboots
 5. **Better User Experience**: Streaming resumes automatically without user action

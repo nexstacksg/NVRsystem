@@ -1,5 +1,5 @@
 /**
- * Shared Test Fixtures for LightNVR Integration Tests
+ * Shared Test Fixtures for Oneberry Integration Tests
  * 
  * Provides reusable fixtures for authentication, page setup, and test utilities.
  */

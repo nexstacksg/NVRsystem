@@ -2,7 +2,7 @@
 
 ##
 # Quick test script for screenshot capture
-# Tests against a running LightNVR instance
+# Tests against a running Oneberry instance
 ##
 
 set -e
@@ -20,14 +20,14 @@ if [ "$EUID" -eq 0 ]; then
   echo ""
 fi
 
-# Check if LightNVR is accessible
-echo "Checking LightNVR accessibility..."
+# Check if Oneberry is accessible
+echo "Checking Oneberry accessibility..."
 if ! curl -s -o /dev/null -w "%{http_code}" "$URL/login.html" | grep -q "200"; then
-  echo "Error: Cannot access LightNVR at $URL"
-  echo "Make sure LightNVR is running first."
+  echo "Error: Cannot access Oneberry at $URL"
+  echo "Make sure Oneberry is running first."
   exit 1
 fi
-echo "✓ LightNVR is accessible"
+echo "✓ Oneberry is accessible"
 echo ""
 
 # Run screenshot capture

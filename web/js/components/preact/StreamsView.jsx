@@ -1,5 +1,5 @@
 /**
- * LightNVR Web Interface StreamsView Component
+ * Oneberry Web Interface StreamsView Component
  * React component for the streams page
  */
 

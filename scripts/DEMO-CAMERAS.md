@@ -206,7 +206,7 @@ rtsp://admin:password@192.168.1.100:554/cam/realmonitor?channel=1&subtype=0
 # Edit demo-cameras.json with your camera
 node scripts/setup-demo-streams.js
 
-# Verify in LightNVR UI
+# Verify in Oneberry UI
 # Then capture screenshots
 ./scripts/update-documentation-media.sh --screenshots-only
 ```
@@ -239,10 +239,10 @@ node scripts/setup-demo-streams.js
 node scripts/setup-demo-streams.js --config /path/to/my-cameras.json
 ```
 
-### Different LightNVR Instance
+### Different Oneberry Instance
 
 ```bash
-# Setup on remote LightNVR
+# Setup on remote Oneberry
 node scripts/setup-demo-streams.js \
   --url http://192.168.1.50:8080 \
   --username admin \
@@ -274,7 +274,7 @@ If your camera is on a different network (e.g., 192.168.50.x vs 192.168.1.x):
 ### Stream Setup Fails
 
 ```bash
-# Check LightNVR is running
+# Check Oneberry is running
 curl http://localhost:8080/login.html
 
 # Check credentials
@@ -291,7 +291,7 @@ curl -X POST http://localhost:8080/api/auth/login \
 - Zones require the stream to exist first
 - Check that detection is enabled on the stream
 - Verify zone coordinates are valid (0.0-1.0)
-- Check LightNVR logs for errors
+- Check Oneberry logs for errors
 
 ## Best Practices
 
@@ -309,7 +309,7 @@ The orchestration script automatically runs demo stream setup:
 
 ```bash
 # This will:
-# 1. Start LightNVR in Docker
+# 1. Start Oneberry in Docker
 # 2. Setup demo streams from demo-cameras.json
 # 3. Capture screenshots
 # 4. Optimize images
@@ -326,7 +326,7 @@ To skip demo setup:
 
 After configuring demo cameras:
 
-1. **Verify streams** - Check LightNVR UI shows live video
+1. **Verify streams** - Check Oneberry UI shows live video
 2. **Test detection** - Ensure objects are being detected
 3. **Adjust zones** - Fine-tune zone coordinates and filters
 4. **Capture media** - Run screenshot/video automation

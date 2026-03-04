@@ -2,7 +2,7 @@
 
 ## Problem Statement
 
-LightNVR was generating a minimal go2rtc configuration that only included stream definitions and basic STUN servers, but lacked essential WebRTC settings for NAT traversal. This caused WebRTC connections to fail when accessing through:
+Oneberry was generating a minimal go2rtc configuration that only included stream definitions and basic STUN servers, but lacked essential WebRTC settings for NAT traversal. This caused WebRTC connections to fail when accessing through:
 - Firewalls (Fortigate, pfSense, etc.)
 - NAT devices (home routers, corporate networks)
 - External networks
@@ -36,7 +36,7 @@ Added new WebRTC configuration fields to `config.h`:
 
 ### 2. Configuration File Support
 
-Added `[go2rtc]` section to `lightnvr.ini`:
+Added `[go2rtc]` section to `oneberry.ini`:
 ```ini
 [go2rtc]
 ; WebRTC configuration for NAT/firewall traversal
@@ -125,7 +125,7 @@ streams:
      - ICE servers (STUN/TURN)
      - Candidates for NAT traversal
 
-4. **config/lightnvr.ini**
+4. **config/oneberry.ini**
    - Added `[go2rtc]` section with WebRTC configuration options
    - Included documentation comments for each option
 
@@ -220,7 +220,7 @@ After this fix, WebRTC connections should successfully establish even when:
 
 ## Build and Deployment
 
-1. Build the updated LightNVR:
+1. Build the updated Oneberry:
    ```bash
    cd build
    make -j$(nproc)
@@ -228,15 +228,15 @@ After this fix, WebRTC connections should successfully establish even when:
 
 2. Update configuration (optional):
    ```bash
-   # Edit /etc/lightnvr/lightnvr.ini or ./lightnvr.ini
+   # Edit /etc/oneberry/oneberry.ini or ./oneberry.ini
    # Add [go2rtc] section with desired settings
    ```
 
-3. Restart LightNVR:
+3. Restart Oneberry:
    ```bash
-   sudo systemctl restart lightnvr
+   sudo systemctl restart oneberry
    # or
-   ./lightnvr
+   ./oneberry
    ```
 
 4. Verify go2rtc config:
@@ -259,8 +259,8 @@ After this fix, WebRTC connections should successfully establish even when:
 # Check generated go2rtc config
 cat /tmp/go2rtc/go2rtc.yaml
 
-# Check LightNVR config
-cat /etc/lightnvr/lightnvr.ini
+# Check Oneberry config
+cat /etc/oneberry/oneberry.ini
 
 # Check go2rtc is running
 ps aux | grep go2rtc

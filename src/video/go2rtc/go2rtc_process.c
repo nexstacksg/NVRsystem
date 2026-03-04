@@ -912,7 +912,7 @@ bool go2rtc_process_start(int api_port) {
         // Child process
 
         // Request to receive SIGTERM when parent dies
-        // This ensures go2rtc is terminated even if lightNVR is killed with SIGKILL
+        // This ensures go2rtc is terminated even if oneberry is killed with SIGKILL
         if (prctl(PR_SET_PDEATHSIG, SIGTERM) == -1) {
             fprintf(stderr, "Warning: Failed to set parent death signal: %s\n", strerror(errno));
             // Continue anyway, this is not critical but means we might leak go2rtc on SIGKILL

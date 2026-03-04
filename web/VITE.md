@@ -1,6 +1,6 @@
 # Migration from Snowpack to Vite
 
-This document outlines the migration from Snowpack to Vite for the LightNVR web interface.
+This document outlines the migration from Snowpack to Vite for the Oneberry web interface.
 
 ## Why Migrate?
 

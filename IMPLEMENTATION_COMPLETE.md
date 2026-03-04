@@ -2,7 +2,7 @@
 
 ## Summary
 
-Successfully implemented comprehensive Docker container improvements for LightNVR to address persistence, initialization, and user experience issues.
+Successfully implemented comprehensive Docker container improvements for Oneberry to address persistence, initialization, and user experience issues.
 
 ## Files Created
 
@@ -59,7 +59,7 @@ Successfully implemented comprehensive Docker container improvements for LightNV
 ### 1. Dockerfile
 **Changes:**
 - Added entrypoint script integration
-- Moved web assets to template location (`/usr/share/lightnvr/web-template/`)
+- Moved web assets to template location (`/usr/share/oneberry/web-template/`)
 - Added health check
 - Exposed additional ports (8554, 8555)
 - Added environment variables
@@ -69,7 +69,7 @@ Successfully implemented comprehensive Docker container improvements for LightNV
 **Key Improvements:**
 ```dockerfile
 # Web assets protection
-COPY --from=builder /opt/web/dist /usr/share/lightnvr/web-template/
+COPY --from=builder /opt/web/dist /usr/share/oneberry/web-template/
 
 # Entrypoint integration
 COPY docker-entrypoint.sh /usr/local/bin/
@@ -131,7 +131,7 @@ tags: |
   type=sha,prefix={{branch}}-
 
 labels: |
-  org.opencontainers.image.title=LightNVR
+  org.opencontainers.image.title=Oneberry
   org.opencontainers.image.description=Lightweight Network Video Recorder
 ```
 
@@ -145,7 +145,7 @@ labels: |
 - Added configuration customization guide
 
 **Key Improvements:**
-- Clear warning about NOT mounting `/var/lib/lightnvr` directly
+- Clear warning about NOT mounting `/var/lib/oneberry` directly
 - Comprehensive port listing with descriptions
 - Step-by-step first-run explanation
 - Configuration customization examples
@@ -154,7 +154,7 @@ labels: |
 
 ### Before
 ```
-User mounts /var/lib/lightnvr
+User mounts /var/lib/oneberry
     ↓
 Web assets overwritten
     ↓
@@ -163,11 +163,11 @@ Web UI broken
 
 ### After
 ```
-Web assets in /usr/share/lightnvr/web-template/
+Web assets in /usr/share/oneberry/web-template/
     ↓
-Entrypoint copies to /var/lib/lightnvr/web/
+Entrypoint copies to /var/lib/oneberry/web/
     ↓
-User mounts only /var/lib/lightnvr/data/
+User mounts only /var/lib/oneberry/data/
     ↓
 Web UI always works
 ```
@@ -350,7 +350,7 @@ DOCKER_TEST_CHECKLIST.md
 
 ## Conclusion
 
-The Docker container improvements transform LightNVR from a basic containerized application to a production-ready, user-friendly deployment option. Users can now:
+The Docker container improvements transform Oneberry from a basic containerized application to a production-ready, user-friendly deployment option. Users can now:
 
 1. **Deploy in under 5 minutes** with a single command
 2. **Stream via WebRTC** without manual configuration

@@ -433,7 +433,7 @@ int main(int argc, char *argv[]) {
     int pid_fd = -1;
 
     // Print banner
-    printf("LightNVR v%s - Lightweight NVR\n", LIGHTNVR_VERSION_STRING);
+    printf("Oneberry v%s - Lightweight NVR\n", LIGHTNVR_VERSION_STRING);
     printf("Build date: %s\n", LIGHTNVR_BUILD_DATE);
 
     // Initialize logging
@@ -498,7 +498,7 @@ int main(int argc, char *argv[]) {
     // Copy to global config
     memcpy(&g_config, &config, sizeof(config_t));
 
-    log_info("LightNVR v%s starting up", LIGHTNVR_VERSION_STRING);
+    log_info("Oneberry v%s starting up", LIGHTNVR_VERSION_STRING);
 
     // Initialize libcurl globally (MUST be done once at startup, before any threads)
     if (curl_init_global() != 0) {
@@ -864,7 +864,7 @@ int main(int argc, char *argv[]) {
                     snprintf(model_path, sizeof(model_path), "%s/%s", config.models_path, config.streams[i].detection_model);
                 } else {
                     // Fall back to default path if INI config doesn't exist
-                    snprintf(model_path, MAX_PATH_LENGTH, "/etc/lightnvr/models/%s", config.streams[i].detection_model);
+                    snprintf(model_path, MAX_PATH_LENGTH, "/etc/oneberry/models/%s", config.streams[i].detection_model);
                 }
 
                 // Check if file exists
@@ -1018,7 +1018,7 @@ int main(int argc, char *argv[]) {
 
     check_and_ensure_services();
     print_detection_stream_status();
-    log_info("LightNVR initialized successfully");
+    log_info("Oneberry initialized successfully");
 
     // Main loop
     // Initialize the service check time to now since we just called check_and_ensure_services()
@@ -1074,7 +1074,7 @@ int main(int argc, char *argv[]) {
         sleep(1);
     }
 
-    log_info("Shutting down LightNVR...");
+    log_info("Shutting down Oneberry...");
 
     // Now that we're in the main thread (not signal handler), we can safely
     // call initiate_shutdown() which uses mutexes and logging

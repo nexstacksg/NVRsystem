@@ -6,7 +6,7 @@ set -e
 
 # Default values
 INSTALL_DIR="/usr/local/bin"
-CONFIG_DIR="/etc/lightnvr/go2rtc"
+CONFIG_DIR="/etc/oneberry/go2rtc"
 VERSION="latest"
 ARCH=$(uname -m)
 # Use opensensor fork by default (includes memory leak fixes)
@@ -125,7 +125,7 @@ log:
   level: info
 
 streams:
-  # Streams will be added dynamically by LightNVR
+  # Streams will be added dynamically by Oneberry
 EOF
     echo "Created default configuration file: $CONFIG_DIR/go2rtc.yaml"
 fi
@@ -134,7 +134,7 @@ echo "go2rtc installation complete!"
 echo "Binary installed to: $INSTALL_DIR/go2rtc"
 echo "Configuration directory: $CONFIG_DIR"
 echo ""
-echo "To use go2rtc with LightNVR, configure the following CMake options:"
+echo "To use go2rtc with Oneberry, configure the following CMake options:"
 echo "  -DGO2RTC_BINARY_PATH=$INSTALL_DIR/go2rtc"
 echo "  -DGO2RTC_CONFIG_DIR=$CONFIG_DIR"
 echo ""

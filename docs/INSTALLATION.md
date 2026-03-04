@@ -1,6 +1,6 @@
-# LightNVR Installation Guide
+# Oneberry Installation Guide
 
-This document provides detailed instructions for installing LightNVR on various platforms.
+This document provides detailed instructions for installing Oneberry on various platforms.
 
 ## Table of Contents
 
@@ -21,7 +21,7 @@ This document provides detailed instructions for installing LightNVR on various 
 
 ## Prerequisites
 
-Before installing LightNVR, ensure your system meets the following requirements:
+Before installing Oneberry, ensure your system meets the following requirements:
 
 - **Processor**: Any Linux-compatible processor (ARM, x86, MIPS, etc.)
 - **Memory**: unknown what the minimum is
@@ -38,8 +38,8 @@ Building from source is the recommended method for most installations, as it ens
 #### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/opensensor/lightnvr.git
-cd lightnvr
+git clone https://github.com/opensensor/oneberry.git
+cd oneberry
 ```
 
 #### 2. Install Dependencies
@@ -64,22 +64,22 @@ sudo ./scripts/install.sh
 ```
 
 The installation script will:
-1. Install the binary to `/usr/local/bin/lightnvr`
-2. Install configuration files to `/etc/lightnvr/`
-3. Create data directories in `/var/lib/lightnvr/`
+1. Install the binary to `/usr/local/bin/oneberry`
+2. Install configuration files to `/etc/oneberry/`
+3. Create data directories in `/var/lib/oneberry/`
 4. Create a systemd service file
 
 You can customize the installation paths using options:
 
 ```bash
-sudo ./scripts/install.sh --prefix=/opt --config-dir=/etc/custom/lightnvr
+sudo ./scripts/install.sh --prefix=/opt --config-dir=/etc/custom/oneberry
 ```
 
 See `./scripts/install.sh --help` for all available options.
 
 ### Docker Installation
 
-Docker provides an easy way to run LightNVR without installing dependencies directly on your system.
+Docker provides an easy way to run Oneberry without installing dependencies directly on your system.
 
 #### Option 1: Using Docker Compose (Recommended)
 
@@ -87,22 +87,22 @@ Docker Compose simplifies the deployment and ensures proper volume configuration
 
 ```bash
 # Clone the repository
-git clone https://github.com/opensensor/lightNVR.git
-cd lightNVR
+git clone https://github.com/opensensor/oneberry.git
+cd oneberry
 
 # Start the container
 docker-compose up -d
 ```
 
 The default `docker-compose.yml` creates two volumes:
-- `./config` - Configuration files (mounted to `/etc/lightnvr`)
-- `./data` - Persistent data including database, recordings, and models (mounted to `/var/lib/lightnvr/data`)
+- `./config` - Configuration files (mounted to `/etc/oneberry`)
+- `./data` - Persistent data including database, recordings, and models (mounted to `/var/lib/oneberry/data`)
 
 To customize the configuration:
 
 ```bash
 # Edit the configuration file
-nano config/lightnvr.ini
+nano config/oneberry.ini
 
 # Restart the container to apply changes
 docker-compose restart
@@ -113,7 +113,7 @@ docker-compose restart
 ##### 1. Pull the Docker Image
 
 ```bash
-docker pull lightnvr/lightnvr:latest
+docker pull oneberry/oneberry:latest
 ```
 
 ##### 2. Create Directories for Persistent Storage
@@ -129,35 +129,35 @@ mkdir -p /path/to/data
 
 ```bash
 docker run -d \
-  --name lightnvr \
+  --name oneberry \
   --restart unless-stopped \
   -p 8080:8080 \
   -p 1984:1984 \
-  -v /path/to/config:/etc/lightnvr \
-  -v /path/to/data:/var/lib/lightnvr/data \
-  lightnvr/lightnvr:latest
+  -v /path/to/config:/etc/oneberry \
+  -v /path/to/data:/var/lib/oneberry/data \
+  oneberry/oneberry:latest
 ```
 
 ##### 4. Create a Configuration File
 
 ```bash
 # Copy the default configuration
-docker cp lightnvr:/etc/lightnvr/lightnvr.ini /path/to/config/lightnvr.ini
+docker cp oneberry:/etc/oneberry/oneberry.ini /path/to/config/oneberry.ini
 
 # Edit the configuration
-nano /path/to/config/lightnvr.ini
+nano /path/to/config/oneberry.ini
 ```
 
-**Note:** Ensure the paths in `lightnvr.ini` point to `/var/lib/lightnvr/data` subdirectories:
-- Database: `/var/lib/lightnvr/data/database/lightnvr.db`
-- Recordings: `/var/lib/lightnvr/data/recordings`
-- MP4 recordings: `/var/lib/lightnvr/data/recordings/mp4`
-- Models: `/var/lib/lightnvr/data/models`
+**Note:** Ensure the paths in `oneberry.ini` point to `/var/lib/oneberry/data` subdirectories:
+- Database: `/var/lib/oneberry/data/database/oneberry.db`
+- Recordings: `/var/lib/oneberry/data/recordings`
+- MP4 recordings: `/var/lib/oneberry/data/recordings/mp4`
+- Models: `/var/lib/oneberry/data/models`
 
 ##### 5. Restart the Container
 
 ```bash
-docker restart lightnvr
+docker restart oneberry
 ```
 
 ### Pre-built Packages
@@ -166,7 +166,7 @@ Pre-built packages are available from GitHub Releases.
 
 #### Downloading from GitHub Releases
 
-1. Visit the [LightNVR Releases page](https://github.com/opensensor/lightNVR/releases)
+1. Visit the [Oneberry Releases page](https://github.com/opensensor/oneberry/releases)
 2. Download the appropriate package for your platform:
    - `.deb` packages for Debian/Ubuntu
    - `.tar.gz` archives for other Linux distributions
@@ -175,7 +175,7 @@ Pre-built packages are available from GitHub Releases.
 
 ```bash
 # Download the latest .deb package from GitHub Releases
-wget https://github.com/opensensor/lightNVR/releases/latest/download/lightnvr_<version>_<arch>.deb
+wget https://github.com/opensensor/oneberry/releases/latest/download/lightnvr_<version>_<arch>.deb
 
 # Install the package
 sudo dpkg -i lightnvr_<version>_<arch>.deb
@@ -190,13 +190,13 @@ For other distributions, download the tarball and install manually:
 
 ```bash
 # Download and extract
-wget https://github.com/opensensor/lightNVR/releases/latest/download/lightnvr-<version>-linux-<arch>.tar.gz
-tar -xzf lightnvr-<version>-linux-<arch>.tar.gz
+wget https://github.com/opensensor/oneberry/releases/latest/download/oneberry-<version>-linux-<arch>.tar.gz
+tar -xzf oneberry-<version>-linux-<arch>.tar.gz
 
 # Install (adjust paths as needed)
-sudo cp lightnvr /usr/local/bin/
-sudo mkdir -p /etc/lightnvr
-sudo cp lightnvr.ini.default /etc/lightnvr/lightnvr.ini
+sudo cp oneberry /usr/local/bin/
+sudo mkdir -p /etc/oneberry
+sudo cp oneberry.ini.default /etc/oneberry/oneberry.ini
 ```
 
 ## Platform-Specific Instructions
@@ -286,17 +286,17 @@ sudo apt-get update
 sudo apt-get install -y build-essential cmake pkg-config
 
 # Clone and build cross-compiled dependencies
-git clone https://github.com/lightnvr/ingenic-dependencies.git
+git clone https://github.com/oneberry/ingenic-dependencies.git
 cd ingenic-dependencies
 ./build-all.sh
 ```
 
-#### 3. Build LightNVR for Ingenic A1
+#### 3. Build Oneberry for Ingenic A1
 
 ```bash
 # Clone the repository
-git clone https://github.com/opensensor/lightnvr.git
-cd lightnvr
+git clone https://github.com/opensensor/oneberry.git
+cd oneberry
 
 # Build using the cross-compilation script
 ./scripts/build-ingenic.sh
@@ -306,14 +306,14 @@ cd lightnvr
 
 ```bash
 # Copy the binary and configuration files to the device
-scp build/Ingenic/bin/lightnvr root@ingenic-device:/usr/local/bin/
-scp config/lightnvr.conf.default root@ingenic-device:/etc/lightnvr/lightnvr.conf
+scp build/Ingenic/bin/oneberry root@ingenic-device:/usr/local/bin/
+scp config/oneberry.conf.default root@ingenic-device:/etc/oneberry/oneberry.conf
 
 # Create necessary directories on the device
-ssh root@ingenic-device "mkdir -p /var/lib/lightnvr/recordings /var/lib/lightnvr/www /var/log/lightnvr"
+ssh root@ingenic-device "mkdir -p /var/lib/oneberry/recordings /var/lib/oneberry/www /var/log/oneberry"
 
 # Copy web interface files
-scp -r web/* root@ingenic-device:/var/lib/lightnvr/www/
+scp -r web/* root@ingenic-device:/var/lib/oneberry/www/
 ```
 
 ### Raspberry Pi
@@ -346,8 +346,8 @@ sudo apt-get install -y \
 
 ```bash
 # Clone the repository
-git clone https://github.com/opensensor/lightnvr.git
-cd lightnvr
+git clone https://github.com/opensensor/oneberry.git
+cd oneberry
 
 # Build with Raspberry Pi optimizations
 ./scripts/build.sh --release --platform=raspberry-pi
@@ -358,14 +358,14 @@ sudo ./scripts/install.sh
 
 ## Post-Installation Setup
 
-After installing LightNVR, follow these steps to complete the setup:
+After installing Oneberry, follow these steps to complete the setup:
 
-### 1. Configure LightNVR
+### 1. Configure Oneberry
 
 Edit the configuration file:
 
 ```bash
-sudo nano /etc/lightnvr/lightnvr.conf
+sudo nano /etc/oneberry/oneberry.conf
 ```
 
 At minimum, you should:
@@ -379,16 +379,16 @@ See [CONFIGURATION.md](CONFIGURATION.md) for detailed configuration options.
 
 ```bash
 # Start the service
-sudo systemctl start lightnvr
+sudo systemctl start oneberry
 
 # Enable the service to start at boot
-sudo systemctl enable lightnvr
+sudo systemctl enable oneberry
 ```
 
 ### 3. Check the Status
 
 ```bash
-sudo systemctl status lightnvr
+sudo systemctl status oneberry
 ```
 
 ### 4. Access the Web Interface
@@ -407,7 +407,7 @@ Log in with the username and password configured in the configuration file.
 
 ```bash
 # Navigate to the repository
-cd lightnvr
+cd oneberry
 
 # Pull the latest changes
 git pull
@@ -416,13 +416,13 @@ git pull
 ./scripts/build.sh --release
 
 # Stop the service
-sudo systemctl stop lightnvr
+sudo systemctl stop oneberry
 
 # Install the new version
 sudo ./scripts/install.sh
 
 # Start the service
-sudo systemctl start lightnvr
+sudo systemctl start oneberry
 ```
 
 ### Upgrading Docker Installation
@@ -431,7 +431,7 @@ sudo systemctl start lightnvr
 
 ```bash
 # Navigate to the repository
-cd lightNVR
+cd oneberry
 
 # Pull the latest changes
 git pull
@@ -446,21 +446,21 @@ docker-compose up -d
 
 ```bash
 # Pull the latest image
-docker pull lightnvr/lightnvr:latest
+docker pull oneberry/oneberry:latest
 
 # Stop and remove the container
-docker stop lightnvr
-docker rm lightnvr
+docker stop oneberry
+docker rm oneberry
 
 # Run a new container with the latest image
 docker run -d \
-  --name lightnvr \
+  --name oneberry \
   --restart unless-stopped \
   -p 8080:8080 \
   -p 1984:1984 \
-  -v /path/to/config:/etc/lightnvr \
-  -v /path/to/data:/var/lib/lightnvr/data \
-  lightnvr/lightnvr:latest
+  -v /path/to/config:/etc/oneberry \
+  -v /path/to/data:/var/lib/oneberry/data \
+  oneberry/oneberry:latest
 ```
 
 **Note:** Your data is preserved in the volumes, so upgrading will not affect your database or recordings.
@@ -471,20 +471,20 @@ docker run -d \
 
 ```bash
 # Stop the service
-sudo systemctl stop lightnvr
-sudo systemctl disable lightnvr
+sudo systemctl stop oneberry
+sudo systemctl disable oneberry
 
 # Remove the service file
-sudo rm /etc/systemd/system/lightnvr.service
+sudo rm /etc/systemd/system/oneberry.service
 sudo systemctl daemon-reload
 
 # Remove the binary
-sudo rm /usr/local/bin/lightnvr
+sudo rm /usr/local/bin/oneberry
 
 # Remove configuration and data (optional)
-sudo rm -rf /etc/lightnvr
-sudo rm -rf /var/lib/lightnvr
-sudo rm -rf /var/log/lightnvr
+sudo rm -rf /etc/oneberry
+sudo rm -rf /var/lib/oneberry
+sudo rm -rf /var/log/oneberry
 ```
 
 ### Uninstalling Docker Installation
@@ -493,13 +493,13 @@ sudo rm -rf /var/log/lightnvr
 
 ```bash
 # Navigate to the repository
-cd lightNVR
+cd oneberry
 
 # Stop and remove the container
 docker-compose down
 
 # Remove the image
-docker rmi lightnvr
+docker rmi oneberry
 
 # Remove volumes (optional - this will delete all data)
 rm -rf ./config
@@ -510,11 +510,11 @@ rm -rf ./data
 
 ```bash
 # Stop and remove the container
-docker stop lightnvr
-docker rm lightnvr
+docker stop oneberry
+docker rm oneberry
 
 # Remove the image
-docker rmi lightnvr/lightnvr:latest
+docker rmi oneberry/oneberry:latest
 
 # Remove volumes (optional - this will delete all data)
 rm -rf /path/to/config

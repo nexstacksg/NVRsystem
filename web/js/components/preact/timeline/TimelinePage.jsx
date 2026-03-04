@@ -1,5 +1,5 @@
 /**
- * LightNVR Timeline Page Component
+ * Oneberry Timeline Page Component
  * Main component for the timeline view
  */
 

@@ -138,7 +138,7 @@ jobs:
             exit 1
           fi
 
-      - name: Build lightNVR
+      - name: Build oneberry
         run: |
           mkdir -p build
           cd build
@@ -196,7 +196,7 @@ jobs:
           rm -rf playwright-report test-results
           mkdir -p playwright-report test-results
 
-          # Run Playwright tests (uses global-setup.ts to start lightNVR and go2rtc)
+          # Run Playwright tests (uses global-setup.ts to start oneberry and go2rtc)
           npx playwright test --project=ui
         env:
           CI: true
@@ -221,10 +221,10 @@ jobs:
         if: always()
         run: |
           # Stop any remaining processes
-          pkill -f lightnvr || true
+          pkill -f oneberry || true
           pkill -f go2rtc || true
 
           # Clean up test artifacts
           rm -f test_frame*.jpg go2rtc-bin
-          rm -rf /tmp/lightnvr-test
+          rm -rf /tmp/oneberry-test
 

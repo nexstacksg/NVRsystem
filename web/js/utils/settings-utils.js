@@ -1,5 +1,5 @@
 /**
- * LightNVR Settings Utilities
+ * Oneberry Settings Utilities
  * Provides cached access to server settings for frontend components
  */
 

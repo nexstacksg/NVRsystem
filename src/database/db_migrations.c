@@ -1,6 +1,6 @@
 /**
  * @file db_migrations.c
- * @brief Database migration runner for lightNVR
+ * @brief Database migration runner for oneberry
  */
 
 #include <stdio.h>
@@ -17,7 +17,7 @@
 /**
  * Default migrations directory (relative to executable or absolute)
  */
-#define DEFAULT_MIGRATIONS_DIR "/usr/share/lightnvr/migrations"
+#define DEFAULT_MIGRATIONS_DIR "/usr/share/oneberry/migrations"
 #define LOCAL_MIGRATIONS_DIR "./db/migrations"
 
 /**
@@ -77,7 +77,7 @@ static const char *find_migrations_dir(void) {
         if (last_slash) {
             *last_slash = '\0';
             snprintf(migrations_path, sizeof(migrations_path), 
-                     "%s/../share/lightnvr/migrations", exe_path);
+                     "%s/../share/oneberry/migrations", exe_path);
             if (access(migrations_path, R_OK) == 0) {
                 return migrations_path;
             }

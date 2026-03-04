@@ -1,8 +1,8 @@
 #!/bin/bash
 
 ##
-# Start lightNVR with test configuration
-# This script sets up temp directories and starts lightNVR for integration testing
+# Start oneberry with test configuration
+# This script sets up temp directories and starts oneberry for integration testing
 ##
 
 set -e
@@ -11,9 +11,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Test configuration
-TEST_DIR="/tmp/lightnvr-test"
-LIGHTNVR_BIN="${PROJECT_ROOT}/build/bin/lightnvr"
-CONFIG_FILE="${PROJECT_ROOT}/config/lightnvr-test.ini"
+TEST_DIR="/tmp/oneberry-test"
+LIGHTNVR_BIN="${PROJECT_ROOT}/build/bin/oneberry"
+CONFIG_FILE="${PROJECT_ROOT}/config/oneberry-test.ini"
 LIGHTNVR_PORT=18080
 GO2RTC_API_PORT=11984
 
@@ -31,14 +31,14 @@ usage() {
     echo "Usage: $0 [command] [options]"
     echo ""
     echo "Commands:"
-    echo "  start     Start lightNVR with test configuration"
-    echo "  stop      Stop the test lightNVR instance"
-    echo "  status    Check if test lightNVR is running"
+    echo "  start     Start oneberry with test configuration"
+    echo "  stop      Stop the test oneberry instance"
+    echo "  status    Check if test oneberry is running"
     echo "  setup     Set up test directories only"
-    echo "  cleanup   Remove test directories and stop lightNVR"
+    echo "  cleanup   Remove test directories and stop oneberry"
     echo ""
     echo "Options:"
-    echo "  --wait    Wait for lightNVR to be ready (for start command)"
+    echo "  --wait    Wait for oneberry to be ready (for start command)"
     echo "  --verbose Enable verbose logging"
     echo ""
     exit 1
@@ -62,8 +62,8 @@ cleanup_test_dirs() {
 
 check_lightnvr_binary() {
     if [ ! -f "$LIGHTNVR_BIN" ]; then
-        log_error "lightNVR binary not found at $LIGHTNVR_BIN"
-        log_error "Please build lightNVR first: ./scripts/build.sh"
+        log_error "oneberry binary not found at $LIGHTNVR_BIN"
+        log_error "Please build oneberry first: ./scripts/build.sh"
         exit 1
     fi
 }
@@ -71,18 +71,18 @@ check_lightnvr_binary() {
 wait_for_lightnvr() {
     local max_wait=30
     local wait_time=0
-    log_info "Waiting for lightNVR to be ready (port $LIGHTNVR_PORT)..."
+    log_info "Waiting for oneberry to be ready (port $LIGHTNVR_PORT)..."
     
     while [ $wait_time -lt $max_wait ]; do
         if curl -s -u admin:admin "http://localhost:${LIGHTNVR_PORT}/api/v1/system" >/dev/null 2>&1; then
-            log_info "lightNVR is ready!"
+            log_info "oneberry is ready!"
             return 0
         fi
         sleep 1
         wait_time=$((wait_time + 1))
     done
     
-    log_error "lightNVR failed to start within ${max_wait} seconds"
+    log_error "oneberry failed to start within ${max_wait} seconds"
     return 1
 }
 
@@ -94,15 +94,15 @@ start_lightnvr() {
     setup_test_dirs
     
     # Check if already running
-    if [ -f "${TEST_DIR}/lightnvr.pid" ]; then
-        local pid=$(cat "${TEST_DIR}/lightnvr.pid")
+    if [ -f "${TEST_DIR}/oneberry.pid" ]; then
+        local pid=$(cat "${TEST_DIR}/oneberry.pid")
         if kill -0 "$pid" 2>/dev/null; then
-            log_warn "lightNVR already running (PID: $pid)"
+            log_warn "oneberry already running (PID: $pid)"
             return 0
         fi
     fi
     
-    log_info "Starting lightNVR with test configuration..."
+    log_info "Starting oneberry with test configuration..."
     
     local cmd="$LIGHTNVR_BIN -c $CONFIG_FILE"
     if [ "$verbose_flag" = "true" ]; then
@@ -112,9 +112,9 @@ start_lightnvr() {
     cd "$PROJECT_ROOT"
     $cmd &
     local pid=$!
-    echo "$pid" > "${TEST_DIR}/lightnvr.pid"
+    echo "$pid" > "${TEST_DIR}/oneberry.pid"
     
-    log_info "lightNVR started (PID: $pid)"
+    log_info "oneberry started (PID: $pid)"
     
     if [ "$wait_flag" = "true" ]; then
         wait_for_lightnvr
@@ -122,31 +122,31 @@ start_lightnvr() {
 }
 
 stop_lightnvr() {
-    if [ -f "${TEST_DIR}/lightnvr.pid" ]; then
-        local pid=$(cat "${TEST_DIR}/lightnvr.pid")
+    if [ -f "${TEST_DIR}/oneberry.pid" ]; then
+        local pid=$(cat "${TEST_DIR}/oneberry.pid")
         if kill -0 "$pid" 2>/dev/null; then
-            log_info "Stopping lightNVR (PID: $pid)..."
+            log_info "Stopping oneberry (PID: $pid)..."
             kill "$pid" 2>/dev/null || true
             sleep 2
             # Force kill if still running
             if kill -0 "$pid" 2>/dev/null; then
                 kill -9 "$pid" 2>/dev/null || true
             fi
-            log_info "lightNVR stopped"
+            log_info "oneberry stopped"
         else
-            log_info "lightNVR is not running"
+            log_info "oneberry is not running"
         fi
-        rm -f "${TEST_DIR}/lightnvr.pid"
+        rm -f "${TEST_DIR}/oneberry.pid"
     else
-        log_info "No PID file found, lightNVR may not be running"
+        log_info "No PID file found, oneberry may not be running"
     fi
 }
 
 status_lightnvr() {
-    if [ -f "${TEST_DIR}/lightnvr.pid" ]; then
-        local pid=$(cat "${TEST_DIR}/lightnvr.pid")
+    if [ -f "${TEST_DIR}/oneberry.pid" ]; then
+        local pid=$(cat "${TEST_DIR}/oneberry.pid")
         if kill -0 "$pid" 2>/dev/null; then
-            log_info "lightNVR is running (PID: $pid)"
+            log_info "oneberry is running (PID: $pid)"
             # Check API
             if curl -s -u admin:admin "http://localhost:${LIGHTNVR_PORT}/api/v1/system" >/dev/null 2>&1; then
                 log_info "API is responsive on port $LIGHTNVR_PORT"
@@ -156,7 +156,7 @@ status_lightnvr() {
             return 0
         fi
     fi
-    log_info "lightNVR is not running"
+    log_info "oneberry is not running"
     return 1
 }
 

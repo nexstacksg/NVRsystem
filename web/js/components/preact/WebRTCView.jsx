@@ -1,5 +1,5 @@
 /**
- * LightNVR Web Interface WebRTCView Component
+ * Oneberry Web Interface WebRTCView Component
  * Preact component for the WebRTC view page
  */
 
@@ -34,7 +34,7 @@ export function WebRTCView() {
       return layoutParam;
     }
     // Check localStorage for persisted layout preference
-    const storedLayout = localStorage.getItem('lightnvr-webrtc-layout');
+    const storedLayout = localStorage.getItem('oneberry-webrtc-layout');
     return storedLayout || '4';
   });
 
@@ -176,7 +176,7 @@ export function WebRTCView() {
     }
 
     // Save layout to localStorage for persistence across sessions
-    localStorage.setItem('lightnvr-webrtc-layout', layout);
+    localStorage.setItem('oneberry-webrtc-layout', layout);
 
     if (layout === '1' && selectedStream) {
       sessionStorage.setItem('webrtc_selected_stream', selectedStream);

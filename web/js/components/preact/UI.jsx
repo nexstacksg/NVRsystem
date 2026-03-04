@@ -1,5 +1,5 @@
 /**
- * UI utility components for LightNVR
+ * UI utility components for Oneberry
  * JSX version of UI components
  */
 

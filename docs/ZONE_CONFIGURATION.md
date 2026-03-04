@@ -1,6 +1,6 @@
 # Detection Zone Configuration
 
-This document describes the detection zone configuration feature for lightNVR.
+This document describes the detection zone configuration feature for oneberry.
 
 ## Overview
 
@@ -171,7 +171,7 @@ DELETE /api/streams/{stream_name}/zones
 
 ## Integration with light-object-detect
 
-When detection is triggered, lightNVR sends zone configuration to the light-object-detect API:
+When detection is triggered, oneberry sends zone configuration to the light-object-detect API:
 
 ```bash
 curl -X POST "http://localhost:8000/api/v1/detect" \

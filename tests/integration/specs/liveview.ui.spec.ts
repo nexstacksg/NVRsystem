@@ -20,7 +20,7 @@ test.describe('Live View Page @ui @liveview', () => {
       const liveView = new LiveViewPage(page);
       await liveView.goto();
       
-      await expect(page).toHaveTitle(/LightNVR/i);
+      await expect(page).toHaveTitle(/Oneberry/i);
       expect(await liveView.isOnPage()).toBeTruthy();
       
       await page.screenshot({ path: 'test-results/liveview-page-load.png' });

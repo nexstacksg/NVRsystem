@@ -1,5 +1,5 @@
 /**
- * LightNVR Web Interface RecordingsView Component
+ * Oneberry Web Interface RecordingsView Component
  * Preact component for the recordings page
  */
 

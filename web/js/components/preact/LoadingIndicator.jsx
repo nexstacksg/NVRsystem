@@ -1,5 +1,5 @@
 /**
- * LightNVR Loading Indicator Component
+ * Oneberry Loading Indicator Component
  * Displays a loading spinner and optional message
  */
 

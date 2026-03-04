@@ -110,7 +110,7 @@ function main() {
     const cmakeContent = fs.readFileSync(cmakeListsPath, 'utf8');
 
     // Extract version using regex
-    const versionMatch = cmakeContent.match(/project\s*\(\s*LightNVR\s+VERSION\s+([0-9]+\.[0-9]+\.[0-9]+)/i);
+    const versionMatch = cmakeContent.match(/project\s*\(\s*Oneberry\s+VERSION\s+([0-9]+\.[0-9]+\.[0-9]+)/i);
 
     if (!versionMatch || !versionMatch[1]) {
       console.error('Failed to extract version from CMakeLists.txt');
@@ -122,7 +122,7 @@ function main() {
 
     // Generate version.js file
     const versionJsContent = `/**
- * LightNVR version information
+ * Oneberry version information
  * This file is auto-generated from CMakeLists.txt during the build process
  * DO NOT EDIT MANUALLY
  */

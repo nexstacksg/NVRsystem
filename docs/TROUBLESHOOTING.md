@@ -1,6 +1,6 @@
-# LightNVR Troubleshooting Guide
+# Oneberry Troubleshooting Guide
 
-This document provides solutions for common issues you might encounter when using LightNVR.
+This document provides solutions for common issues you might encounter when using Oneberry.
 
 ## Table of Contents
 
@@ -72,27 +72,27 @@ If you encounter build errors:
 
 ### Service Won't Start
 
-If the LightNVR service won't start:
+If the Oneberry service won't start:
 
 1. Check the systemd status:
    ```bash
-   sudo systemctl status lightnvr
+   sudo systemctl status oneberry
    ```
 
 2. Check the log file for error messages:
    ```bash
-   sudo tail -f /var/log/lightnvr.log
+   sudo tail -f /var/log/oneberry.log
    ```
 
 3. Verify that the configuration file exists and is valid:
    ```bash
-   sudo cat /etc/lightnvr/lightnvr.conf
+   sudo cat /etc/oneberry/oneberry.conf
    ```
 
 4. Check permissions on directories:
    ```bash
-   sudo ls -la /var/lib/lightnvr
-   sudo ls -la /var/log/lightnvr
+   sudo ls -la /var/lib/oneberry
+   sudo ls -la /var/log/oneberry
    ```
 
 ### PID File Issues
@@ -101,20 +101,20 @@ If you see errors related to the PID file:
 
 1. Remove the stale PID file:
    ```bash
-   sudo rm /var/run/lightnvr.pid
+   sudo rm /var/run/oneberry.pid
    ```
 
 2. Ensure the directory exists and has the correct permissions:
    ```bash
-   sudo mkdir -p /var/run/lightnvr
-   sudo chown -R root:root /var/run/lightnvr
+   sudo mkdir -p /var/run/oneberry
+   sudo chown -R root:root /var/run/oneberry
    ```
 
 ## Stream Connection Issues
 
 ### Can't Connect to Camera
 
-If LightNVR can't connect to a camera:
+If Oneberry can't connect to a camera:
 
 1. Verify that the camera is online and accessible:
    ```bash
@@ -128,10 +128,10 @@ If LightNVR can't connect to a camera:
 
 3. Check for authentication issues in the log file:
    ```bash
-   grep "authentication" /var/log/lightnvr.log
+   grep "authentication" /var/log/oneberry.log
    ```
 
-4. Verify network connectivity between the LightNVR server and the camera
+4. Verify network connectivity between the Oneberry server and the camera
 
 ### Stream Disconnects Frequently
 
@@ -164,7 +164,7 @@ If you still experience issues:
 
 3. **Check server logs** for HLS writer errors:
    ```bash
-   docker logs lightnvr | grep -i "hls"
+   docker logs oneberry | grep -i "hls"
    ```
 
 ### Live Stream Video Timeouts
@@ -233,12 +233,12 @@ If recordings aren't being created:
 1. Check if the stream is properly connected
 2. Verify that recording is enabled for the stream:
    ```bash
-   grep "record" /etc/lightnvr/lightnvr.conf
+   grep "record" /etc/oneberry/oneberry.conf
    ```
 
 3. Check permissions on the recordings directory:
    ```bash
-   ls -la /var/lib/lightnvr/recordings
+   ls -la /var/lib/oneberry/recordings
    ```
 
 4. Check available disk space:
@@ -261,7 +261,7 @@ If recordings are corrupt:
 
 ### Blank Page Issue
 
-If you see a blank page with the title "WebRTC View - LightNVR" but no content:
+If you see a blank page with the title "WebRTC View - Oneberry" but no content:
 
 **Quick Fix:**
 ```bash
@@ -272,10 +272,10 @@ sudo bash scripts/diagnose_web_issue.sh
 sudo bash scripts/install_web_assets.sh
 
 # Restart service
-sudo systemctl restart lightnvr
+sudo systemctl restart oneberry
 ```
 
-**Cause:** Web assets (HTML, CSS, JavaScript files) were not installed to `/var/lib/lightnvr/www/`
+**Cause:** Web assets (HTML, CSS, JavaScript files) were not installed to `/var/lib/oneberry/www/`
 
 See [TROUBLESHOOTING_WEB_INTERFACE.md](TROUBLESHOOTING_WEB_INTERFACE.md) for detailed instructions.
 
@@ -283,9 +283,9 @@ See [TROUBLESHOOTING_WEB_INTERFACE.md](TROUBLESHOOTING_WEB_INTERFACE.md) for det
 
 If you can't access the web interface:
 
-1. Verify that the LightNVR service is running:
+1. Verify that the Oneberry service is running:
    ```bash
-   sudo systemctl status lightnvr
+   sudo systemctl status oneberry
    ```
 
 2. Check if the web server is listening on the configured port:
@@ -300,7 +300,7 @@ If you can't access the web interface:
 
 4. Verify that the web root directory exists and has the correct permissions:
    ```bash
-   ls -la /var/lib/lightnvr/www
+   ls -la /var/lib/oneberry/www
    ```
 
 ### Authentication Issues
@@ -309,7 +309,7 @@ If you're having trouble with authentication:
 
 1. Reset the username and password in the configuration file:
    ```bash
-   sudo nano /etc/lightnvr/lightnvr.conf
+   sudo nano /etc/oneberry/oneberry.conf
    ```
 
    Update these lines:
@@ -321,14 +321,14 @@ If you're having trouble with authentication:
 
 2. Restart the service:
    ```bash
-   sudo systemctl restart lightnvr
+   sudo systemctl restart oneberry
    ```
 
 ## Performance Optimization
 
 ### High CPU Usage
 
-If LightNVR is using too much CPU:
+If Oneberry is using too much CPU:
 
 1. Reduce the number of streams
 2. Lower the resolution and frame rate of streams
@@ -344,7 +344,7 @@ If LightNVR is using too much CPU:
 
 ### High Memory Usage
 
-If LightNVR is using too much memory:
+If Oneberry is using too much memory:
 
 1. Reduce the number of streams
 2. Lower the resolution and frame rate of streams
@@ -352,7 +352,7 @@ If LightNVR is using too much memory:
 4. Enable and configure swap:
    ```
    use_swap=true
-   swap_file=/var/lib/lightnvr/swap
+   swap_file=/var/lib/oneberry/swap
    swap_size=134217728  # 128MB in bytes
    ```
 
@@ -373,7 +373,7 @@ Example configuration for Ingenic A1:
 # Memory Optimization for Ingenic A1
 buffer_size=512  # 512KB buffer size
 use_swap=true
-swap_file=/var/lib/lightnvr/swap
+swap_file=/var/lib/oneberry/swap
 swap_size=134217728  # 128MB in bytes
 max_streams=8
 
@@ -396,29 +396,29 @@ The log file is your best resource for troubleshooting. Here's how to analyze it
 
 1. View the entire log file:
    ```bash
-   cat /var/log/lightnvr.log
+   cat /var/log/oneberry.log
    ```
 
 2. View only error messages:
    ```bash
-   grep "ERROR" /var/log/lightnvr.log
+   grep "ERROR" /var/log/oneberry.log
    ```
 
 3. View only warning messages:
    ```bash
-   grep "WARN" /var/log/lightnvr.log
+   grep "WARN" /var/log/oneberry.log
    ```
 
 4. Follow the log file in real-time:
    ```bash
-   tail -f /var/log/lightnvr.log
+   tail -f /var/log/oneberry.log
    ```
 
 5. Check for specific issues:
    ```bash
-   grep "stream" /var/log/lightnvr.log
-   grep "recording" /var/log/lightnvr.log
-   grep "database" /var/log/lightnvr.log
+   grep "stream" /var/log/oneberry.log
+   grep "recording" /var/log/oneberry.log
+   grep "database" /var/log/oneberry.log
    ```
 
 ### Common Log Messages

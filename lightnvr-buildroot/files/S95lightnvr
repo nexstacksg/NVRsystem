@@ -5,13 +5,13 @@ DAEMON_ARGS="-d"
 . /usr/share/common
 
 start() {
-	echo_title "Starting LightNVR"
+	echo_title "Starting Oneberry"
 
 	start_daemon
 }
 
 stop() {
-	echo_title "Stopping LightNVR"
+	echo_title "Stopping Oneberry"
 
 	stop_daemon
 }

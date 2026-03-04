@@ -1,5 +1,5 @@
 /**
- * LightNVR Web Interface Fetch Utilities
+ * Oneberry Web Interface Fetch Utilities
  * Enhanced fetch API with timeout, cancellation, and retry capabilities
  */
 

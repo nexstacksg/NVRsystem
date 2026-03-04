@@ -1,10 +1,10 @@
-# Building LightNVR
+# Building Oneberry
 
-This document provides instructions for building the LightNVR software from source.
+This document provides instructions for building the Oneberry software from source.
 
 ## Prerequisites
 
-Before building LightNVR, you need to install the following dependencies:
+Before building Oneberry, you need to install the following dependencies:
 
 ### Debian/Ubuntu
 
@@ -66,12 +66,12 @@ sudo pacman -S \
 
 ## Building
 
-LightNVR includes a build script that simplifies the build process. To build the software:
+Oneberry includes a build script that simplifies the build process. To build the software:
 
 ```bash
 # Clone the repository (if you haven't already)
-git clone https://github.com/opensensor/lightnvr.git
-cd lightnvr
+git clone https://github.com/opensensor/oneberry.git
+cd oneberry
 
 # Build in debug mode (default)
 ./scripts/build.sh
@@ -85,7 +85,7 @@ cd lightnvr
 
 ### Building with or without SOD
 
-LightNVR can be built with or without SOD (an embedded computer vision & machine learning library) support. By default, SOD is enabled.
+Oneberry can be built with or without SOD (an embedded computer vision & machine learning library) support. By default, SOD is enabled.
 
 ```bash
 # Build with SOD support (default)
@@ -95,7 +95,7 @@ LightNVR can be built with or without SOD (an embedded computer vision & machine
 ./scripts/build_without_sod.sh
 ```
 
-When built without SOD, LightNVR will still function normally but will not have object detection capabilities unless the SOD library is installed separately and available at runtime.
+When built without SOD, Oneberry will still function normally but will not have object detection capabilities unless the SOD library is installed separately and available at runtime.
 
 For more information about SOD integration, see [SOD Integration](SOD_INTEGRATION.md).
 
@@ -129,29 +129,29 @@ cd ../..
 
 ## Running
 
-After building, you can run LightNVR directly:
+After building, you can run Oneberry directly:
 
 ```bash
 # If you used the build script
-./lightnvr
+./oneberry
 
 # Or run the binary directly
-./build/Release/bin/lightnvr
+./build/Release/bin/oneberry
 ```
 
-By default, LightNVR will look for a configuration file in the following locations:
-1. `./lightnvr.conf` (current directory)
-2. `/etc/lightnvr/lightnvr.conf`
+By default, Oneberry will look for a configuration file in the following locations:
+1. `./oneberry.conf` (current directory)
+2. `/etc/oneberry/oneberry.conf`
 
 You can specify a different configuration file using the `-c` option:
 
 ```bash
-./lightnvr -c /path/to/config.conf
+./oneberry -c /path/to/config.conf
 ```
 
 ## Building Web Assets
 
-LightNVR includes a web interface built with Vite. By default, the web assets are built **without source maps** to reduce file size, which is especially important for embedded devices.
+Oneberry includes a web interface built with Vite. By default, the web assets are built **without source maps** to reduce file size, which is especially important for embedded devices.
 
 ### Building Web Assets Without Source Maps (Default)
 
@@ -183,11 +183,11 @@ sudo ./scripts/install_web_assets.sh
 sudo ./scripts/install_web_assets.sh -m
 ```
 
-The web assets will be installed to `/var/lib/lightnvr/www` by default, or to the path specified in `/etc/lightnvr/lightnvr.ini`.
+The web assets will be installed to `/var/lib/oneberry/www` by default, or to the path specified in `/etc/oneberry/oneberry.ini`.
 
 ## Installation
 
-To install LightNVR system-wide, you can use the provided installation script:
+To install Oneberry system-wide, you can use the provided installation script:
 
 ```bash
 # Build in release mode first
@@ -198,22 +198,22 @@ sudo ./scripts/install.sh
 ```
 
 The installation script will:
-1. Install the binary to `/usr/local/bin/lightnvr`
-2. Install configuration files to `/etc/lightnvr/`
-3. Create data directories in `/var/lib/lightnvr/`
+1. Install the binary to `/usr/local/bin/oneberry`
+2. Install configuration files to `/etc/oneberry/`
+3. Create data directories in `/var/lib/oneberry/`
 4. Create a systemd service file
 
 You can customize the installation paths using options:
 
 ```bash
-sudo ./scripts/install.sh --prefix=/opt --config-dir=/etc/custom/lightnvr
+sudo ./scripts/install.sh --prefix=/opt --config-dir=/etc/custom/oneberry
 ```
 
 See `./scripts/install.sh --help` for all available options.
 
 ## Cross-Compiling for Ingenic A1
 
-To cross-compile LightNVR for the Ingenic A1 SoC, you need to set up a cross-compilation toolchain. Detailed instructions for cross-compiling will be provided in a separate document.
+To cross-compile Oneberry for the Ingenic A1 SoC, you need to set up a cross-compilation toolchain. Detailed instructions for cross-compiling will be provided in a separate document.
 
 ## Troubleshooting
 
@@ -227,8 +227,8 @@ If you encounter build errors, try the following:
 
 ### Runtime Errors
 
-If LightNVR fails to start or crashes:
+If Oneberry fails to start or crashes:
 
-1. Check the log file for error messages: `/var/log/lightnvr/lightnvr.log`
+1. Check the log file for error messages: `/var/log/oneberry/oneberry.log`
 2. Verify that the configuration file is valid
 3. Ensure that all required directories exist and have the correct permissions

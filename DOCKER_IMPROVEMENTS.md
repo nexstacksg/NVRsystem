@@ -1,22 +1,22 @@
 # Docker Container Improvements - Implementation Summary
 
-This document summarizes the improvements made to the LightNVR Docker container to address persistence and initialization issues.
+This document summarizes the improvements made to the Oneberry Docker container to address persistence and initialization issues.
 
 ## Problems Addressed
 
 ### 1. Web Assets Getting Overwritten
-**Problem:** When users mounted volumes to `/var/lib/lightnvr`, the web assets were overwritten, breaking the web UI.
+**Problem:** When users mounted volumes to `/var/lib/oneberry`, the web assets were overwritten, breaking the web UI.
 
 **Solution:** 
-- Moved web assets to a protected template location (`/usr/share/lightnvr/web-template/`)
-- Entrypoint script copies assets to `/var/lib/lightnvr/web/` on first run
-- Updated documentation to warn against mounting `/var/lib/lightnvr` directly
+- Moved web assets to a protected template location (`/usr/share/oneberry/web-template/`)
+- Entrypoint script copies assets to `/var/lib/oneberry/web/` on first run
+- Updated documentation to warn against mounting `/var/lib/oneberry` directly
 
 ### 2. No Default Configuration Files
 **Problem:** Container required manual configuration file creation before first use.
 
 **Solution:**
-- Entrypoint script automatically creates default `lightnvr.ini` on first run
+- Entrypoint script automatically creates default `oneberry.ini` on first run
 - Includes sensible defaults for all settings
 - Creates proper directory structure automatically
 
@@ -44,7 +44,7 @@ Created a comprehensive entrypoint script that handles:
 
 - **Directory Creation:** Creates all necessary directories on first run
 - **Web Assets:** Copies web UI files from template location
-- **Configuration Files:** Creates default `lightnvr.ini` and `go2rtc.yaml`
+- **Configuration Files:** Creates default `oneberry.ini` and `go2rtc.yaml`
 - **Permissions:** Sets proper file permissions
 - **Logging:** Provides clear startup information
 - **Signal Handling:** Graceful shutdown on SIGTERM/SIGINT
@@ -52,12 +52,12 @@ Created a comprehensive entrypoint script that handles:
 Key features:
 ```bash
 # Only copies web assets if directory is empty
-if [ -z "$(ls -A /var/lib/lightnvr/web 2>/dev/null)" ]; then
-    cp -r /usr/share/lightnvr/web-template/* /var/lib/lightnvr/web/
+if [ -z "$(ls -A /var/lib/oneberry/web 2>/dev/null)" ]; then
+    cp -r /usr/share/oneberry/web-template/* /var/lib/oneberry/web/
 fi
 
 # Only creates config if it doesn't exist
-if [ ! -f /etc/lightnvr/lightnvr.ini ]; then
+if [ ! -f /etc/oneberry/oneberry.ini ]; then
     # Create default configuration
 fi
 ```
@@ -69,7 +69,7 @@ fi
 1. **Web Assets Protection:**
    ```dockerfile
    # Copy to template location instead of final location
-   COPY --from=builder /opt/web/dist /usr/share/lightnvr/web-template/
+   COPY --from=builder /opt/web/dist /usr/share/oneberry/web-template/
    ```
 
 2. **Entrypoint Integration:**
@@ -81,7 +81,7 @@ fi
 
 3. **Explicit Volume Declarations:**
    ```dockerfile
-   VOLUME ["/etc/lightnvr", "/var/lib/lightnvr/data"]
+   VOLUME ["/etc/oneberry", "/var/lib/oneberry/data"]
    ```
 
 4. **Additional Ports:**
@@ -99,7 +99,7 @@ fi
    ```dockerfile
    ENV GO2RTC_CONFIG_PERSIST=true \
        LIGHTNVR_AUTO_INIT=true \
-       LIGHTNVR_WEB_ROOT=/var/lib/lightnvr/web
+       LIGHTNVR_WEB_ROOT=/var/lib/oneberry/web
    ```
 
 ### 3. docker-compose.yml Enhancements
@@ -127,15 +127,15 @@ fi
 3. **Documentation Comments:**
    ```yaml
    volumes:
-     # DO NOT mount /var/lib/lightnvr directly - it will overwrite web assets!
-     - ./config:/etc/lightnvr
-     - ./data:/var/lib/lightnvr/data
+     # DO NOT mount /var/lib/oneberry directly - it will overwrite web assets!
+     - ./config:/etc/oneberry
+     - ./data:/var/lib/oneberry/data
    ```
 
 4. **Network Configuration:**
    ```yaml
    networks:
-     - lightnvr
+     - oneberry
    ```
 
 ### 4. GitHub Actions Workflow Updates
@@ -164,7 +164,7 @@ fi
 3. **Image Labels:**
    ```yaml
    labels: |
-     org.opencontainers.image.title=LightNVR
+     org.opencontainers.image.title=Oneberry
      org.opencontainers.image.description=Lightweight Network Video Recorder with go2rtc integration
      org.opencontainers.image.vendor=OpenSensor
    ```
@@ -189,12 +189,12 @@ fi
 
 ## Default Configuration
 
-### lightnvr.ini
+### oneberry.ini
 
 The entrypoint creates a default configuration with:
 - Web UI on port 8080
-- Database at `/var/lib/lightnvr/data/database/lightnvr.db`
-- Recordings at `/var/lib/lightnvr/data/recordings`
+- Database at `/var/lib/oneberry/data/database/oneberry.db`
+- Recordings at `/var/lib/oneberry/data/recordings`
 - go2rtc integration enabled
 - WebRTC enabled with STUN servers
 
@@ -352,7 +352,7 @@ Potential future improvements:
 
 ## Conclusion
 
-These improvements transform the LightNVR Docker container from a basic containerized application to a production-ready, user-friendly deployment option. The container now:
+These improvements transform the Oneberry Docker container from a basic containerized application to a production-ready, user-friendly deployment option. The container now:
 
 - Works out-of-the-box with sensible defaults
 - Preserves all user data and configuration
@@ -360,5 +360,5 @@ These improvements transform the LightNVR Docker container from a basic containe
 - Supports WebRTC streaming without manual configuration
 - Follows Docker best practices
 
-Users can now deploy LightNVR with a single `docker-compose up -d` command and have a fully functional NVR system with WebRTC streaming capabilities.
+Users can now deploy Oneberry with a single `docker-compose up -d` command and have a fully functional NVR system with WebRTC streaming capabilities.
 

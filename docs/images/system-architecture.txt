@@ -1,6 +1,6 @@
-# System Architecture Diagram for LightNVR
+# System Architecture Diagram for Oneberry
 
-This text file describes the system architecture diagram that should be created for the LightNVR documentation.
+This text file describes the system architecture diagram that should be created for the Oneberry documentation.
 
 ## Diagram Layout
 
@@ -65,4 +65,4 @@ The diagram should show the following key relationships:
 - Error recovery mechanisms
 - Modular design
 
-This diagram will help users understand the overall architecture of LightNVR and how the different components interact with each other.
+This diagram will help users understand the overall architecture of Oneberry and how the different components interact with each other.

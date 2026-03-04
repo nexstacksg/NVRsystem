@@ -1,28 +1,28 @@
-# LightNVR Architecture
+# Oneberry Architecture
 
-This document describes the architecture and internal design of the LightNVR system.
+This document describes the architecture and internal design of the Oneberry system.
 
 ## Overview
 
-LightNVR is designed with a modular architecture that prioritizes memory efficiency and reliability. The system is composed of several key components that work together to provide a complete Network Video Recorder solution.
+Oneberry is designed with a modular architecture that prioritizes memory efficiency and reliability. The system is composed of several key components that work together to provide a complete Network Video Recorder solution.
 
-The architecture centers on **go2rtc** as the primary streaming backbone, with LightNVR providing configuration management, recording, detection, and a unified web interface.
+The architecture centers on **go2rtc** as the primary streaming backbone, with Oneberry providing configuration management, recording, detection, and a unified web interface.
 
 ## Overall Architecture
-![LightNVR Overall Architecture](images/arch-overall.svg)
+![Oneberry Overall Architecture](images/arch-overall.svg)
 
 ## Thread Architecture
-![LightNVR Thread Architecture](images/arch-thread.svg)
+![Oneberry Thread Architecture](images/arch-thread.svg)
 
 ## State Management Architecture
-![LightNVR State Management](images/arch-state.svg)
+![Oneberry State Management](images/arch-state.svg)
 
 ## High-Level Data Flow
 
 ```
 ┌─────────────┐     RTSP/ONVIF      ┌─────────────────────────────────────────────────┐
 │   Cameras   │────────────────────▶│                    go2rtc                       │
-│             │                     │  (Managed by LightNVR as child process)         │
+│             │                     │  (Managed by Oneberry as child process)         │
 └─────────────┘                     │                                                 │
                                     │  ┌─────────┐  ┌─────────┐  ┌─────────────────┐  │
                                     │  │  RTSP   │  │  WebRTC │  │  HLS/frame.jpeg │  │
@@ -32,7 +32,7 @@ The architecture centers on **go2rtc** as the primary streaming backbone, with L
                                     └───────┼───────────┼─────────────────┼───────────┘
                                             │           │                 │
             ┌───────────────────────────────┼───────────┼─────────────────┼───────────┐
-            │                   LightNVR    │           │                 │           │
+            │                   Oneberry    │           │                 │           │
             │                               ▼           ▼                 ▼           │
             │  ┌──────────────────────────────────────────────────────────────────┐   │
             │  │                        Web Interface                              │   │
@@ -55,8 +55,8 @@ The architecture centers on **go2rtc** as the primary streaming backbone, with L
             │           │                        │                                    │
             │           ▼                        ▼                                    │
             │  ┌──────────────────────────────────────────────────────────────────┐   │
-            │  │                      Storage (/var/lib/lightnvr)                  │   │
-            │  │  recordings/mp4/  │  recordings/hls/  │  lightnvr.db              │   │
+            │  │                      Storage (/var/lib/oneberry)                  │   │
+            │  │  recordings/mp4/  │  recordings/hls/  │  oneberry.db              │   │
             │  └──────────────────────────────────────────────────────────────────┘   │
             └─────────────────────────────────────────────────────────────────────────┘
 ```
@@ -81,7 +81,7 @@ Key files:
 
 ### go2rtc Integration (Primary Streaming)
 
-**go2rtc is the heart of LightNVR's streaming architecture.** It handles:
+**go2rtc is the heart of Oneberry's streaming architecture.** It handles:
 - Direct camera connections (RTSP, ONVIF, HTTP, etc.)
 - WebRTC streaming for ultra-low-latency live viewing
 - RTSP server for local re-streaming (used by MP4/HLS recorders)
@@ -92,7 +92,7 @@ Key files:
 Key files:
 - `src/video/go2rtc/go2rtc_process.c`: Process lifecycle management
 - `src/video/go2rtc/go2rtc_stream.c`: Stream registration and API communication
-- `src/video/go2rtc/go2rtc_integration.c`: Integration layer with LightNVR
+- `src/video/go2rtc/go2rtc_integration.c`: Integration layer with Oneberry
 - `src/video/go2rtc/go2rtc_consumer.c`: Recording consumer management
 - `src/video/go2rtc/go2rtc_health.c`: Health monitoring and auto-restart
 
@@ -179,12 +179,12 @@ Key files:
 
 ## Memory Management
 
-LightNVR is designed to be memory-efficient, with several strategies employed:
+Oneberry is designed to be memory-efficient, with several strategies employed:
 
 ### go2rtc Memory Efficiency
 
 - go2rtc handles all camera connections and transcoding
-- LightNVR only receives re-streamed video for recording
+- Oneberry only receives re-streamed video for recording
 - Frame extraction for detection uses JPEG snapshots (not decoded video)
 
 ### Motion Buffer (Pre-Event Recording)
@@ -202,10 +202,10 @@ LightNVR is designed to be memory-efficient, with several strategies employed:
 
 ## Thread Model
 
-LightNVR uses a multi-threaded architecture:
+Oneberry uses a multi-threaded architecture:
 
 1. **Main Thread**: Application lifecycle, signal handling, shutdown coordination
-2. **go2rtc Process**: Separate process managed by LightNVR (handles all camera I/O)
+2. **go2rtc Process**: Separate process managed by Oneberry (handles all camera I/O)
 3. **Mongoose Server Thread**: HTTP/WebSocket event loop
 4. **Per-Request Threads**: API requests handled in thread pool
 5. **HLS Writer Threads**: One per stream writing HLS segments
@@ -228,7 +228,7 @@ Camera (RTSP/ONVIF)
        │                                │                     │
        │ WebRTC                         │ HLS                 │ RTSP
        ▼                                ▼                     ▼
-   Browser                      LightNVR HLS          LightNVR MP4
+   Browser                      Oneberry HLS          Oneberry MP4
   (Live View)                    Writer Thread         Recording
                                        │                     │
                                        ▼                     ▼
@@ -252,11 +252,11 @@ Camera (RTSP/ONVIF)
 3. Web server serves the SPA (Single Page Application)
 4. Client-side Preact app makes API requests
 5. **Live viewing**: Browser connects directly to go2rtc for WebRTC/HLS
-6. **Recording playback**: Browser requests MP4/HLS from LightNVR API
+6. **Recording playback**: Browser requests MP4/HLS from Oneberry API
 
 ## Database Schema
 
-LightNVR uses SQLite for data storage with the following main tables:
+Oneberry uses SQLite for data storage with the following main tables:
 
 ### Streams Table
 
@@ -367,7 +367,7 @@ CREATE TABLE sessions (
 
 ## API Design
 
-The LightNVR API follows RESTful principles:
+The Oneberry API follows RESTful principles:
 
 - Resources are identified by URLs
 - Standard HTTP methods (GET, POST, PUT, DELETE) for CRUD operations
@@ -408,7 +408,7 @@ See [CONFIGURATION.md](CONFIGURATION.md) for detailed configuration documentatio
 
 The Ingenic A1 SoC has only 256MB of RAM, requiring specific optimizations:
 
-1. **go2rtc Efficiency**: go2rtc handles camera connections, reducing LightNVR memory usage
+1. **go2rtc Efficiency**: go2rtc handles camera connections, reducing Oneberry memory usage
 2. **Staggered Initialization**: Streams are initialized one at a time to prevent memory spikes
 3. **JPEG-based Detection**: Uses go2rtc's `frame.jpeg` endpoint instead of decoding video
 4. **Swap Support**: Optional swap file for additional virtual memory
@@ -416,7 +416,7 @@ The Ingenic A1 SoC has only 256MB of RAM, requiring specific optimizations:
 
 ## Shutdown Coordination System
 
-LightNVR implements a robust shutdown coordination system to ensure clean and orderly shutdown of all components.
+Oneberry implements a robust shutdown coordination system to ensure clean and orderly shutdown of all components.
 
 The shutdown coordination system follows a priority-based approach to ensure components shut down in the correct dependency order:
 
@@ -454,7 +454,7 @@ This system prevents race conditions, deadlocks, and memory corruption during sh
 
 ## Error Handling and Recovery
 
-LightNVR is designed to be robust and self-healing:
+Oneberry is designed to be robust and self-healing:
 
 1. **go2rtc Health Monitoring**: Monitors go2rtc API and restarts on failure
 2. **Stream Reconnection**: go2rtc automatically reconnects to streams after network issues
@@ -464,7 +464,7 @@ LightNVR is designed to be robust and self-healing:
 
 ## Security Considerations
 
-LightNVR implements several security measures:
+Oneberry implements several security measures:
 
 1. **Session-based Authentication**: Secure token-based sessions with expiration
 2. **Password Hashing**: Passwords are stored as salted hashes

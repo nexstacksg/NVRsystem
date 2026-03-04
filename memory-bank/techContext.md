@@ -1,4 +1,4 @@
-# Tech Context: LightNVR
+# Tech Context: Oneberry
 
 ## Core Technologies
 
@@ -32,7 +32,7 @@
     1. Clone repository.
     2. Run `./scripts/build.sh` (handles CMake configuration, compilation, and frontend build via Vite).
     3. Output binaries/libraries are typically placed in a `build/` directory.
-- **Installation:** `./scripts/install.sh` copies binaries, configuration files, and systemd service files to standard system locations (e.g., `/usr/local/bin`, `/etc/lightnvr`, `/lib/systemd/system`).
+- **Installation:** `./scripts/install.sh` copies binaries, configuration files, and systemd service files to standard system locations (e.g., `/usr/local/bin`, `/etc/oneberry`, `/lib/systemd/system`).
 - **Docker:** Dockerfiles (`Dockerfile`, `Dockerfile.alpine`) are provided for containerized builds and deployment. Uses multi-stage builds.
 
 ## Key Libraries & Dependencies (Backend C)
