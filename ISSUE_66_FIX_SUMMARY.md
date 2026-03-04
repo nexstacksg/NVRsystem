@@ -7,7 +7,7 @@ This document summarizes the comprehensive fix for Issue #66, which addresses th
 ## Problems Identified
 
 ### 1. Database Not Persisted (Primary Issue)
-The original `docker-compose.yml` and Dockerfiles only mounted `/var/lib/lightnvr/recordings` as a volume, leaving the database at `/var/lib/lightnvr/lightnvr.db` inside the container's ephemeral filesystem. This caused:
+The original `docker-compose.yml` and Dockerfiles only mounted `/var/lib/oneberry/recordings` as a volume, leaving the database at `/var/lib/oneberry/oneberry.db` inside the container's ephemeral filesystem. This caused:
 - Complete loss of database on container restart
 - Loss of all stream configurations
 - Loss of user settings and authentication data
@@ -28,25 +28,25 @@ These settings existed in the config structure and INI file but were never actua
 ### Files Modified
 
 1. **docker-compose.yml**
-   - Changed volume mount from `./recordings:/var/lib/lightnvr/recordings` to `./data:/var/lib/lightnvr/data`
+   - Changed volume mount from `./recordings:/var/lib/oneberry/recordings` to `./data:/var/lib/oneberry/data`
    - Added port 1984 for go2rtc API
    - Added timezone environment variable
 
 2. **Dockerfile**
-   - Updated VOLUME declarations from `/var/lib/lightnvr/recordings` to `/var/lib/lightnvr/data`
-   - Updated directory creation to use `/var/lib/lightnvr/data` structure
+   - Updated VOLUME declarations from `/var/lib/oneberry/recordings` to `/var/lib/oneberry/data`
+   - Updated directory creation to use `/var/lib/oneberry/data` structure
    - Added comments explaining volume purposes
 
 3. **Dockerfile.alpine**
    - Same updates as main Dockerfile for Alpine-based builds
 
-4. **config/lightnvr.ini**
-   - Updated all paths to use `/var/lib/lightnvr/data` subdirectories:
-     - Database: `/var/lib/lightnvr/data/database/lightnvr.db`
-     - Recordings: `/var/lib/lightnvr/data/recordings`
-     - MP4 recordings: `/var/lib/lightnvr/data/recordings/mp4`
-     - Models: `/var/lib/lightnvr/data/models`
-     - Swap: `/var/lib/lightnvr/data/swap`
+4. **config/oneberry.ini**
+   - Updated all paths to use `/var/lib/oneberry/data` subdirectories:
+     - Database: `/var/lib/oneberry/data/database/oneberry.db`
+     - Recordings: `/var/lib/oneberry/data/recordings`
+     - MP4 recordings: `/var/lib/oneberry/data/recordings/mp4`
+     - Models: `/var/lib/oneberry/data/models`
+     - Swap: `/var/lib/oneberry/data/swap`
 
 5. **src/core/config.c**
    - Added parsing for `record_mp4_directly` setting
@@ -80,17 +80,17 @@ These settings existed in the config structure and INI file but were never actua
 
 ### Before (Broken)
 ```
-./config -> /etc/lightnvr
-./recordings -> /var/lib/lightnvr/recordings
-Database: /var/lib/lightnvr/lightnvr.db (NOT PERSISTED!)
+./config -> /etc/oneberry
+./recordings -> /var/lib/oneberry/recordings
+Database: /var/lib/oneberry/oneberry.db (NOT PERSISTED!)
 ```
 
 ### After (Fixed)
 ```
-./config -> /etc/lightnvr
-./data -> /var/lib/lightnvr/data
+./config -> /etc/oneberry
+./data -> /var/lib/oneberry/data
   ├── database/
-  │   └── lightnvr.db
+  │   └── oneberry.db
   ├── recordings/
   │   ├── hls/
   │   └── mp4/
@@ -117,14 +117,14 @@ The GitHub Actions workflow (`.github/workflows/docker-publish.yml`) will automa
 
 **Important**: The next published image will have the updated volume structure. Users pulling the new image will need to:
 1. Follow the migration guide in `DOCKER_MIGRATION_GUIDE.md`
-2. Update their volume mounts to use `/var/lib/lightnvr/data`
+2. Update their volume mounts to use `/var/lib/oneberry/data`
 3. Update their configuration files with new paths
 
 ### Breaking Change Notice
 
 This is a **breaking change** for existing Docker users. The volume mount point has changed from:
-- Old: `/var/lib/lightnvr/recordings`
-- New: `/var/lib/lightnvr/data`
+- Old: `/var/lib/oneberry/recordings`
+- New: `/var/lib/oneberry/data`
 
 **Recommendation**: 
 - Bump the version to indicate a breaking change (e.g., 0.12.0 or 1.0.0)
@@ -173,7 +173,7 @@ The fix also enables proper parsing of MP4 recording options:
 record_mp4_directly = false
 
 ; Path for MP4 recordings
-mp4_path = /var/lib/lightnvr/data/recordings/mp4
+mp4_path = /var/lib/oneberry/data/recordings/mp4
 
 ; Duration of each MP4 segment in seconds (default: 900 = 15 minutes)
 mp4_segment_duration = 900
@@ -197,7 +197,7 @@ These settings were previously ignored but are now functional.
 - `docker-compose.yml` - Updated volume mounts
 - `Dockerfile` - Updated volume declarations and directory structure
 - `Dockerfile.alpine` - Updated volume declarations and directory structure
-- `config/lightnvr.ini` - Updated all paths to use data directory
+- `config/oneberry.ini` - Updated all paths to use data directory
 - `src/core/config.c` - Added MP4 configuration parsing
 - `README.md` - Updated Docker installation instructions
 - `docs/INSTALLATION.md` - Comprehensive Docker documentation
@@ -210,13 +210,13 @@ After deployment, users can verify the fix with:
 
 ```bash
 # Check database exists and persists
-ls -la ./data/database/lightnvr.db
+ls -la ./data/database/oneberry.db
 
 # Restart container
 docker-compose restart
 
 # Verify database still exists
-ls -la ./data/database/lightnvr.db
+ls -la ./data/database/oneberry.db
 
 # Check that streams are still configured
 # (Access web interface and verify settings)
@@ -234,5 +234,5 @@ For issues during migration or with the new structure:
 
 - Issue reported by: @BrianLakstins
 - Fix implemented by: AI Assistant (Augment)
-- Repository: opensensor/lightNVR
+- Repository: opensensor/oneberry
 

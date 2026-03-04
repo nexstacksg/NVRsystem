@@ -1,7 +1,7 @@
 {
-  "name": "lightnvr",
+  "name": "oneberry",
   "version": "1.0.0",
-  "description": "LightNVR Integration Tests",
+  "description": "Oneberry Integration Tests",
   "scripts": {
     "test": "npx playwright test",
     "test:api": "npx playwright test --grep @api",

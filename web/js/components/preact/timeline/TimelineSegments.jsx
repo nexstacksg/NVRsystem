@@ -1,5 +1,5 @@
 /**
- * LightNVR Timeline Segments Component
+ * Oneberry Timeline Segments Component
  * Displays recording segments on the timeline
  */
 

@@ -1,5 +1,5 @@
 /**
- * LightNVR Web Interface Live View Page
+ * Oneberry Web Interface Live View Page
  * Entry point for the live view page with WebRTC/HLS support
  */
 

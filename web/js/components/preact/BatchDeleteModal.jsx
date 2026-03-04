@@ -1,5 +1,5 @@
 /**
- * LightNVR Web Interface Batch Delete Modal Component
+ * Oneberry Web Interface Batch Delete Modal Component
  * Preact component for displaying progress of batch delete operations
  */
 

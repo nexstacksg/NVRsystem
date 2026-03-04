@@ -1,5 +1,5 @@
 /**
- * LightNVR version information
+ * Oneberry version information
  * This file is auto-generated from CMakeLists.txt during the build process
  * DO NOT EDIT MANUALLY
  */

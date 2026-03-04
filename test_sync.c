@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     set_log_level(LOG_LEVEL_INFO);
     
     // Initialize database
-    if (init_database("/var/lib/lightnvr/lightnvr.db") != 0) {
+    if (init_database("/var/lib/oneberry/oneberry.db") != 0) {
         fprintf(stderr, "Failed to initialize database\n");
         return 1;
     }

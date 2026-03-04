@@ -1,6 +1,6 @@
-# LightNVR Docker Quick Start Guide
+# Oneberry Docker Quick Start Guide
 
-Get LightNVR running in under 5 minutes!
+Get Oneberry running in under 5 minutes!
 
 ## Prerequisites
 
@@ -13,10 +13,10 @@ Get LightNVR running in under 5 minutes!
 
 ```bash
 # Clone the repository
-git clone https://github.com/opensensor/lightNVR.git
-cd lightNVR
+git clone https://github.com/opensensor/oneberry.git
+cd oneberry
 
-# Start LightNVR
+# Start Oneberry
 docker-compose up -d
 
 # View logs
@@ -35,22 +35,22 @@ docker-compose logs -f
 # Create directories for persistent data
 mkdir -p config data
 
-# Run LightNVR
+# Run Oneberry
 docker run -d \
-  --name lightnvr \
+  --name oneberry \
   --restart unless-stopped \
   -p 8080:8080 \
   -p 8554:8554 \
   -p 8555:8555 \
   -p 8555:8555/udp \
   -p 1984:1984 \
-  -v $(pwd)/config:/etc/lightnvr \
-  -v $(pwd)/data:/var/lib/lightnvr/data \
+  -v $(pwd)/config:/etc/oneberry \
+  -v $(pwd)/data:/var/lib/oneberry/data \
   -e TZ=America/New_York \
-  ghcr.io/opensensor/lightnvr:latest
+  ghcr.io/opensensor/oneberry:latest
 
 # View logs
-docker logs -f lightnvr
+docker logs -f oneberry
 ```
 
 ## What Happens on First Run?
@@ -82,7 +82,7 @@ The container automatically:
 docker-compose logs -f
 
 # Docker Run
-docker logs -f lightnvr
+docker logs -f oneberry
 ```
 
 ### Restart Container
@@ -91,7 +91,7 @@ docker logs -f lightnvr
 docker-compose restart
 
 # Docker Run
-docker restart lightnvr
+docker restart oneberry
 ```
 
 ### Stop Container
@@ -100,7 +100,7 @@ docker restart lightnvr
 docker-compose down
 
 # Docker Run
-docker stop lightnvr
+docker stop oneberry
 ```
 
 ### Update to Latest Version
@@ -110,9 +110,9 @@ docker-compose pull
 docker-compose up -d
 
 # Docker Run
-docker pull ghcr.io/opensensor/lightnvr:latest
-docker stop lightnvr
-docker rm lightnvr
+docker pull ghcr.io/opensensor/oneberry:latest
+docker stop oneberry
+docker rm oneberry
 # Then run the docker run command again
 ```
 
@@ -148,8 +148,8 @@ vlc rtsp://localhost:8554/stream-name
 
 ### Edit Main Configuration
 ```bash
-# Edit lightnvr.ini
-nano ./config/lightnvr.ini
+# Edit oneberry.ini
+nano ./config/oneberry.ini
 
 # Restart to apply changes
 docker-compose restart
@@ -170,7 +170,7 @@ docker-compose restart
 
 **Check if container is running:**
 ```bash
-docker ps | grep lightnvr
+docker ps | grep oneberry
 ```
 
 **Check logs for errors:**
@@ -187,13 +187,13 @@ curl http://localhost:8080
 
 **Ensure UDP port is exposed:**
 ```bash
-docker ps | grep lightnvr
+docker ps | grep oneberry
 # Should show 8555/tcp and 8555/udp
 ```
 
 **Check go2rtc is running:**
 ```bash
-docker exec lightnvr ps aux | grep go2rtc
+docker exec oneberry ps aux | grep go2rtc
 ```
 
 **Test go2rtc API:**
@@ -205,14 +205,14 @@ curl http://localhost:1984/api/streams
 
 **Verify volume mounts:**
 ```bash
-docker inspect lightnvr | grep -A 10 Mounts
+docker inspect oneberry | grep -A 10 Mounts
 ```
 
 **Should show:**
-- `/etc/lightnvr`
-- `/var/lib/lightnvr/data`
+- `/etc/oneberry`
+- `/var/lib/oneberry/data`
 
-**⚠️ Important:** Do NOT mount `/var/lib/lightnvr` directly!
+**⚠️ Important:** Do NOT mount `/var/lib/oneberry` directly!
 
 ### Recordings Not Saving
 
@@ -228,7 +228,7 @@ ls -la ./data/recordings/
 
 **Check configuration:**
 ```bash
-grep -A 5 "\[storage\]" ./config/lightnvr.ini
+grep -A 5 "\[storage\]" ./config/oneberry.ini
 ```
 
 ## Environment Variables
@@ -251,13 +251,13 @@ environment:
 
 ```
 ./config/                    # Configuration files
-├── lightnvr.ini            # Main configuration
+├── oneberry.ini            # Main configuration
 └── go2rtc/
     └── go2rtc.yaml         # go2rtc configuration
 
 ./data/                      # Persistent data
 ├── database/
-│   └── lightnvr.db         # SQLite database
+│   └── oneberry.db         # SQLite database
 ├── recordings/
 │   ├── hls/                # HLS recordings
 │   └── mp4/                # MP4 recordings
@@ -290,13 +290,13 @@ environment:
 - 📖 Read the [Full Docker Guide](docs/DOCKER.md)
 - 🔧 Check [Configuration Guide](docs/CONFIGURATION.md)
 - 🐛 See [Troubleshooting Guide](docs/TROUBLESHOOTING.md)
-- 💬 Join discussions on [GitHub](https://github.com/opensensor/lightNVR/discussions)
+- 💬 Join discussions on [GitHub](https://github.com/opensensor/oneberry/discussions)
 
 ## Getting Help
 
-- **Documentation:** https://github.com/opensensor/lightNVR/tree/main/docs
-- **Issues:** https://github.com/opensensor/lightNVR/issues
-- **Discussions:** https://github.com/opensensor/lightNVR/discussions
+- **Documentation:** https://github.com/opensensor/oneberry/tree/main/docs
+- **Issues:** https://github.com/opensensor/oneberry/issues
+- **Discussions:** https://github.com/opensensor/oneberry/discussions
 
 ## Example docker-compose.yml
 
@@ -304,9 +304,9 @@ environment:
 version: '3.8'
 
 services:
-  lightnvr:
-    image: ghcr.io/opensensor/lightnvr:latest
-    container_name: lightnvr
+  oneberry:
+    image: ghcr.io/opensensor/oneberry:latest
+    container_name: oneberry
     restart: unless-stopped
     ports:
       - "8080:8080"     # Web UI
@@ -315,17 +315,17 @@ services:
       - "8555:8555/udp" # WebRTC UDP
       - "1984:1984"     # go2rtc API
     volumes:
-      - ./config:/etc/lightnvr
-      - ./data:/var/lib/lightnvr/data
+      - ./config:/etc/oneberry
+      - ./data:/var/lib/oneberry/data
     environment:
       - TZ=America/New_York
       - GO2RTC_CONFIG_PERSIST=true
       - LIGHTNVR_AUTO_INIT=true
     networks:
-      - lightnvr
+      - oneberry
 
 networks:
-  lightnvr:
+  oneberry:
     driver: bridge
 ```
 

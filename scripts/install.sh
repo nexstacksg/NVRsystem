@@ -1,19 +1,19 @@
 #!/bin/bash
 
-# LightNVR Installation Script
+# Oneberry Installation Script
 
 # Exit on error
 set -e
 
 # Default installation prefix
 PREFIX="/usr/local"
-CONFIG_DIR="/etc/lightnvr"
-DATA_DIR="/var/lib/lightnvr"
-LOG_DIR="/var/log/lightnvr"
-RUN_DIR="/var/run/lightnvr"
+CONFIG_DIR="/etc/oneberry"
+DATA_DIR="/var/lib/oneberry"
+LOG_DIR="/var/log/oneberry"
+RUN_DIR="/var/run/oneberry"
 INSTALL_SOD=1
 INSTALL_GO2RTC=1
-GO2RTC_CONFIG_DIR="/etc/lightnvr/go2rtc"
+GO2RTC_CONFIG_DIR="/etc/oneberry/go2rtc"
 DO_LDCONFIG=1
 INSTALL_SYSTEMD_SERVICE=1
 
@@ -81,10 +81,10 @@ while [[ $# -gt 0 ]]; do
             echo "Usage: $0 [options]"
             echo "Options:"
             echo "  --prefix=DIR       Installation prefix (default: /usr/local)"
-            echo "  --config-dir=DIR   Configuration directory (default: /etc/lightnvr)"
-            echo "  --data-dir=DIR     Data directory (default: /var/lib/lightnvr)"
-            echo "  --log-dir=DIR      Log directory (default: /var/log/lightnvr)"
-            echo "  --run-dir=DIR      Run directory (default: /var/run/lightnvr)"
+            echo "  --config-dir=DIR   Configuration directory (default: /etc/oneberry)"
+            echo "  --data-dir=DIR     Data directory (default: /var/lib/oneberry)"
+            echo "  --log-dir=DIR      Log directory (default: /var/log/oneberry)"
+            echo "  --run-dir=DIR      Run directory (default: /var/run/oneberry)"
             echo "  --with-sod         Install with SOD support (default)"
             echo "  --without-sod      Install without SOD support"
             echo "  --with-ldconfig    Run ldconfig after installing SOD library (default)"
@@ -93,7 +93,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --without-systemd  Skip installing systemd service"
             echo "  --with-go2rtc      Install with go2rtc support (default)"
             echo "  --without-go2rtc   Install without go2rtc support"
-            echo "  --go2rtc-config-dir=DIR  Set go2rtc config directory (default: /etc/lightnvr/go2rtc)"
+            echo "  --go2rtc-config-dir=DIR  Set go2rtc config directory (default: /etc/oneberry/go2rtc)"
             echo "  --help             Show this help message"
             exit 0
             ;;
@@ -111,17 +111,17 @@ if [ "$(id -u)" -ne 0 ]; then
     exit 1
 fi
 
-# Search for the lightnvr binary first
-echo "Searching for LightNVR binary..."
+# Search for the oneberry binary first
+echo "Searching for Oneberry binary..."
 BINARY_PATH=""
 POSSIBLE_BINARY_PATHS=(
-    "lightnvr"
-    "build/Release/bin/lightnvr"
-    "build/Debug/bin/lightnvr"
-    "build/Release/lightnvr"
-    "build/Debug/lightnvr"
-    "build/bin/lightnvr"
-    "build/lightnvr"
+    "oneberry"
+    "build/Release/bin/oneberry"
+    "build/Debug/bin/oneberry"
+    "build/Release/oneberry"
+    "build/Debug/oneberry"
+    "build/bin/oneberry"
+    "build/oneberry"
 )
 
 for path in "${POSSIBLE_BINARY_PATHS[@]}"; do
@@ -229,7 +229,7 @@ mkdir -p "$RUN_DIR"
 
 # Install binary
 echo "Installing binary..."
-install -m 755 "$BINARY_PATH" "$PREFIX/bin/lightnvr"
+install -m 755 "$BINARY_PATH" "$PREFIX/bin/oneberry"
 
 # Install SOD library if enabled
 if [ "$INSTALL_SOD" -eq 1 ]; then
@@ -276,12 +276,12 @@ fi
 
 # Install configuration files
 echo "Installing configuration files..."
-if [ ! -f "$CONFIG_DIR/lightnvr.ini" ]; then
-    install -m 644 config/lightnvr.ini "$CONFIG_DIR/lightnvr.ini"
-    echo "Installed default configuration to $CONFIG_DIR/lightnvr.ini"
+if [ ! -f "$CONFIG_DIR/oneberry.ini" ]; then
+    install -m 644 config/oneberry.ini "$CONFIG_DIR/oneberry.ini"
+    echo "Installed default configuration to $CONFIG_DIR/oneberry.ini"
 else
     echo "Configuration file already exists, not overwriting"
-    install -m 644 config/lightnvr.ini "$CONFIG_DIR/lightnvr.ini.default"
+    install -m 644 config/oneberry.ini "$CONFIG_DIR/oneberry.ini.default"
 fi
 
 # Install go2rtc configuration if enabled
@@ -307,7 +307,7 @@ log:
   level: info
 
 streams:
-  # Streams will be added dynamically by LightNVR
+  # Streams will be added dynamically by Oneberry
 EOF
         echo "Created default go2rtc configuration at $GO2RTC_CONFIG_DIR/go2rtc.yaml"
     else
@@ -371,7 +371,7 @@ fi
 
 # Set permissions
 echo "Setting permissions..."
-chown -R root:root "$PREFIX/bin/lightnvr"
+chown -R root:root "$PREFIX/bin/oneberry"
 chown -R root:root "$CONFIG_DIR"
 chown -R root:root "$DATA_DIR"
 chown -R root:root "$LOG_DIR"
@@ -384,15 +384,15 @@ if [ "$INSTALL_SYSTEMD_SERVICE" -eq 0 ]; then
 else
     # Create systemd service file
     echo "Creating systemd service file..."
-    cat > /etc/systemd/system/lightnvr.service << EOF
+    cat > /etc/systemd/system/oneberry.service << EOF
 [Unit]
-Description=LightNVR - Lightweight Network Video Recorder
+Description=Oneberry - Lightweight Network Video Recorder
 After=network.target network-online.target
 Wants=network-online.target
 
 [Service]
 Type=forking
-PIDFile=$DATA_DIR/data/lightnvr.pid
+PIDFile=$DATA_DIR/data/oneberry.pid
 User=root
 Group=root
 # Set environment variables for proper operation
@@ -402,7 +402,7 @@ Environment="LD_LIBRARY_PATH=/usr/local/lib:/usr/lib:/lib"
 Environment="FFMPEG_DATADIR=/usr/share/ffmpeg"
 # Do NOT set WorkingDirectory - daemon code handles this to avoid SQLite issues
 # Do NOT set PWD environment variable - let the daemon determine the working directory
-ExecStart=$PREFIX/bin/lightnvr -c $CONFIG_DIR/lightnvr.ini -d
+ExecStart=$PREFIX/bin/oneberry -c $CONFIG_DIR/oneberry.ini -d
 ExecReload=/bin/kill -HUP \$MAINPID
 KillMode=mixed
 KillSignal=SIGTERM
@@ -417,7 +417,7 @@ ExecStartPre=/bin/chmod 755 $DATA_DIR $LOG_DIR $RUN_DIR
 # Log to journal for better debugging
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=lightnvr
+SyslogIdentifier=oneberry
 
 [Install]
 WantedBy=multi-user.target
@@ -430,17 +430,17 @@ fi
 
 echo "Installation completed successfully!"
 echo ""
-echo "To start LightNVR:"
-echo "  systemctl start lightnvr"
+echo "To start Oneberry:"
+echo "  systemctl start oneberry"
 echo ""
-echo "To enable LightNVR to start at boot:"
-echo "  systemctl enable lightnvr"
+echo "To enable Oneberry to start at boot:"
+echo "  systemctl enable oneberry"
 echo ""
-echo "To check LightNVR status:"
-echo "  systemctl status lightnvr"
+echo "To check Oneberry status:"
+echo "  systemctl status oneberry"
 echo ""
-echo "Configuration file: $CONFIG_DIR/lightnvr.ini"
-echo "Log file: $LOG_DIR/lightnvr.log"
+echo "Configuration file: $CONFIG_DIR/oneberry.ini"
+echo "Log file: $LOG_DIR/oneberry.log"
 echo "Web interface: http://localhost:8080 (default port)"
 
 if [ "$INSTALL_SOD" -eq 1 ]; then
@@ -450,13 +450,13 @@ if [ "$INSTALL_SOD" -eq 1 ]; then
 
     # Verify if the library is properly linked to the binary
     echo ""
-    echo "Checking if lightnvr is linked to libsod.so..."
-    if ldd "$PREFIX/bin/lightnvr" | grep -q "libsod.so"; then
-        echo "SUCCESS: lightnvr is correctly linked to libsod.so"
+    echo "Checking if oneberry is linked to libsod.so..."
+    if ldd "$PREFIX/bin/oneberry" | grep -q "libsod.so"; then
+        echo "SUCCESS: oneberry is correctly linked to libsod.so"
     else
-        echo "WARNING: lightnvr is not linked to libsod.so"
+        echo "WARNING: oneberry is not linked to libsod.so"
         echo "This may indicate a problem with dynamic linking."
-        echo "LightNVR will attempt to load the library at runtime."
+        echo "Oneberry will attempt to load the library at runtime."
     fi
 else
     echo ""

@@ -1,5 +1,5 @@
 /**
- * Base Page Object Model for LightNVR pages
+ * Base Page Object Model for Oneberry pages
  * 
  * Provides common functionality for all page objects.
  */

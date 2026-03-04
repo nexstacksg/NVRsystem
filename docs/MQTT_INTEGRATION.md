@@ -1,10 +1,10 @@
 # MQTT Integration for Detection Event Streaming
 
-LightNVR can publish detection events to an MQTT broker in real-time, enabling integration with home automation systems, custom alerting, and external processing pipelines.
+Oneberry can publish detection events to an MQTT broker in real-time, enabling integration with home automation systems, custom alerting, and external processing pipelines.
 
 ## What is MQTT?
 
-MQTT (Message Queuing Telemetry Transport) is a lightweight publish/subscribe messaging protocol commonly used in IoT and home automation. When LightNVR detects an object (person, car, etc.), it publishes a message to an MQTT broker, and any subscribed clients receive that message instantly.
+MQTT (Message Queuing Telemetry Transport) is a lightweight publish/subscribe messaging protocol commonly used in IoT and home automation. When Oneberry detects an object (person, car, etc.), it publishes a message to an MQTT broker, and any subscribed clients receive that message instantly.
 
 **Common use cases:**
 - Home Assistant automations (turn on lights when person detected)
@@ -43,9 +43,9 @@ brew install mosquitto
 brew services start mosquitto
 ```
 
-### 2. Configure LightNVR
+### 2. Configure Oneberry
 
-Edit your `lightnvr.ini` configuration file and add/modify the `[mqtt]` section:
+Edit your `oneberry.ini` configuration file and add/modify the `[mqtt]` section:
 
 ```ini
 [mqtt]
@@ -59,14 +59,14 @@ broker_host = localhost
 broker_port = 1883
 
 ; Optional authentication
-; username = lightnvr
+; username = oneberry
 ; password = your_password
 
 ; Client ID (must be unique per client)
-client_id = lightnvr
+client_id = oneberry
 
 ; Topic prefix - events published to: {topic_prefix}/detections/{stream_name}
-topic_prefix = lightnvr
+topic_prefix = oneberry
 
 ; TLS encryption (requires broker TLS support)
 tls_enabled = false
@@ -77,35 +77,35 @@ qos = 1
 retain = false
 ```
 
-### 3. Restart LightNVR
+### 3. Restart Oneberry
 
-After changing the configuration, restart LightNVR:
+After changing the configuration, restart Oneberry:
 
 ```bash
 # If running as a service
-sudo systemctl restart lightnvr
+sudo systemctl restart oneberry
 
 # If running in Docker
-docker restart lightnvr
+docker restart oneberry
 
 # If running directly
-pkill lightnvr && ./lightnvr -c /path/to/lightnvr.ini
+pkill oneberry && ./oneberry -c /path/to/oneberry.ini
 ```
 
 ### 4. Test the Connection
 
-Open a terminal and subscribe to all LightNVR detection events:
+Open a terminal and subscribe to all Oneberry detection events:
 
 ```bash
 # Subscribe to all detection events
-mosquitto_sub -h localhost -t "lightnvr/detections/#" -v
+mosquitto_sub -h localhost -t "oneberry/detections/#" -v
 ```
 
 The `-v` flag shows the topic name along with the message. You should see output when detections occur on any stream.
 
 To subscribe to a specific stream:
 ```bash
-mosquitto_sub -h localhost -t "lightnvr/detections/front_door" -v
+mosquitto_sub -h localhost -t "oneberry/detections/front_door" -v
 ```
 
 ## Message Format
@@ -171,16 +171,16 @@ Add the following to your `configuration.yaml`:
 mqtt:
   sensor:
     - name: "Front Door Detections"
-      state_topic: "lightnvr/detections/front_door"
+      state_topic: "oneberry/detections/front_door"
       value_template: "{{ value_json.count }}"
-      json_attributes_topic: "lightnvr/detections/front_door"
+      json_attributes_topic: "oneberry/detections/front_door"
       json_attributes_template: "{{ value_json | tojson }}"
 
 # Create a binary sensor for person detection
 binary_sensor:
   - platform: mqtt
     name: "Person at Front Door"
-    state_topic: "lightnvr/detections/front_door"
+    state_topic: "oneberry/detections/front_door"
     value_template: >
       {% if value_json.detections | selectattr('label', 'eq', 'person') | list | count > 0 %}
         ON
@@ -196,7 +196,7 @@ automation:
   - alias: "Notify on Person Detection"
     trigger:
       platform: mqtt
-      topic: "lightnvr/detections/front_door"
+      topic: "oneberry/detections/front_door"
     condition:
       - condition: template
         value_template: >
@@ -219,7 +219,7 @@ import paho.mqtt.client as mqtt
 
 BROKER_HOST = "localhost"
 BROKER_PORT = 1883
-TOPIC = "lightnvr/detections/#"
+TOPIC = "oneberry/detections/#"
 
 def on_connect(client, userdata, flags, rc):
     print(f"Connected to MQTT broker (rc={rc})")
@@ -249,7 +249,7 @@ Install dependencies: `pip install paho-mqtt`
 #!/bin/bash
 # Simple alert script - sends desktop notification on person detection
 
-mosquitto_sub -h localhost -t "lightnvr/detections/#" | while read -r line; do
+mosquitto_sub -h localhost -t "oneberry/detections/#" | while read -r line; do
     # Extract stream name and check for person
     if echo "$line" | grep -q '"label":"person"'; then
         stream=$(echo "$line" | grep -oP '"stream":"\K[^"]+')
@@ -280,10 +280,10 @@ mosquitto_pub -h localhost -t "test" -m "hello"
 mosquitto_sub -h localhost -t "test"
 ```
 
-**Check LightNVR logs:**
+**Check Oneberry logs:**
 ```bash
 # Look for MQTT-related messages
-tail -f /var/log/lightnvr.log | grep -i mqtt
+tail -f /var/log/oneberry.log | grep -i mqtt
 ```
 
 ### Authentication Issues
@@ -298,13 +298,13 @@ If your broker requires authentication:
 
 2. **Create password file:**
    ```bash
-   sudo mosquitto_passwd -c /etc/mosquitto/passwd lightnvr
+   sudo mosquitto_passwd -c /etc/mosquitto/passwd oneberry
    ```
 
-3. **Configure LightNVR:**
+3. **Configure Oneberry:**
    ```ini
    [mqtt]
-   username = lightnvr
+   username = oneberry
    password = your_password
    ```
 
@@ -339,7 +339,7 @@ For secure connections over the internet:
    keyfile /etc/mosquitto/certs/server.key
    ```
 
-2. **Configure LightNVR:**
+2. **Configure Oneberry:**
    ```ini
    [mqtt]
    broker_port = 8883
@@ -355,18 +355,18 @@ When `retain = true`, the broker stores the last message on each topic. New subs
 retain = true
 ```
 
-### Multiple LightNVR Instances
+### Multiple Oneberry Instances
 
-If running multiple LightNVR instances, ensure each has a unique `client_id`:
+If running multiple Oneberry instances, ensure each has a unique `client_id`:
 
 ```ini
 # Instance 1
 [mqtt]
-client_id = lightnvr-garage
+client_id = oneberry-garage
 
 # Instance 2
 [mqtt]
-client_id = lightnvr-frontyard
+client_id = oneberry-frontyard
 ```
 
 

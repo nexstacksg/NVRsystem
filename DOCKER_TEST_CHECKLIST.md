@@ -26,7 +26,7 @@ sleep 10
 
 ### Verification
 - [ ] Container starts without errors
-- [ ] `config/lightnvr.ini` created automatically
+- [ ] `config/oneberry.ini` created automatically
 - [ ] `config/go2rtc/go2rtc.yaml` created automatically
 - [ ] `data/database/` directory exists
 - [ ] `data/recordings/` directory exists
@@ -37,11 +37,11 @@ sleep 10
 
 ### Expected Logs
 ```
-[INFO] Initializing LightNVR configuration...
+[INFO] Initializing Oneberry configuration...
 [INFO] Copying web assets from template...
 [INFO] Creating default configuration file...
 [INFO] Creating default go2rtc configuration...
-[INFO] Starting LightNVR...
+[INFO] Starting Oneberry...
 ```
 
 ## Test 2: Configuration Persistence
@@ -49,7 +49,7 @@ sleep 10
 ### Steps
 ```bash
 # Modify configuration
-echo "# Custom comment" >> config/lightnvr.ini
+echo "# Custom comment" >> config/oneberry.ini
 echo "# Custom go2rtc comment" >> config/go2rtc/go2rtc.yaml
 
 # Restart container
@@ -60,7 +60,7 @@ sleep 5
 ```
 
 ### Verification
-- [ ] Custom comments still present in `lightnvr.ini`
+- [ ] Custom comments still present in `oneberry.ini`
 - [ ] Custom comments still present in `go2rtc.yaml`
 - [ ] Web UI still accessible
 - [ ] No new config files created
@@ -84,7 +84,7 @@ sleep 5
 
 ### Verification
 - [ ] Test stream still exists after restart
-- [ ] Database file exists at `data/database/lightnvr.db`
+- [ ] Database file exists at `data/database/oneberry.db`
 - [ ] Database file size > 0
 - [ ] Can query streams via API
 
@@ -117,22 +117,22 @@ sleep 10
 ```bash
 # Clean start
 rm -rf config/ data/
-docker stop lightnvr 2>/dev/null || true
-docker rm lightnvr 2>/dev/null || true
+docker stop oneberry 2>/dev/null || true
+docker rm oneberry 2>/dev/null || true
 
 # Run container
 docker run -d \
-  --name lightnvr \
+  --name oneberry \
   --restart unless-stopped \
   -p 8080:8080 \
   -p 8554:8554 \
   -p 8555:8555 \
   -p 8555:8555/udp \
   -p 1984:1984 \
-  -v $(pwd)/config:/etc/lightnvr \
-  -v $(pwd)/data:/var/lib/lightnvr/data \
+  -v $(pwd)/config:/etc/oneberry \
+  -v $(pwd)/data:/var/lib/oneberry/data \
   -e TZ=America/New_York \
-  ghcr.io/opensensor/lightnvr:latest
+  ghcr.io/opensensor/oneberry:latest
 
 # Wait for initialization
 sleep 10
@@ -170,7 +170,7 @@ nc -zuv localhost 8555 || echo "Port 8555 UDP FAILED"
 sleep 30
 
 # Check health status
-docker inspect lightnvr | grep -A 5 Health
+docker inspect oneberry | grep -A 5 Health
 ```
 
 ### Verification
@@ -206,14 +206,14 @@ cat config/go2rtc/go2rtc.yaml
 ### Steps
 ```bash
 # Check go2rtc is running
-docker exec lightnvr ps aux | grep go2rtc
+docker exec oneberry ps aux | grep go2rtc
 
 # Test go2rtc API
 curl http://localhost:1984/api/config
 
 # Check go2rtc logs
-docker exec lightnvr cat /var/log/lightnvr/go2rtc.log 2>/dev/null || \
-  docker logs lightnvr 2>&1 | grep go2rtc
+docker exec oneberry cat /var/log/oneberry/go2rtc.log 2>/dev/null || \
+  docker logs oneberry 2>&1 | grep go2rtc
 ```
 
 ### Verification
@@ -269,7 +269,7 @@ sleep 10
 ```bash
 # Simulate old version with data
 mkdir -p config data/database data/recordings
-echo "existing data" > data/database/lightnvr.db
+echo "existing data" > data/database/oneberry.db
 
 # Pull latest image
 docker-compose pull
@@ -290,15 +290,15 @@ sleep 10
 ### Steps
 ```bash
 # Create second instance
-mkdir -p lightnvr-2/{config,data}
-cd lightnvr-2
+mkdir -p oneberry-2/{config,data}
+cd oneberry-2
 
 # Create docker-compose.yml with different ports
 cat > docker-compose.yml << 'EOF'
 version: '3.8'
 services:
-  lightnvr:
-    image: ghcr.io/opensensor/lightnvr:latest
+  oneberry:
+    image: ghcr.io/opensensor/oneberry:latest
     ports:
       - "8081:8080"
       - "8555:8554"
@@ -306,8 +306,8 @@ services:
       - "8556:8555/udp"
       - "1985:1984"
     volumes:
-      - ./config:/etc/lightnvr
-      - ./data:/var/lib/lightnvr/data
+      - ./config:/etc/oneberry
+      - ./data:/var/lib/oneberry/data
 EOF
 
 docker-compose up -d
@@ -326,7 +326,7 @@ sleep 10
 ### Steps
 ```bash
 # Monitor resource usage
-docker stats lightnvr --no-stream
+docker stats oneberry --no-stream
 
 # Check disk usage
 du -sh config/ data/
@@ -367,7 +367,7 @@ docker-compose down
 rm -rf config/ data/
 
 # Verify cleanup
-docker ps -a | grep lightnvr
+docker ps -a | grep oneberry
 ```
 
 ### Verification
@@ -400,20 +400,20 @@ time curl -f http://localhost:8080/
 
 ### Test S1: Non-Root User
 ```bash
-docker exec lightnvr whoami
+docker exec oneberry whoami
 ```
 **Expected:** Should not be root (future enhancement)
 
 ### Test S2: File Permissions
 ```bash
-docker exec lightnvr ls -la /etc/lightnvr
-docker exec lightnvr ls -la /var/lib/lightnvr/data
+docker exec oneberry ls -la /etc/oneberry
+docker exec oneberry ls -la /var/lib/oneberry/data
 ```
 **Expected:** Appropriate permissions (755 for directories)
 
 ### Test S3: Exposed Secrets
 ```bash
-docker inspect lightnvr | grep -i password
+docker inspect oneberry | grep -i password
 ```
 **Expected:** No hardcoded passwords in environment
 
@@ -481,7 +481,7 @@ _______________________________________________
 
 set -e
 
-echo "Starting LightNVR Docker Tests..."
+echo "Starting Oneberry Docker Tests..."
 
 # Test 1: Fresh Installation
 echo "Test 1: Fresh Installation"
@@ -494,18 +494,18 @@ echo "✓ Test 1 Passed"
 
 # Test 2: Configuration Persistence
 echo "Test 2: Configuration Persistence"
-echo "# Test comment" >> config/lightnvr.ini
+echo "# Test comment" >> config/oneberry.ini
 docker-compose restart
 sleep 5
-grep "Test comment" config/lightnvr.ini || exit 1
+grep "Test comment" config/oneberry.ini || exit 1
 echo "✓ Test 2 Passed"
 
 # Test 3: Database Persistence
 echo "Test 3: Database Persistence"
-test -f data/database/lightnvr.db || exit 1
+test -f data/database/oneberry.db || exit 1
 docker-compose restart
 sleep 5
-test -f data/database/lightnvr.db || exit 1
+test -f data/database/oneberry.db || exit 1
 echo "✓ Test 3 Passed"
 
 # Test 4: Port Accessibility

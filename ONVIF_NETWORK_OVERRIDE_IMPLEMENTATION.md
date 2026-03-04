@@ -6,7 +6,7 @@ This implementation adds support for overriding the ONVIF discovery network via 
 
 ## Problem Statement
 
-When running LightNVR in a Docker container, the automatic network detection skips Docker bridge interfaces (`docker*`, `veth*`, `br-*`, `lxc*`). This prevents ONVIF discovery from working in containerized environments where cameras may be on the host network or external networks accessible through Docker networking.
+When running Oneberry in a Docker container, the automatic network detection skips Docker bridge interfaces (`docker*`, `veth*`, `br-*`, `lxc*`). This prevents ONVIF discovery from working in containerized environments where cameras may be on the host network or external networks accessible through Docker networking.
 
 ## Solution
 
@@ -82,7 +82,7 @@ if (!network || strlen(network) == 0 || strcmp(network, "auto") == 0) {
 
 ### 5. Documentation Updates
 
-- **config/lightnvr.ini** - Added `[onvif]` section with examples
+- **config/oneberry.ini** - Added `[onvif]` section with examples
 - **docs/DOCKER.md** - Added environment variable documentation and usage examples
 - **docker-compose.yml** - Added commented example for `LIGHTNVR_ONVIF_NETWORK`
 - **docker-entrypoint.sh** - Added `[onvif]` section to default config template
@@ -93,7 +93,7 @@ if (!network || strlen(network) == 0 || strcmp(network, "auto") == 0) {
 
 ```yaml
 services:
-  lightnvr:
+  oneberry:
     environment:
       - LIGHTNVR_ONVIF_NETWORK=192.168.1.0/24
 ```
@@ -103,7 +103,7 @@ services:
 ```bash
 docker run -e LIGHTNVR_ONVIF_NETWORK=192.168.1.0/24 \
   -p 8080:8080 \
-  ghcr.io/opensensor/lightnvr:latest
+  ghcr.io/opensensor/oneberry:latest
 ```
 
 ### Config File
@@ -135,7 +135,7 @@ The implementation maintains backward compatibility:
 
 1. `src/core/config.c` - Added ONVIF defaults and config parsing
 2. `src/video/onvif_discovery.c` - Added environment variable check
-3. `config/lightnvr.ini` - Added `[onvif]` section
+3. `config/oneberry.ini` - Added `[onvif]` section
 4. `docs/DOCKER.md` - Added documentation
 5. `docker-compose.yml` - Added example
 6. `docker-entrypoint.sh` - Added default config template

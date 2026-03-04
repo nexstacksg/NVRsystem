@@ -1,11 +1,11 @@
-# LightNVR Scripts
+# Oneberry Scripts
 
-This directory contains various scripts for building, installing, and maintaining LightNVR.
+This directory contains various scripts for building, installing, and maintaining Oneberry.
 
 ## Installation Scripts
 
 ### `install.sh`
-Main installation script for LightNVR.
+Main installation script for Oneberry.
 
 **Usage:**
 ```bash
@@ -13,7 +13,7 @@ sudo bash scripts/install.sh
 ```
 
 **What it does:**
-- Installs the LightNVR binary
+- Installs the Oneberry binary
 - Installs SOD library (if enabled)
 - Creates necessary directories
 - Installs configuration files
@@ -40,7 +40,7 @@ sudo bash scripts/install_web_assets.sh
 **What it does:**
 - Checks for prebuilt web assets in `web/dist/`
 - Builds assets if needed (requires Node.js/npm)
-- Installs assets to `/var/lib/lightnvr/www/`
+- Installs assets to `/var/lib/oneberry/www/`
 - Sets proper permissions
 - Verifies installation
 
@@ -68,7 +68,7 @@ sudo bash scripts/diagnose_web_issue.sh
 ```
 
 **What it checks:**
-- LightNVR service status
+- Oneberry service status
 - Configuration file
 - Web root directory existence and permissions
 - Critical web files (index.html, etc.)
@@ -87,7 +87,7 @@ sudo bash scripts/diagnose_web_issue.sh
 ## Build Scripts
 
 ### `build.sh`
-Main build script for LightNVR.
+Main build script for Oneberry.
 
 **Usage:**
 ```bash
@@ -194,8 +194,8 @@ sudo bash scripts/install.sh
 sudo bash scripts/install_go2rtc.sh
 
 # 5. Start service
-sudo systemctl start lightnvr
-sudo systemctl enable lightnvr
+sudo systemctl start oneberry
+sudo systemctl enable oneberry
 ```
 
 ### Fixing Blank Web Page
@@ -208,7 +208,7 @@ sudo bash scripts/diagnose_web_issue.sh
 sudo bash scripts/install_web_assets.sh
 
 # 3. Restart service
-sudo systemctl restart lightnvr
+sudo systemctl restart oneberry
 ```
 
 ### Updating Web Interface Only
@@ -225,7 +225,7 @@ cd ..
 sudo bash scripts/install_web_assets.sh
 
 # 4. Restart service
-sudo systemctl restart lightnvr
+sudo systemctl restart oneberry
 ```
 
 ### Updating Application Only
@@ -237,13 +237,13 @@ sudo systemctl restart lightnvr
 bash scripts/build.sh --release
 
 # 3. Stop service
-sudo systemctl stop lightnvr
+sudo systemctl stop oneberry
 
 # 4. Install binary
-sudo cp build/bin/lightnvr /usr/local/bin/
+sudo cp build/bin/oneberry /usr/local/bin/
 
 # 5. Start service
-sudo systemctl start lightnvr
+sudo systemctl start oneberry
 ```
 
 ## Troubleshooting

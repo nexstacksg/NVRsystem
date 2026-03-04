@@ -1,4 +1,4 @@
--- Initial database schema for lightNVR
+-- Initial database schema for oneberry
 -- This creates the base tables needed for the NVR system
 
 -- migrate:up

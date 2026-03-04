@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-LightNVR Feature Analysis Excel Sheet Generator
+Oneberry Feature Analysis Excel Sheet Generator
 Generates a comprehensive feature breakdown with status tracking.
 """
 
@@ -183,7 +183,7 @@ FEATURES = [
     ("MQTT Integration", "MQTT Enable/Disable", "Toggle MQTT event publishing", "Working", "Done", "mqtt_enabled setting"),
     ("MQTT Integration", "MQTT Broker Config", "Host, port, credentials configuration", "Working", "Done", "Full broker connection settings"),
     ("MQTT Integration", "MQTT TLS Support", "Encrypted MQTT connections", "Working", "Done", "mqtt_tls_enabled flag"),
-    ("MQTT Integration", "MQTT Topic Prefix", "Customizable topic namespace", "Working", "Done", "Default: lightnvr/detections/<stream>"),
+    ("MQTT Integration", "MQTT Topic Prefix", "Customizable topic namespace", "Working", "Done", "Default: oneberry/detections/<stream>"),
     ("MQTT Integration", "MQTT QoS Levels", "QoS 0/1/2 support", "Working", "Done", "Dropdown with 3 QoS levels"),
     ("MQTT Integration", "MQTT Retain Flag", "Retain last message for new subscribers", "Working", "Done", "Retain checkbox"),
     ("MQTT Integration", "MQTT Keepalive", "Connection health check interval", "Working", "Done", "Configurable 10–3600 seconds"),
@@ -205,8 +205,8 @@ FEATURES = [
     ("System Information", "System Logs Viewer", "Real-time log viewing with filtering", "Working", "Done", "LogsView + LogsPoller components"),
     ("System Information", "Log Level Runtime Change", "Change log level without restart", "Working", "Done", "handleSetLogLevel with API call"),
     ("System Information", "Clear Logs", "Clear system log buffer", "Working", "Done", "clearLogs function"),
-    ("System Information", "System Restart", "Restart LightNVR service", "Working", "Done", "restartSystem function"),
-    ("System Information", "System Shutdown", "Shutdown LightNVR service", "Working", "Done", "shutdownSystem function"),
+    ("System Information", "System Restart", "Restart Oneberry service", "Working", "Done", "restartSystem function"),
+    ("System Information", "System Shutdown", "Shutdown Oneberry service", "Working", "Done", "shutdownSystem function"),
     ("System Information", "Health Check API", "System health endpoint", "Working", "Done", "api_handlers_health.c (17KB)"),
 
     # ─── Retention & Storage ─────────────────────────────────────────
@@ -245,7 +245,7 @@ FEATURES = [
     ("Docker & Deployment", "Dockerfile Alpine", "Minimal Alpine-based image", "Working", "Done", "Dockerfile.alpine"),
     ("Docker & Deployment", "Docker Compose", "Full stack deployment config", "Working", "Done", "docker-compose.yml"),
     ("Docker & Deployment", "Docker Entrypoint", "Auto-init config, DB, web assets", "Working", "Done", "docker-entrypoint.sh (9KB)"),
-    ("Docker & Deployment", "Volume Persistence", "Config + data volume separation", "Working", "Done", "/etc/lightnvr + /var/lib/lightnvr/data"),
+    ("Docker & Deployment", "Volume Persistence", "Config + data volume separation", "Working", "Done", "/etc/oneberry + /var/lib/oneberry/data"),
     ("Docker & Deployment", "Environment Variables", "TZ, GO2RTC_CONFIG_PERSIST, LIGHTNVR_AUTO_INIT", "Working", "Done", "3 env vars documented"),
     ("Docker & Deployment", "Port Mapping", "8080 (web), 8554 (RTSP), 8555 (WebRTC), 1984 (go2rtc)", "Working", "Done", "4 exposed ports"),
     ("Docker & Deployment", "Build Scripts", "Build automation with release mode", "Working", "Done", "scripts/build.sh + install.sh"),
@@ -299,7 +299,7 @@ FEATURES = [
 def create_excel():
     wb = openpyxl.Workbook()
     ws = wb.active
-    ws.title = "LightNVR Feature Analysis"
+    ws.title = "Oneberry Feature Analysis"
 
     # ── Column widths ───────────────────────────────────────────────
     col_widths = [8, 28, 50, 16, 16, 50]
@@ -311,7 +311,7 @@ def create_excel():
     # ── Title row ───────────────────────────────────────────────────
     ws.merge_cells("A1:F1")
     title_cell = ws["A1"]
-    title_cell.value = "LightNVR – Full Feature Analysis Report"
+    title_cell.value = "Oneberry – Full Feature Analysis Report"
     title_cell.font = Font(name="Calibri", bold=True, color="FFFFFF", size=16)
     title_cell.fill = PatternFill(start_color="111827", end_color="111827", fill_type="solid")
     title_cell.alignment = Alignment(horizontal="center", vertical="center")
@@ -320,7 +320,7 @@ def create_excel():
     # ── Subtitle row ────────────────────────────────────────────────
     ws.merge_cells("A2:F2")
     sub_cell = ws["A2"]
-    sub_cell.value = "Generated: 2026-02-11  |  Project: opensensor/lightNVR  |  Total Features: {}".format(len(FEATURES))
+    sub_cell.value = "Generated: 2026-02-11  |  Project: opensensor/oneberry  |  Total Features: {}".format(len(FEATURES))
     sub_cell.font = Font(name="Calibri", italic=True, color="9CA3AF", size=10)
     sub_cell.fill = PatternFill(start_color="111827", end_color="111827", fill_type="solid")
     sub_cell.alignment = Alignment(horizontal="center", vertical="center")
@@ -556,7 +556,7 @@ def create_excel():
     ws.auto_filter.ref = f"A4:F{header_row + len(FEATURES) + len(categories)}"
 
     # ── Save ────────────────────────────────────────────────────────
-    output_path = "/home/rahad/work/lightNVR/LightNVR_Feature_Analysis.xlsx"
+    output_path = "/home/rahad/work/oneberry/LightNVR_Feature_Analysis.xlsx"
     wb.save(output_path)
     print(f"✅ Excel sheet saved to: {output_path}")
     print(f"   Total features: {len(FEATURES)}")

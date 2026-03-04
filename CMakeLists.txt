@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(LightNVR VERSION 0.19.1 LANGUAGES C CXX)
+project(Oneberry VERSION 0.19.1 LANGUAGES C CXX)
 
 # Set C/C++ standards
 set(CMAKE_C_STANDARD 11)
@@ -13,7 +13,7 @@ option(SOD_DYNAMIC_LINK "Dynamically link SOD library instead of static linking"
 # go2rtc integration options
 option(ENABLE_GO2RTC "Enable go2rtc integration for WebRTC streaming" ON)
 option(GO2RTC_BINARY_PATH "Path to go2rtc binary" "/usr/local/bin/go2rtc")
-option(GO2RTC_CONFIG_DIR "Directory for go2rtc configuration files" "/etc/lightnvr/go2rtc")
+option(GO2RTC_CONFIG_DIR "Directory for go2rtc configuration files" "/etc/oneberry/go2rtc")
 option(GO2RTC_API_PORT "Port for go2rtc HTTP API" 1984)
 
 # SSL/TLS options
@@ -335,15 +335,15 @@ if(ENABLE_GO2RTC)
 endif()
 
 # Define the shared library
-add_library(lightnvr_lib STATIC ${SOURCES})
-target_include_directories(lightnvr_lib PUBLIC ${LIGHTNVR_INCLUDE_DIRS})
-target_include_directories(lightnvr_lib PRIVATE
+add_library(oneberry_lib STATIC ${SOURCES})
+target_include_directories(oneberry_lib PUBLIC ${LIGHTNVR_INCLUDE_DIRS})
+target_include_directories(oneberry_lib PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/external/mongoose"
     "${CMAKE_CURRENT_SOURCE_DIR}/external/inih"
 )
 
 # Define the main executable
-add_executable(lightnvr src/core/main.c)
+add_executable(oneberry src/core/main.c)
 
 # Define source files for rebuild_recordings utility (excluding inih)
 set(REBUILD_RECORDINGS_SOURCES
@@ -366,13 +366,13 @@ set(REBUILD_RECORDINGS_SOURCES
 add_executable(rebuild_recordings ${REBUILD_RECORDINGS_SOURCES})
 
 # Set the output directory for the binaries
-set_target_properties(lightnvr rebuild_recordings PROPERTIES
+set_target_properties(oneberry rebuild_recordings PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
 
 # Link libraries for main executable
-target_link_libraries(lightnvr
-        lightnvr_lib
+target_link_libraries(oneberry
+        oneberry_lib
         mongoose_lib
         inih_lib
         ${FFMPEG_LIBRARIES}
@@ -387,7 +387,7 @@ target_link_libraries(lightnvr
 
 # Link libraries for rebuild_recordings utility
 target_link_libraries(rebuild_recordings
-        lightnvr_lib
+        oneberry_lib
         mongoose_lib
         inih_lib
         ${FFMPEG_LIBRARIES}
@@ -398,26 +398,26 @@ target_link_libraries(rebuild_recordings
 )
 
 # Link cJSON (system library)
-target_link_libraries(lightnvr ${CJSON_LIBRARIES})
+target_link_libraries(oneberry ${CJSON_LIBRARIES})
 target_link_libraries(rebuild_recordings ${CJSON_LIBRARIES})
 
 # Link MQTT library if enabled
 if(ENABLE_MQTT AND MOSQUITTO_FOUND)
-    target_link_libraries(lightnvr ${MOSQUITTO_LIBRARIES})
-    target_include_directories(lightnvr PRIVATE ${MOSQUITTO_INCLUDE_DIRS})
+    target_link_libraries(oneberry ${MOSQUITTO_LIBRARIES})
+    target_include_directories(oneberry PRIVATE ${MOSQUITTO_INCLUDE_DIRS})
 endif()
 
 # Link SOD library if enabled
 if(ENABLE_SOD)
     # Always link to the sod target, whether it's built as static or shared
-    target_link_libraries(lightnvr sod)
+    target_link_libraries(oneberry sod)
 
     # Log the linking method for clarity
     if(SOD_DYNAMIC_LINK)
         message(STATUS "Using dynamic linking for SOD library (built from source)")
 
         # Set proper RPATH settings for the main executable when using dynamic SOD
-        set_target_properties(lightnvr PROPERTIES
+        set_target_properties(oneberry PROPERTIES
                 BUILD_WITH_INSTALL_RPATH TRUE
                 INSTALL_RPATH "$ORIGIN/../src/sod:$ORIGIN/../lib"
         )
@@ -429,7 +429,7 @@ if(ENABLE_SOD)
         )
 
         # Copy the SOD shared library to a directory next to the executable
-        add_custom_command(TARGET lightnvr POST_BUILD
+        add_custom_command(TARGET oneberry POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/lib"
                 COMMAND ${CMAKE_COMMAND} -E copy
                 "$<TARGET_FILE:sod>"
@@ -439,7 +439,7 @@ if(ENABLE_SOD)
 
         # Additional direct RPATH via linker flags for older systems
         if(UNIX AND NOT APPLE)
-            set_target_properties(lightnvr PROPERTIES
+            set_target_properties(oneberry PROPERTIES
                     LINK_FLAGS "-Wl,-rpath,\$ORIGIN/../src/sod:\$ORIGIN/../lib"
             )
         endif()
@@ -449,9 +449,9 @@ if(ENABLE_SOD)
 endif()
 
 # Install targets
-install(TARGETS lightnvr rebuild_recordings DESTINATION bin)
-install(DIRECTORY config/ DESTINATION /etc/lightnvr)
-install(DIRECTORY db/migrations/ DESTINATION share/lightnvr/migrations
+install(TARGETS oneberry rebuild_recordings DESTINATION bin)
+install(DIRECTORY config/ DESTINATION /etc/oneberry)
+install(DIRECTORY db/migrations/ DESTINATION share/oneberry/migrations
         FILES_MATCHING PATTERN "*.sql")
 
 # Add subdirectories for tests if testing is enabled
@@ -475,10 +475,10 @@ add_custom_target(generate_version_js
 )
 
 # Make sure version.js is generated before building the web assets
-add_dependencies(lightnvr generate_version_js)
+add_dependencies(oneberry generate_version_js)
 
 # Print build information
-message(STATUS "Building LightNVR ${PROJECT_VERSION} with the following configuration:")
+message(STATUS "Building Oneberry ${PROJECT_VERSION} with the following configuration:")
 message(STATUS "- SOD object detection: ${ENABLE_SOD}")
 if(ENABLE_SOD)
     if(SOD_DYNAMIC_LINK)

@@ -1,5 +1,5 @@
 /**
- * LightNVR Web Interface LoginView Component
+ * Oneberry Web Interface LoginView Component
  * Preact component for the login page
  */
 
@@ -171,7 +171,7 @@ export function LoginView() {
     <section id="login-page" className="page flex items-center justify-center min-h-screen">
       <div className="login-container w-full max-w-md p-6 bg-card text-card-foreground rounded-lg shadow-lg">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold">LightNVR</h1>
+          <h1 className="text-2xl font-bold">Oneberry</h1>
           <p className="text-muted-foreground">Please sign in to continue</p>
         </div>
 

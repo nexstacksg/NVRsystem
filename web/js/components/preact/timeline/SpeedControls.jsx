@@ -1,5 +1,5 @@
 /**
- * LightNVR Speed Controls Component
+ * Oneberry Speed Controls Component
  * Handles playback speed controls for the timeline
  */
 

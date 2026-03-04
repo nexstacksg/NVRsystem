@@ -18,7 +18,7 @@
 #include "video/onvif_detection.h"
 
 // Default models directory
-#define DEFAULT_MODELS_DIR "/var/lib/lightnvr/models"
+#define DEFAULT_MODELS_DIR "/var/lib/oneberry/models"
 
 /**
  * @brief Direct handler for GET /api/detection/models

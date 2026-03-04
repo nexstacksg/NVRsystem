@@ -1,10 +1,10 @@
-# LightNVR Frontend Architecture
+# Oneberry Frontend Architecture
 
-This document describes the frontend architecture of the LightNVR web interface, which has been modernized to use Tailwind CSS and Preact.
+This document describes the frontend architecture of the Oneberry web interface, which has been modernized to use Tailwind CSS and Preact.
 
 ## Overview
 
-The LightNVR frontend has been redesigned to use modern web technologies:
+The Oneberry frontend has been redesigned to use modern web technologies:
 
 - **Tailwind CSS** for utility-first styling
 - **Preact** for lightweight component-based UI
@@ -43,7 +43,7 @@ web/
 
 ## Tailwind CSS Integration
 
-Tailwind CSS is a utility-first CSS framework that allows for rapid UI development with predefined utility classes. In LightNVR, Tailwind is used for all styling needs.
+Tailwind CSS is a utility-first CSS framework that allows for rapid UI development with predefined utility classes. In Oneberry, Tailwind is used for all styling needs.
 
 ### Key Features
 
@@ -135,7 +135,7 @@ export function StreamCard({ stream, onToggle, onEdit, onDelete }) {
 
 ## State Management
 
-State management in the LightNVR frontend is handled using Preact's built-in hooks:
+State management in the Oneberry frontend is handled using Preact's built-in hooks:
 
 - **useState**: For component-local state
 - **useEffect**: For side effects like data fetching
@@ -207,7 +207,7 @@ useEffect(() => {
 
 ## Responsive Design
 
-The LightNVR frontend is designed to be responsive and work well on devices of all sizes, from mobile phones to desktop monitors. This is achieved through:
+The Oneberry frontend is designed to be responsive and work well on devices of all sizes, from mobile phones to desktop monitors. This is achieved through:
 
 - Tailwind's responsive utilities (`sm:`, `md:`, `lg:` prefixes)
 - Flexible layouts using CSS Grid and Flexbox
@@ -232,7 +232,7 @@ The LightNVR frontend is designed to be responsive and work well on devices of a
 
 ## Dark Mode Support
 
-The LightNVR frontend supports both light and dark modes, using Tailwind's dark mode utilities. The mode can be toggled by the user and is persisted across sessions.
+The Oneberry frontend supports both light and dark modes, using Tailwind's dark mode utilities. The mode can be toggled by the user and is persisted across sessions.
 
 ### Example: Dark Mode Toggle
 
@@ -285,7 +285,7 @@ Several performance optimizations are implemented in the frontend:
 
 ## Accessibility
 
-The LightNVR frontend is designed with accessibility in mind:
+The Oneberry frontend is designed with accessibility in mind:
 
 - Proper semantic HTML elements
 - ARIA attributes where appropriate

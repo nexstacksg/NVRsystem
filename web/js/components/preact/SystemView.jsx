@@ -1,5 +1,5 @@
 /**
- * LightNVR Web Interface SystemView Component
+ * Oneberry Web Interface SystemView Component
  * Preact component for the system page
  */
 

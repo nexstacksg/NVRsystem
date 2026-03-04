@@ -30,7 +30,7 @@
 
 ```bash
 # 1. Configure your camera in scripts/demo-cameras.json
-# 2. Start LightNVR
+# 2. Start Oneberry
 docker-compose up -d
 
 # 3. Setup demo streams
@@ -43,7 +43,7 @@ node scripts/setup-demo-streams.js
 ### Update Screenshots for README
 
 ```bash
-# 1. Start LightNVR with Docker (auto-configures demo streams)
+# 1. Start Oneberry with Docker (auto-configures demo streams)
 ./scripts/update-documentation-media.sh --docker --screenshots-only
 
 # 2. Review screenshots
@@ -74,7 +74,7 @@ ls -lh docs/videos/
 ### Update Against Running Instance
 
 ```bash
-# If LightNVR is already running
+# If Oneberry is already running
 ./scripts/update-documentation-media.sh --url http://localhost:8080
 ```
 
@@ -88,7 +88,7 @@ ls -lh docs/videos/
 ## File Locations
 
 ```
-lightNVR/
+oneberry/
 ├── docs/
 │   ├── images/          # Screenshots (PNG)
 │   └── videos/          # Demo videos (WebM/MP4/GIF)
@@ -159,9 +159,9 @@ if (config.demo === 'all' || config.demo === 'my-feature') {
 
 ## Troubleshooting
 
-### "Cannot access LightNVR"
+### "Cannot access Oneberry"
 ```bash
-# Check if LightNVR is running
+# Check if Oneberry is running
 curl http://localhost:8080/login.html
 
 # Start with Docker

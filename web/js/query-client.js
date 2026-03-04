@@ -1,5 +1,5 @@
 /**
- * LightNVR Web Interface Query Client
+ * Oneberry Web Interface Query Client
  * TanStack Query (Preact Query) integration for Preact
  */
 

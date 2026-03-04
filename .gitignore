@@ -38,7 +38,7 @@ cmake-build-debug/
 *.exe
 *.out
 *.app
-/lightnvr
+/oneberry
 
 # CMake generated files
 CMakeCache.txt
@@ -69,8 +69,8 @@ Makefile
 
 # Configuration files with sensitive information
 # Keep the default config but ignore user configs
-/lightnvr.conf
-/config/lightnvr.conf
+/oneberry.conf
+/config/oneberry.conf
 
 # Recording files
 /recordings/

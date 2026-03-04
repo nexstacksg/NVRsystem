@@ -51,7 +51,7 @@ if(ENABLE_SOD)
 
     # Link libraries
     target_link_libraries(test_sod_unified
-        lightnvr_lib
+        oneberry_lib
         ${FFMPEG_LIBRARIES}
         ${SQLITE_LIBRARIES}
         ${CURL_LIBRARIES}
@@ -74,7 +74,7 @@ if(ENABLE_SOD)
     endif()
 
     target_link_libraries(test_sod_voc
-        lightnvr_lib
+        oneberry_lib
         ${FFMPEG_LIBRARIES}
         ${SQLITE_LIBRARIES}
         ${CURL_LIBRARIES}
@@ -116,7 +116,7 @@ add_executable(test_db_backup database/db_backup_test.c)
 
 # Link libraries for database backup test
 target_link_libraries(test_db_backup
-    lightnvr_lib
+    oneberry_lib
     ${SQLITE_LIBRARIES}
     ${SSL_LIBRARIES}  # Add SSL libraries which include mbedcrypto
     pthread
@@ -145,7 +145,7 @@ target_compile_definitions(test_stream_detection PRIVATE BUILDING_TEST)
 
 # Link libraries for stream detection test
 target_link_libraries(test_stream_detection
-    lightnvr_lib
+    oneberry_lib
     ${FFMPEG_LIBRARIES}
     ${SQLITE_LIBRARIES}
     ${CURL_LIBRARIES}
@@ -187,7 +187,7 @@ target_compile_definitions(test_go2rtc_recovery PRIVATE BUILDING_TEST)
 
 # Link libraries for go2rtc recovery test
 target_link_libraries(test_go2rtc_recovery
-    lightnvr_lib
+    oneberry_lib
     ${FFMPEG_LIBRARIES}
     ${SQLITE_LIBRARIES}
     ${CURL_LIBRARIES}

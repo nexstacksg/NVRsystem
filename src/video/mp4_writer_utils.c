@@ -1172,7 +1172,7 @@ skip_audio_stream:
 
     // Add metadata
     av_dict_set(&writer->output_ctx->metadata, "title", writer->stream_name, 0);
-    av_dict_set(&writer->output_ctx->metadata, "encoder", "LightNVR", 0);
+    av_dict_set(&writer->output_ctx->metadata, "encoder", "Oneberry", 0);
 
     // Set options for fast start - EXACTLY match rtsp_recorder.c
     AVDictionary *opts = NULL;

@@ -122,12 +122,12 @@ verify_streams() {
     
     echo ""
     echo "All test streams are configured! You can now:"
-    echo "  1. Add streams to lightNVR via the web UI or API"
+    echo "  1. Add streams to oneberry via the web UI or API"
     echo "  2. Use RTSP URLs directly: rtsp://${GO2RTC_HOST}:${GO2RTC_RTSP_PORT}/<stream_name>"
 }
 
 show_help() {
-    echo "test-streams.sh - Set up test RTSP streams for lightNVR development"
+    echo "test-streams.sh - Set up test RTSP streams for oneberry development"
     echo ""
     echo "Usage: $0 [command]"
     echo ""

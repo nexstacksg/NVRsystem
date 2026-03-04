@@ -55,7 +55,7 @@ echo "Reading from: $CMAKE_PATH"
 echo "Writing to: $OUTPUT_PATH"
 
 # Extract version using grep and sed
-VERSION=$(grep -E "project\s*\(\s*LightNVR\s+VERSION\s+[0-9]+\.[0-9]+\.[0-9]+" "$CMAKE_PATH" | sed -E 's/.*VERSION\s+([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+VERSION=$(grep -E "project\s*\(\s*Oneberry\s+VERSION\s+[0-9]+\.[0-9]+\.[0-9]+" "$CMAKE_PATH" | sed -E 's/.*VERSION\s+([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
 
 if [ -z "$VERSION" ]; then
     echo "Failed to extract version from CMakeLists.txt"
@@ -70,7 +70,7 @@ mkdir -p "$(dirname "$OUTPUT_PATH")"
 # Generate version.js file
 cat > "$OUTPUT_PATH" << EOF
 /**
- * LightNVR version information
+ * Oneberry version information
  * This file is auto-generated from CMakeLists.txt during the build process
  * DO NOT EDIT MANUALLY
  */

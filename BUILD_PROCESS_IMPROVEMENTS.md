@@ -2,7 +2,7 @@
 
 ## Summary
 
-The LightNVR build process has been completely automated to eliminate manual steps and ensure consistency across releases.
+The Oneberry build process has been completely automated to eliminate manual steps and ensure consistency across releases.
 
 ## Problems Solved
 
@@ -70,7 +70,7 @@ One-time migration script to remove web/dist from git tracking.
 - Added Node.js 20.x LTS installation
 - Added web asset build step (`npm ci && npm run build`)
 - Web assets built before C/C++ compilation
-- Assets copied to `/usr/share/lightnvr/web-template/`
+- Assets copied to `/usr/share/oneberry/web-template/`
 
 ### 2. .gitignore
 - Added `web/dist/` to ignore built assets
@@ -153,13 +153,13 @@ When you push a tag (e.g., `v0.13.0`):
    - Runs `npm run build` to build with Vite
    - Builds C/C++ code
    - Creates minimal runtime image
-   - Copies web assets to `/usr/share/lightnvr/web-template/`
+   - Copies web assets to `/usr/share/oneberry/web-template/`
 
 3. **Docker images published** to GitHub Container Registry:
-   - `ghcr.io/opensensor/lightnvr:latest`
-   - `ghcr.io/opensensor/lightnvr:0.13.0`
-   - `ghcr.io/opensensor/lightnvr:0.13`
-   - `ghcr.io/opensensor/lightnvr:0`
+   - `ghcr.io/opensensor/oneberry:latest`
+   - `ghcr.io/opensensor/oneberry:0.13.0`
+   - `ghcr.io/opensensor/oneberry:0.13`
+   - `ghcr.io/opensensor/oneberry:0`
 
 4. **Multi-arch manifest** created combining all platforms
 
@@ -188,28 +188,28 @@ When you push a tag (e.g., `v0.13.0`):
 
 ✅ **The buildroot package has been updated!**
 
-The `lightnvr-buildroot/` directory now includes the necessary changes to build web assets during the Buildroot build process.
+The `oneberry-buildroot/` directory now includes the necessary changes to build web assets during the Buildroot build process.
 
 **What changed in the buildroot package:**
 
-1. **Added `host-nodejs` dependency** (line 12 in `lightnvr.mk`)
+1. **Added `host-nodejs` dependency** (line 12 in `oneberry.mk`)
 2. **Added pre-build hook** to build web assets (lines 31-41)
 3. **Installation unchanged** - still copies from `web/dist`, but now it's built
 
 **Updated files:**
-- `lightnvr-buildroot/lightnvr.mk` - Main package definition
-- `lightnvr-buildroot/README.md` - Comprehensive documentation
-- `lightnvr-buildroot/CHANGELOG.md` - Change tracking
+- `oneberry-buildroot/oneberry.mk` - Main package definition
+- `oneberry-buildroot/README.md` - Comprehensive documentation
+- `oneberry-buildroot/CHANGELOG.md` - Change tracking
 
 **To use the updated package:**
 
 ```bash
 # Copy to your Buildroot tree
-cp -r lightnvr-buildroot/ /path/to/buildroot/package/lightnvr/
+cp -r oneberry-buildroot/ /path/to/buildroot/package/oneberry/
 
 # Rebuild
-make lightnvr-dirclean
-make lightnvr
+make oneberry-dirclean
+make oneberry
 ```
 
 **Alternative: Use pre-built releases**
@@ -217,9 +217,9 @@ make lightnvr
 If you prefer not to build web assets in Buildroot, you can extract them from Docker images:
 
 ```bash
-docker pull ghcr.io/opensensor/lightnvr:0.13.0
-docker create --name temp ghcr.io/opensensor/lightnvr:0.13.0
-docker cp temp:/usr/share/lightnvr/web-template ./web-assets
+docker pull ghcr.io/opensensor/oneberry:0.13.0
+docker create --name temp ghcr.io/opensensor/oneberry:0.13.0
+docker cp temp:/usr/share/oneberry/web-template ./web-assets
 docker rm temp
 ```
 
@@ -245,13 +245,13 @@ git tag -d v0.13.0  # Delete tag
 
 ```bash
 # Build Docker image
-docker build -t lightnvr:test .
+docker build -t oneberry:test .
 
 # Verify web assets exist
-docker run --rm lightnvr:test ls -la /usr/share/lightnvr/web-template/
+docker run --rm oneberry:test ls -la /usr/share/oneberry/web-template/
 
 # Run the image
-docker run -p 8080:8080 lightnvr:test
+docker run -p 8080:8080 oneberry:test
 ```
 
 ## Troubleshooting

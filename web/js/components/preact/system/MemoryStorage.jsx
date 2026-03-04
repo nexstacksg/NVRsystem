@@ -46,7 +46,7 @@ export function MemoryStorage({ systemInfo, formatBytes }) {
             <span className="font-medium">Process Memory:</span>
             <div className="flex flex-wrap justify-end gap-1">
               <span className="inline-block px-2 py-0.5 text-xs rounded" style={{backgroundColor: 'hsl(var(--primary-muted))', color: 'hsl(var(--primary))'}}>
-                LightNVR: {formatBytes(lightNvrMemoryUsed)}
+                Oneberry: {formatBytes(lightNvrMemoryUsed)}
               </span>
               <span className="inline-block px-2 py-0.5 text-xs rounded badge-success">
                 go2rtc: {formatBytes(go2rtcMemoryUsed)}
@@ -89,7 +89,7 @@ export function MemoryStorage({ systemInfo, formatBytes }) {
         </div>
         <div>
           <div className="flex justify-between mb-1">
-            <span className="font-medium">LightNVR Storage:</span>
+            <span className="font-medium">Oneberry Storage:</span>
             <span>
               {systemInfo.disk?.used ? formatBytes(systemInfo.disk.used) : '0'} /
               {systemInfo.disk?.total ? formatBytes(systemInfo.disk.total) : '0'}

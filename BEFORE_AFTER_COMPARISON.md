@@ -5,7 +5,7 @@
 ### BEFORE: First-Time User Experience ❌
 
 ```bash
-# User tries to start LightNVR
+# User tries to start Oneberry
 docker-compose up -d
 
 # Container starts but...
@@ -20,7 +20,7 @@ docker-compose logs
 # Sees errors about missing config files
 # No helpful guidance
 
-# User tries to fix by mounting /var/lib/lightnvr
+# User tries to fix by mounting /var/lib/oneberry
 # This overwrites web assets - makes it worse!
 
 # User gives up or spends hours troubleshooting
@@ -29,7 +29,7 @@ docker-compose logs
 ### AFTER: First-Time User Experience ✅
 
 ```bash
-# User tries to start LightNVR
+# User tries to start Oneberry
 docker-compose up -d
 
 # Container starts and...
@@ -41,7 +41,7 @@ docker-compose up -d
 
 # User sees helpful logs
 docker-compose logs
-# [INFO] Initializing LightNVR configuration...
+# [INFO] Initializing Oneberry configuration...
 # [INFO] Creating default configuration file...
 # [INFO] Web UI: http://localhost:8080
 # [INFO] Default credentials: admin/admin
@@ -57,19 +57,19 @@ docker-compose logs
 **BEFORE:**
 ```yaml
 volumes:
-  - ./config:/etc/lightnvr
-  - ./data:/var/lib/lightnvr/data
-  # ⚠️ If user mounts /var/lib/lightnvr, web UI breaks!
+  - ./config:/etc/oneberry
+  - ./data:/var/lib/oneberry/data
+  # ⚠️ If user mounts /var/lib/oneberry, web UI breaks!
 ```
 
 **AFTER:**
 ```yaml
 volumes:
   # Only mount what needs persistence
-  # DO NOT mount /var/lib/lightnvr directly - it will overwrite web assets!
-  - ./config:/etc/lightnvr
-  - ./data:/var/lib/lightnvr/data
-  # ✅ Web assets protected in /usr/share/lightnvr/web-template/
+  # DO NOT mount /var/lib/oneberry directly - it will overwrite web assets!
+  - ./config:/etc/oneberry
+  - ./data:/var/lib/oneberry/data
+  # ✅ Web assets protected in /usr/share/oneberry/web-template/
 ```
 
 ### Port Exposure
@@ -109,8 +109,8 @@ ports:
 **AFTER:**
 ```bash
 # Entrypoint automatically creates:
-# ✅ /etc/lightnvr/lightnvr.ini (with sensible defaults)
-# ✅ /etc/lightnvr/go2rtc/go2rtc.yaml (with WebRTC/STUN)
+# ✅ /etc/oneberry/oneberry.ini (with sensible defaults)
+# ✅ /etc/oneberry/go2rtc/go2rtc.yaml (with WebRTC/STUN)
 # ✅ All necessary directories
 # ✅ Proper permissions
 ```
@@ -120,8 +120,8 @@ ports:
 **BEFORE:**
 ```dockerfile
 # Copy web assets to final location
-COPY --from=builder /opt/web/dist /var/lib/lightnvr/web
-# ❌ Gets overwritten if user mounts /var/lib/lightnvr
+COPY --from=builder /opt/web/dist /var/lib/oneberry/web
+# ❌ Gets overwritten if user mounts /var/lib/oneberry
 
 # No entrypoint script
 # No health check
@@ -132,7 +132,7 @@ COPY --from=builder /opt/web/dist /var/lib/lightnvr/web
 **AFTER:**
 ```dockerfile
 # Copy web assets to template location
-COPY --from=builder /opt/web/dist /usr/share/lightnvr/web-template/
+COPY --from=builder /opt/web/dist /usr/share/oneberry/web-template/
 # ✅ Protected from volume mount overwrites
 
 # Entrypoint script for initialization
@@ -178,7 +178,7 @@ EXPOSE 8080 8554 8555 8555/udp 1984
 1. Container starts
 2. Runs start.sh
 3. Starts go2rtc (generates config)
-4. Starts lightnvr
+4. Starts oneberry
 5. ❌ Fails if no config file
 6. ❌ Web UI broken if volumes mounted wrong
 7. ❌ WebRTC doesn't work (no STUN)
@@ -197,7 +197,7 @@ EXPOSE 8080 8554 8555 8555/udp 1984
    └─ Shows startup info
 3. Runs start.sh
 4. Starts go2rtc (uses persistent config)
-5. Starts lightnvr
+5. Starts oneberry
 6. ✅ Everything works
 7. ✅ Web UI accessible
 8. ✅ WebRTC streaming works
@@ -253,7 +253,7 @@ docker-compose up -d
 
 **BEFORE:**
 ```
-User mounts /var/lib/lightnvr
+User mounts /var/lib/oneberry
     ↓
 Web assets overwritten
     ↓
@@ -264,11 +264,11 @@ User frustrated
 
 **AFTER:**
 ```
-Web assets in /usr/share/lightnvr/web-template/
+Web assets in /usr/share/oneberry/web-template/
     ↓
-Entrypoint copies to /var/lib/lightnvr/web/
+Entrypoint copies to /var/lib/oneberry/web/
     ↓
-User mounts only /var/lib/lightnvr/data/
+User mounts only /var/lib/oneberry/data/
     ↓
 Web UI always works
 ```
@@ -390,7 +390,7 @@ Data persists correctly
 
 ## Conclusion
 
-The improvements transform LightNVR Docker deployment from a **frustrating experience requiring expert knowledge** to a **smooth, professional experience that just works**.
+The improvements transform Oneberry Docker deployment from a **frustrating experience requiring expert knowledge** to a **smooth, professional experience that just works**.
 
 ### Key Achievements
 

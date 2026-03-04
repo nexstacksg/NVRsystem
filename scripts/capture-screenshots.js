@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 /**
- * LightNVR Automated Screenshot Capture
+ * Oneberry Automated Screenshot Capture
  * 
- * This script uses Playwright to automatically capture screenshots of the LightNVR
+ * This script uses Playwright to automatically capture screenshots of the Oneberry
  * web interface for documentation purposes.
  * 
  * Usage:
@@ -11,7 +11,7 @@
  *   node scripts/capture-screenshots.js [options]
  * 
  * Options:
- *   --url <url>          LightNVR URL (default: http://localhost:8080)
+ *   --url <url>          Oneberry URL (default: http://localhost:8080)
  *   --username <user>    Username (default: admin)
  *   --password <pass>    Password (default: admin)
  *   --output <dir>       Output directory (default: docs/images)
@@ -733,7 +733,7 @@ async function captureAllThemes(page) {
 }
 
 async function main() {
-  console.log('LightNVR Screenshot Capture Tool');
+  console.log('Oneberry Screenshot Capture Tool');
   console.log('================================\n');
   console.log('Configuration:');
   console.log(`  URL: ${config.url}`);

@@ -103,7 +103,7 @@ test.describe('go2rtc API @go2rtc', () => {
     test('can capture a frame from RTSP stream', async () => {
       try {
         // Capture one frame to a temp file
-        const outputFile = '/tmp/lightnvr-test/test_frame.jpg';
+        const outputFile = '/tmp/oneberry-test/test_frame.jpg';
         execSync(
           `ffmpeg -nostdin -y -rtsp_transport tcp -i rtsp://localhost:${GO2RTC_RTSP_PORT}/test_pattern ` +
           `-frames:v 1 -update 1 ${outputFile}`,

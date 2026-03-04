@@ -1,8 +1,8 @@
 #!/bin/bash
 # Script to manually sync recording file sizes with the database
 
-DB_PATH="/var/lib/lightnvr/lightnvr.db"
-MP4_PATH="/var/lib/lightnvr/recordings/mp4"
+DB_PATH="/var/lib/oneberry/oneberry.db"
+MP4_PATH="/var/lib/oneberry/recordings/mp4"
 
 echo "Syncing recording file sizes with database..."
 
@@ -35,8 +35,8 @@ import sqlite3
 import os
 import sys
 
-db_path = "/var/lib/lightnvr/lightnvr.db"
-mp4_base = "/var/lib/lightnvr/recordings/mp4"
+db_path = "/var/lib/oneberry/oneberry.db"
+mp4_base = "/var/lib/oneberry/recordings/mp4"
 
 try:
     conn = sqlite3.connect(db_path)

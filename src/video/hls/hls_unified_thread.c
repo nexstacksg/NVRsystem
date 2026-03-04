@@ -839,7 +839,7 @@ static int check_rtsp_connection(const char *rtsp_url, char *host, int *port) {
     snprintf(request, sizeof(request),
              "OPTIONS %s RTSP/1.0\r\n"
              "CSeq: 1\r\n"
-             "User-Agent: LightNVR\r\n"
+             "User-Agent: Oneberry\r\n"
              "\r\n",
              path);
 

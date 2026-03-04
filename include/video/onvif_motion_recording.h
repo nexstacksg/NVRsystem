@@ -17,7 +17,7 @@
  * - Event-based recording triggered by ONVIF motion events
  * - Configurable pre/post-event buffer recording
  * - Recording state management
- * - Integration with existing LightNVR detection framework
+ * - Integration with existing Oneberry detection framework
  */
 
 // Maximum number of motion events in queue

@@ -1,5 +1,5 @@
 /**
- * LightNVR Timeline Player Component
+ * Oneberry Timeline Player Component
  * Handles video playback for the timeline
  */
 

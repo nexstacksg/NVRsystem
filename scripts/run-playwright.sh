@@ -4,7 +4,7 @@
 set -e
 
 echo "========================================"
-echo "LightNVR Playwright Test Runner"
+echo "Oneberry Playwright Test Runner"
 echo "========================================"
 echo ""
 
@@ -41,9 +41,9 @@ done
 
 # Cleanup any existing processes
 echo "[INFO] Cleaning up existing processes..."
-pkill -9 -f lightnvr 2>/dev/null || true
+pkill -9 -f oneberry 2>/dev/null || true
 pkill -9 -f go2rtc 2>/dev/null || true
-rm -rf /tmp/lightnvr-test
+rm -rf /tmp/oneberry-test
 sleep 2
 
 # Create test-results directory

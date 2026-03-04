@@ -1,6 +1,6 @@
 # Automated Screenshot & Video Capture
 
-This directory contains scripts for automatically capturing screenshots and videos of the LightNVR web interface for documentation purposes using Playwright automation.
+This directory contains scripts for automatically capturing screenshots and videos of the Oneberry web interface for documentation purposes using Playwright automation.
 
 ## Overview
 
@@ -84,7 +84,7 @@ node scripts/capture-demos.js --demo detection
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `--url <url>` | LightNVR URL | `http://localhost:8080` |
+| `--url <url>` | Oneberry URL | `http://localhost:8080` |
 | `--username <user>` | Login username | `admin` |
 | `--password <pass>` | Login password | `admin` |
 | `--output <dir>` | Output directory | `docs/images` |
@@ -139,7 +139,7 @@ The repository includes a GitHub Actions workflow for automated screenshot updat
 5. Click **Run workflow**
 
 The workflow will:
-- Build and start LightNVR in Docker
+- Build and start Oneberry in Docker
 - Capture screenshots
 - Optimize images with optipng
 - Create a PR with the changes (if enabled)
@@ -149,7 +149,7 @@ The workflow will:
 ```bash
 # In GitHub Actions or other CI
 docker-compose up -d
-sleep 20  # Wait for LightNVR to start
+sleep 20  # Wait for Oneberry to start
 ./scripts/update-documentation-media.sh --screenshots-only --skip-install
 ```
 
@@ -196,7 +196,7 @@ await sleep(2000);
 ## Troubleshooting
 
 ### Screenshots are blank
-- Ensure LightNVR is running and accessible
+- Ensure Oneberry is running and accessible
 - Check that credentials are correct
 - Increase wait times in the script
 
@@ -221,7 +221,7 @@ docker run -v $(pwd):/work -w /work mcr.microsoft.com/playwright:latest node scr
 
 ## Best Practices
 
-1. **Run on a clean instance** - Use a fresh LightNVR installation with sample data
+1. **Run on a clean instance** - Use a fresh Oneberry installation with sample data
 2. **Use realistic data** - Configure streams with meaningful names
 3. **Consistent timing** - Adjust sleep times if your system is slower
 4. **Check output** - Review screenshots before committing
@@ -230,7 +230,7 @@ docker run -v $(pwd):/work -w /work mcr.microsoft.com/playwright:latest node scr
 ## Example Workflow
 
 ```bash
-# 1. Start LightNVR with sample configuration
+# 1. Start Oneberry with sample configuration
 docker-compose up -d
 
 # 2. Wait for startup

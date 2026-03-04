@@ -1,13 +1,13 @@
-# LightNVR - Lightweight Network Video Recorder
+# Oneberry - Lightweight Network Video Recorder
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Docker Pulls](https://img.shields.io/docker/pulls/opensensor/lightnvr)](https://hub.docker.com/r/opensensor/lightnvr)
+[![Docker Pulls](https://img.shields.io/docker/pulls/opensensor/oneberry)](https://hub.docker.com/r/opensensor/oneberry)
 
-LightNVR is a tiny, memory-optimized Network Video Recorder software written in C. While originally designed for resource-constrained devices like the Ingenic A1 SoC with only 256MB of RAM, it can run on any Linux system.
+Oneberry is a tiny, memory-optimized Network Video Recorder software written in C. While originally designed for resource-constrained devices like the Ingenic A1 SoC with only 256MB of RAM, it can run on any Linux system.
 
 ## Overview
 
-LightNVR provides a lightweight yet powerful solution for recording and managing IP camera streams. It's designed to run efficiently on low-power, memory-constrained devices while still providing essential NVR functionality with a modern, responsive web interface.
+Oneberry provides a lightweight yet powerful solution for recording and managing IP camera streams. It's designed to run efficiently on low-power, memory-constrained devices while still providing essential NVR functionality with a modern, responsive web interface.
 
 ![Live Streams Interface](docs/images/live-streams.png)
 
@@ -48,7 +48,7 @@ LightNVR provides a lightweight yet powerful solution for recording and managing
 
 ## 🧱 Architecture Overview
 
-LightNVR is built as a small, C-based core service with a modern Preact/Tailwind web UI and go2rtc as the streaming backbone. Object detection is handled by an external detection API (typically `light-object-detect`).
+Oneberry is built as a small, C-based core service with a modern Preact/Tailwind web UI and go2rtc as the streaming backbone. Object detection is handled by an external detection API (typically `light-object-detect`).
 
 | ![Overall Architecture](docs/images/arch-overall.svg) |
 |:------------------------------------------------------:|
@@ -58,8 +58,8 @@ At a high level:
 
 - **Web UI & API layer** – Preact single-page UI served by the embedded HTTP server, plus JSON REST endpoints for streams, recordings, detection, and settings.
 - **Core service** – Stream manager, recorder, retention logic, configuration store, and event system implemented in C for low memory use.
-- **Streaming layer (go2rtc)** – Handles RTSP ingest and provides WebRTC/HLS endpoints. LightNVR configures go2rtc and talks to it directly for `/api/webrtc` and snapshot (`/api/frame.jpeg`) calls.
-- **Detection service** – External HTTP API (e.g. `light-object-detect`) that receives frames from go2rtc and returns object detections which LightNVR stores and overlays.
+- **Streaming layer (go2rtc)** – Handles RTSP ingest and provides WebRTC/HLS endpoints. Oneberry configures go2rtc and talks to it directly for `/api/webrtc` and snapshot (`/api/frame.jpeg`) calls.
+- **Detection service** – External HTTP API (e.g. `light-object-detect`) that receives frames from go2rtc and returns object detections which Oneberry stores and overlays.
 - **Storage & system resources** – MP4/HLS writers, file system, DB, and lightweight threading model tuned for small devices.
 
 For more detail, the repository also includes:
@@ -73,7 +73,7 @@ For more detail, the repository also includes:
 Visual polygon-based zone editor for precise object detection. Draw custom zones, filter by object class, and set per-zone confidence thresholds. Perfect for reducing false positives and focusing on areas that matter.
 
 ### Theme Customization (v0.13.0)
-Choose from 7 beautiful color themes with adjustable intensity. Supports both light and dark modes with automatic system preference detection. Make LightNVR match your style!
+Choose from 7 beautiful color themes with adjustable intensity. Supports both light and dark modes with automatic system preference detection. Make Oneberry match your style!
 
 ### Enhanced light-object-detect Integration (v0.14.0)
 Seamless integration with modern ONNX and TFLite models. Configurable detection backends (ONNX, TFLite, OpenCV) with zone-aware filtering and direct go2rtc frame extraction for optimal performance.
@@ -111,7 +111,7 @@ See [scripts/README-screenshots.md](scripts/README-screenshots.md) for detailed 
 
 ## 💡 Use Cases
 
-LightNVR is perfect for:
+Oneberry is perfect for:
 
 - **🏠 Home Security**: Monitor your property with smart detection zones - get alerts only for activity in specific areas
 - **🏢 Small Business**: Cost-effective surveillance with professional features like zone-based detection and retention policies
@@ -120,9 +120,9 @@ LightNVR is perfect for:
 - **🛠️ DIY Projects**: Build custom surveillance solutions with flexible API integration and modern web interface
 - **📦 Warehouse & Logistics**: Monitor specific zones (loading docks, storage areas) with class-specific detection (person, forklift, etc.)
 
-## 🆚 Why LightNVR?
+## 🆚 Why Oneberry?
 
-| Feature | LightNVR | Traditional NVR | Cloud Solutions |
+| Feature | Oneberry | Traditional NVR | Cloud Solutions |
 |---------|----------|-----------------|-----------------|
 | **Memory Footprint** | 256MB minimum | 2GB+ typical | N/A (cloud-based) |
 | **Detection Zones** | ✅ Visual polygon editor | ❌ Usually grid-based or none | ✅ Varies by provider |
@@ -238,8 +238,8 @@ Powerful object detection using modern ONNX and TFLite models with zone-aware fi
 1. **Build from source**:
    ```bash
    # Clone the repository
-   git clone https://github.com/opensensor/lightnvr.git
-   cd lightnvr
+   git clone https://github.com/opensensor/oneberry.git
+   cd oneberry
 
    # Build web assets (requires Node.js/npm)
    cd web
@@ -257,17 +257,17 @@ Powerful object detection using modern ONNX and TFLite models with zone-aware fi
 2. **Configure**:
    ```bash
    # Edit the configuration file
-   sudo nano /etc/lightnvr/lightnvr.conf
+   sudo nano /etc/oneberry/oneberry.conf
    ```
 
 3. **Start the service**:
    ```bash
-   sudo systemctl start lightnvr
+   sudo systemctl start oneberry
    ```
 
 4. **Verify the service is running**:
    ```bash
-   sudo systemctl status lightnvr
+   sudo systemctl status oneberry
    # Check that port 8080 is open
    netstat -tlnp | grep :8080
    ```
@@ -291,7 +291,7 @@ Powerful object detection using modern ONNX and TFLite models with zone-aware fi
    light-object-detect --host 0.0.0.0 --port 9001
    ```
 
-   Then configure detection in LightNVR:
+   Then configure detection in Oneberry:
    - Navigate to **Streams** → Select a stream → **Configure**
    - Enable **Detection Based Recording**
    - Set **API Detection URL** to `http://localhost:9001/api/v1/detect`
@@ -314,7 +314,7 @@ sudo ./scripts/diagnose_web_issue.sh
 sudo ./scripts/install_web_assets.sh
 
 # Restart service
-sudo systemctl restart lightnvr
+sudo systemctl restart oneberry
 ```
 
 See [Web Interface Troubleshooting Guide](docs/TROUBLESHOOTING_WEB_INTERFACE.md) for detailed instructions.
@@ -345,8 +345,8 @@ For other issues, see the [General Troubleshooting Guide](docs/TROUBLESHOOTING.m
 
 ```bash
 # Clone the repository
-git clone https://github.com/opensensor/lightNVR.git
-cd lightNVR
+git clone https://github.com/opensensor/oneberry.git
+cd oneberry
 
 # Start the container
 docker-compose up -d
@@ -366,36 +366,36 @@ Access the web UI at `http://localhost:8080` (default credentials: admin/admin)
 #### Using Docker Run
 
 ```bash
-docker pull ghcr.io/opensensor/lightnvr:latest
+docker pull ghcr.io/opensensor/oneberry:latest
 
 docker run -d \
-  --name lightnvr \
+  --name oneberry \
   --restart unless-stopped \
   -p 8080:8080 \
   -p 8554:8554 \
   -p 8555:8555 \
   -p 8555:8555/udp \
   -p 1984:1984 \
-  -v ./config:/etc/lightnvr \
-  -v ./data:/var/lib/lightnvr/data \
+  -v ./config:/etc/oneberry \
+  -v ./data:/var/lib/oneberry/data \
   -e TZ=America/New_York \
-  ghcr.io/opensensor/lightnvr:latest
+  ghcr.io/opensensor/oneberry:latest
 ```
 
 #### Volume Mounts Explained
 
 The container uses two volume mounts for persistence:
 
-- **`/etc/lightnvr`** - Configuration files
-  - `lightnvr.ini` - Main configuration
+- **`/etc/oneberry`** - Configuration files
+  - `oneberry.ini` - Main configuration
   - `go2rtc/go2rtc.yaml` - go2rtc WebRTC/RTSP configuration
 
-- **`/var/lib/lightnvr/data`** - Persistent data
+- **`/var/lib/oneberry/data`** - Persistent data
   - `database/` - SQLite database
   - `recordings/` - Video recordings (HLS and MP4)
   - `models/` - Object detection models
 
-**⚠️ Important:** Do NOT mount `/var/lib/lightnvr` directly as it will overwrite web assets!
+**⚠️ Important:** Do NOT mount `/var/lib/oneberry` directly as it will overwrite web assets!
 
 #### Exposed Ports
 
@@ -413,9 +413,9 @@ The container uses two volume mounts for persistence:
 #### First Run
 
 On first run, the container will:
-1. Create default configuration files in `/etc/lightnvr`
-2. Copy web assets to `/var/lib/lightnvr/web`
-3. Initialize the database in `/var/lib/lightnvr/data/database`
+1. Create default configuration files in `/etc/oneberry`
+2. Copy web assets to `/var/lib/oneberry/web`
+3. Initialize the database in `/var/lib/oneberry/data/database`
 4. Set up go2rtc with WebRTC/STUN configuration
 
 The go2rtc configuration includes STUN servers for WebRTC NAT traversal, so WebRTC streaming should work out-of-the-box in most network environments.
@@ -426,7 +426,7 @@ After first run, you can customize the configuration:
 
 ```bash
 # Edit main configuration
-nano ./config/lightnvr.ini
+nano ./config/oneberry.ini
 
 # Edit go2rtc configuration (WebRTC, RTSP settings)
 nano ./config/go2rtc/go2rtc.yaml
@@ -480,7 +480,7 @@ The configuration files will persist across container restarts and updates.
 
 ## Memory Optimization
 
-LightNVR is specifically designed for memory-constrained environments:
+Oneberry is specifically designed for memory-constrained environments:
 
 - **Efficient Buffering**: Minimizes memory usage while maintaining reliable recording
 - **Stream Prioritization**: Allocates resources based on stream importance
@@ -506,11 +506,11 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 
 ### Commercial Licensing
 
-For organizations that need to integrate lightNVR into proprietary products or cannot comply with GPL requirements, **commercial licenses** are available from OpenSensor Engineering. See [Commercial Licensing & Professional Support](docs/COMMERCIAL.md) for details.
+For organizations that need to integrate oneberry into proprietary products or cannot comply with GPL requirements, **commercial licenses** are available from OpenSensor Engineering. See [Commercial Licensing & Professional Support](docs/COMMERCIAL.md) for details.
 
 ## Acknowledgments
 
-LightNVR is built on the shoulders of giants. Special thanks to:
+Oneberry is built on the shoulders of giants. Special thanks to:
 
 ### Core Technologies
 - **[FFmpeg](https://ffmpeg.org/)** - Video processing and codec support
@@ -529,5 +529,5 @@ LightNVR is built on the shoulders of giants. Special thanks to:
 - **[SOD](https://github.com/symisc/sod)** - Embedded computer vision library
 
 ### Community
-- All contributors who have helped improve LightNVR
+- All contributors who have helped improve Oneberry
 - The open-source community for inspiration and support

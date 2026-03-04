@@ -1,18 +1,18 @@
 # Product Requirements Document
-## ONVIF Motion Detection Recording for LightNVR
+## ONVIF Motion Detection Recording for Oneberry
 
 ### Executive Summary
-Implement automated recording functionality triggered by ONVIF motion detection events in LightNVR, enabling efficient storage management and event-based video capture for network video recording systems.
+Implement automated recording functionality triggered by ONVIF motion detection events in Oneberry, enabling efficient storage management and event-based video capture for network video recording systems.
 
 ### Problem Statement
-LightNVR currently receives ONVIF motion detection events and displays them visually but lacks the ability to automatically trigger recordings based on these events. Users need automated recording capabilities to capture security-relevant footage without continuous recording, optimizing storage usage and simplifying event review.
+Oneberry currently receives ONVIF motion detection events and displays them visually but lacks the ability to automatically trigger recordings based on these events. Users need automated recording capabilities to capture security-relevant footage without continuous recording, optimizing storage usage and simplifying event review.
 
 ### Goals & Success Metrics
 
 **Primary Goals:**
 - Enable automatic recording triggered by ONVIF motion detection events
 - Implement configurable pre/post-event buffer recording
-- Provide seamless integration with existing LightNVR detection framework
+- Provide seamless integration with existing Oneberry detection framework
 
 **Success Metrics:**
 - Zero missed motion events that should trigger recording
@@ -84,7 +84,7 @@ camera:
 **Global Settings:**
 ```yaml
 recording:
-  storage_path: "/var/lib/lightnvr/recordings"
+  storage_path: "/var/lib/oneberry/recordings"
   max_storage_gb: 500
   buffer_memory_mb: 512
   concurrent_recordings: 4
@@ -184,7 +184,7 @@ ONVIF Camera → simple_onvif_service → Event Queue
 - Memory leak detection
 
 ### Migration Path
-For existing LightNVR users:
+For existing Oneberry users:
 1. Preserve existing continuous recording settings
 2. Add motion recording as opt-in feature
 3. Provide migration tool for existing recordings

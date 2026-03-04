@@ -1,5 +1,5 @@
 LIGHTNVR_SITE_METHOD = git
-LIGHTNVR_SITE = https://github.com/opensensor/lightNVR
+LIGHTNVR_SITE = https://github.com/opensensor/oneberry
 LIGHTNVR_SITE_BRANCH = main
 LIGHTNVR_VERSION = b39e53aea1096899530d4ad6d2cbb2bea1115161
 
@@ -26,13 +26,13 @@ LIGHTNVR_CONF_OPTS = \
 	-DSOD_DYNAMIC_LINK=ON \
 	-DENABLE_GO2RTC=ON \
 	-DGO2RTC_BINARY_PATH=/bin/go2rtc \
-	-DGO2RTC_CONFIG_DIR=/etc/lightnvr/go2rtc \
+	-DGO2RTC_CONFIG_DIR=/etc/oneberry/go2rtc \
 	-DGO2RTC_API_PORT=1984
 
 # Build web assets before CMake configuration
 # Web assets are no longer checked into git, so we build them here
 define LIGHTNVR_BUILD_WEB_ASSETS
-	@echo "Building LightNVR web assets..."
+	@echo "Building Oneberry web assets..."
 	cd $(@D)/web && \
 		export PATH=$(HOST_DIR)/bin/:$$PATH && \
 		$(HOST_DIR)/bin/npm ci --production=false && \
@@ -44,41 +44,41 @@ LIGHTNVR_PRE_BUILD_HOOKS += LIGHTNVR_BUILD_WEB_ASSETS
 
 # Main application files installation - only gzip assets for space savings
 define LIGHTNVR_INSTALL_APP_FILES
-	$(INSTALL) -m 755 -d $(TARGET_DIR)/var/lib/lightnvr
-	$(INSTALL) -m 755 -d $(TARGET_DIR)/var/lib/lightnvr/web
-	$(INSTALL) -m 755 -d $(TARGET_DIR)/var/lib/lightnvr/web/assets
-	$(INSTALL) -m 755 -d $(TARGET_DIR)/var/lib/lightnvr/web/css
-	$(INSTALL) -m 755 -d $(TARGET_DIR)/var/lib/lightnvr/web/img
+	$(INSTALL) -m 755 -d $(TARGET_DIR)/var/lib/oneberry
+	$(INSTALL) -m 755 -d $(TARGET_DIR)/var/lib/oneberry/web
+	$(INSTALL) -m 755 -d $(TARGET_DIR)/var/lib/oneberry/web/assets
+	$(INSTALL) -m 755 -d $(TARGET_DIR)/var/lib/oneberry/web/css
+	$(INSTALL) -m 755 -d $(TARGET_DIR)/var/lib/oneberry/web/img
 	# Copy gzip-compressed JS and CSS files (saves ~70% space)
-	cp $(@D)/web/dist/assets/*.gz $(TARGET_DIR)/var/lib/lightnvr/web/assets/
-	cp $(@D)/web/dist/css/*.gz $(TARGET_DIR)/var/lib/lightnvr/web/css/
+	cp $(@D)/web/dist/assets/*.gz $(TARGET_DIR)/var/lib/oneberry/web/assets/
+	cp $(@D)/web/dist/css/*.gz $(TARGET_DIR)/var/lib/oneberry/web/css/
 	# Copy small uncompressed files that may not have .gz versions (fallback)
 	-for f in $(@D)/web/dist/assets/*.js; do \
 		gz="$$f.gz"; \
 		if [ ! -f "$$gz" ]; then \
-			cp "$$f" $(TARGET_DIR)/var/lib/lightnvr/web/assets/; \
+			cp "$$f" $(TARGET_DIR)/var/lib/oneberry/web/assets/; \
 		fi; \
 	done
 	-for f in $(@D)/web/dist/css/*.css; do \
 		gz="$$f.gz"; \
 		if [ ! -f "$$gz" ]; then \
-			cp "$$f" $(TARGET_DIR)/var/lib/lightnvr/web/css/; \
+			cp "$$f" $(TARGET_DIR)/var/lib/oneberry/web/css/; \
 		fi; \
 	done
 	# Copy HTML files (both compressed and uncompressed for initial load)
-	cp $(@D)/web/dist/*.html $(TARGET_DIR)/var/lib/lightnvr/web/
-	cp $(@D)/web/dist/*.html.gz $(TARGET_DIR)/var/lib/lightnvr/web/
+	cp $(@D)/web/dist/*.html $(TARGET_DIR)/var/lib/oneberry/web/
+	cp $(@D)/web/dist/*.html.gz $(TARGET_DIR)/var/lib/oneberry/web/
 	# Copy images and other static assets
-	-cp -r $(@D)/web/dist/img/* $(TARGET_DIR)/var/lib/lightnvr/web/img/ 2>/dev/null || true
-	$(INSTALL) -m 755 -d $(TARGET_DIR)/etc/lightnvr
-	$(INSTALL) -m 755 -d $(TARGET_DIR)/etc/lightnvr/go2rtc
-	$(INSTALL) -m 644 $(LIGHTNVR_PKGDIR)/files/lightnvr.ini $(TARGET_DIR)/etc/lightnvr/lightnvr.ini
-	$(INSTALL) -m 755 -d $(TARGET_DIR)/opt/lightnvr
-	$(INSTALL) -m 755 -d $(TARGET_DIR)/opt/lightnvr/recordings
-	$(INSTALL) -m 755 -d $(TARGET_DIR)/opt/lightnvr/recordings/mp4
-	$(INSTALL) -m 755 -d $(TARGET_DIR)/opt/lightnvr/database
-	$(INSTALL) -m 755 -d $(TARGET_DIR)/opt/lightnvr/models
-	$(INSTALL) -m 0755 -D $(@D)/bin/lightnvr $(TARGET_DIR)/usr/bin/lightnvr
+	-cp -r $(@D)/web/dist/img/* $(TARGET_DIR)/var/lib/oneberry/web/img/ 2>/dev/null || true
+	$(INSTALL) -m 755 -d $(TARGET_DIR)/etc/oneberry
+	$(INSTALL) -m 755 -d $(TARGET_DIR)/etc/oneberry/go2rtc
+	$(INSTALL) -m 644 $(LIGHTNVR_PKGDIR)/files/oneberry.ini $(TARGET_DIR)/etc/oneberry/oneberry.ini
+	$(INSTALL) -m 755 -d $(TARGET_DIR)/opt/oneberry
+	$(INSTALL) -m 755 -d $(TARGET_DIR)/opt/oneberry/recordings
+	$(INSTALL) -m 755 -d $(TARGET_DIR)/opt/oneberry/recordings/mp4
+	$(INSTALL) -m 755 -d $(TARGET_DIR)/opt/oneberry/database
+	$(INSTALL) -m 755 -d $(TARGET_DIR)/opt/oneberry/models
+	$(INSTALL) -m 0755 -D $(@D)/bin/oneberry $(TARGET_DIR)/usr/bin/oneberry
 	$(INSTALL) -m 0755 -D $(LIGHTNVR_PKGDIR)/files/S95lightnvr $(TARGET_DIR)/etc/init.d/S95lightnvr
 endef
 

@@ -11,8 +11,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: opensensor/lightnvr
-  REGISTRY_IMAGE: ghcr.io/opensensor/lightnvr
+  IMAGE_NAME: opensensor/oneberry
+  REGISTRY_IMAGE: ghcr.io/opensensor/oneberry
 
 jobs:
   build:
@@ -46,7 +46,7 @@ jobs:
             type=raw,value=latest,enable=true
             type=ref,event=pr
           labels: |
-            org.opencontainers.image.title=LightNVR
+            org.opencontainers.image.title=Oneberry
             org.opencontainers.image.description=Lightweight Network Video Recorder with go2rtc integration
             org.opencontainers.image.vendor=OpenSensor
 
@@ -138,7 +138,7 @@ jobs:
             type=raw,value=latest,enable=true
             type=ref,event=pr
           labels: |
-            org.opencontainers.image.title=LightNVR
+            org.opencontainers.image.title=Oneberry
             org.opencontainers.image.description=Lightweight Network Video Recorder with go2rtc integration
             org.opencontainers.image.vendor=OpenSensor
 

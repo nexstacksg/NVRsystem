@@ -1,5 +1,5 @@
 /**
- * LightNVR Web Interface Users Page
+ * Oneberry Web Interface Users Page
  * Entry point for the users page
  */
 

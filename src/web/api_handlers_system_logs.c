@@ -353,8 +353,8 @@ void mg_handle_post_system_logs_clear(struct mg_connection *c, struct mg_http_me
     log_info("Handling POST /api/system/logs/clear request");
 
     // Get log file path
-    const char* log_file = "/var/log/lightnvr.log"; // Default log file path
-    const char* fallback_log_file = "./lightnvr.log"; // Fallback log file in current directory
+    const char* log_file = "/var/log/oneberry.log"; // Default log file path
+    const char* fallback_log_file = "./oneberry.log"; // Fallback log file in current directory
 
     // Check if config has a log file path
     if (g_config.log_file[0] != '\0') {

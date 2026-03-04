@@ -1,6 +1,6 @@
-# LightNVR Release Process
+# Oneberry Release Process
 
-This document describes the automated release process for LightNVR.
+This document describes the automated release process for Oneberry.
 
 ## Overview
 
@@ -106,13 +106,13 @@ When you push a tag, GitHub Actions automatically:
    - Installs Node.js 20.x LTS
    - Runs `npm ci --omit=dev` to install production dependencies only
    - Runs `npm run build` to build with Vite
-   - Copies built assets to `/usr/share/lightnvr/web-template/`
+   - Copies built assets to `/usr/share/oneberry/web-template/`
 
 3. **Publishes images** to GitHub Container Registry:
-   - `ghcr.io/opensensor/lightnvr:latest` (for main branch)
-   - `ghcr.io/opensensor/lightnvr:0.13.0` (for version tags)
-   - `ghcr.io/opensensor/lightnvr:0.13` (major.minor)
-   - `ghcr.io/opensensor/lightnvr:0` (major only)
+   - `ghcr.io/opensensor/oneberry:latest` (for main branch)
+   - `ghcr.io/opensensor/oneberry:0.13.0` (for version tags)
+   - `ghcr.io/opensensor/oneberry:0.13` (major.minor)
+   - `ghcr.io/opensensor/oneberry:0` (major only)
 
 4. **Creates multi-arch manifest** combining all platform images
 
@@ -154,7 +154,7 @@ npm run build
 
 ## Version Numbering
 
-LightNVR follows [Semantic Versioning](https://semver.org/):
+Oneberry follows [Semantic Versioning](https://semver.org/):
 
 - **MAJOR** version: Incompatible API changes
 - **MINOR** version: New functionality (backwards compatible)
@@ -193,7 +193,7 @@ The version tag already exists. Either:
 The version format in `CMakeLists.txt` is incorrect. It should be:
 
 ```cmake
-project(LightNVR VERSION 0.13.0 LANGUAGES C CXX)
+project(Oneberry VERSION 0.13.0 LANGUAGES C CXX)
 ```
 
 ### Web assets not found in Docker image

@@ -1,6 +1,6 @@
-# LightNVR Examples
+# Oneberry Examples
 
-This directory contains example code demonstrating how to use various LightNVR features.
+This directory contains example code demonstrating how to use various Oneberry features.
 
 ## ONVIF Motion Recording Example
 
@@ -54,7 +54,7 @@ The example is provided for reference and educational purposes. To integrate it 
 To compile and run the example as a standalone program:
 
 ```bash
-# From the LightNVR root directory
+# From the Oneberry root directory
 cd build
 cmake ..
 make
@@ -100,7 +100,7 @@ Recording state: RECORDING
 Statistics:
   - Total recordings: 1
   - Total motion events: 2
-Current recording: /var/lib/lightnvr/recordings/front_door/2024/01/10/front_door_20240110_120000_motion.mp4
+Current recording: /var/lib/oneberry/recordings/front_door/2024/01/10/front_door_20240110_120000_motion.mp4
 
 === Example 4: Update Configuration ===
 ✓ Configuration updated for stream: front_door
@@ -127,9 +127,9 @@ Motion recording enabled for 4 cameras
 All examples completed successfully!
 ```
 
-## Integration with LightNVR
+## Integration with Oneberry
 
-The ONVIF motion recording feature is automatically integrated with LightNVR's ONVIF detection system. When motion is detected by an ONVIF camera:
+The ONVIF motion recording feature is automatically integrated with Oneberry's ONVIF detection system. When motion is detected by an ONVIF camera:
 
 1. The `detect_motion_onvif()` function detects motion
 2. It calls `process_motion_event()` to queue the event

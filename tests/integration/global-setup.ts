@@ -1,9 +1,9 @@
 /**
- * Global Setup for LightNVR Integration Tests
+ * Global Setup for Oneberry Integration Tests
  * 
  * This runs once before all tests to start the test environment:
  * 1. Sets up test directories
- * 2. Starts lightNVR with test configuration
+ * 2. Starts oneberry with test configuration
  * 3. Waits for services to be ready
  * 4. Registers test streams with go2rtc
  */
@@ -13,15 +13,15 @@ import { existsSync, mkdirSync, writeFileSync, readFileSync, rmSync } from 'fs';
 import path from 'path';
 
 const PROJECT_ROOT = path.resolve(__dirname, '../..');
-const TEST_DIR = '/tmp/lightnvr-test';
+const TEST_DIR = '/tmp/oneberry-test';
 const TEST_RESULTS_DIR = path.join(PROJECT_ROOT, 'test-results');
-const LIGHTNVR_BIN = path.join(PROJECT_ROOT, 'build/bin/lightnvr');
-const LIGHTNVR_CONFIG = path.join(PROJECT_ROOT, 'config/lightnvr-test.ini');
+const LIGHTNVR_BIN = path.join(PROJECT_ROOT, 'build/bin/oneberry');
+const LIGHTNVR_CONFIG = path.join(PROJECT_ROOT, 'config/oneberry-test.ini');
 const LIGHTNVR_PORT = 18080;
 const GO2RTC_API_PORT = 11984;
 const GO2RTC_RTSP_PORT = 18554;
 
-// Test streams to register with go2rtc and lightNVR
+// Test streams to register with go2rtc and oneberry
 const TEST_STREAMS = [
   { name: 'test_pattern', source: 'ffmpeg:virtual?video&size=720#video=h264', width: 1280, height: 720 },
   { name: 'test_colorbars', source: 'ffmpeg:virtual?video=smptebars&size=720#video=h264', width: 1280, height: 720 },
@@ -88,11 +88,11 @@ async function setupTestDirectories(): Promise<void> {
 }
 
 async function startLightNVR(): Promise<void> {
-  console.log('Starting lightNVR...');
+  console.log('Starting oneberry...');
   
   // Check if binary exists
   if (!existsSync(LIGHTNVR_BIN)) {
-    throw new Error(`lightNVR binary not found at ${LIGHTNVR_BIN}. Run ./scripts/build.sh first.`);
+    throw new Error(`oneberry binary not found at ${LIGHTNVR_BIN}. Run ./scripts/build.sh first.`);
   }
   
   // Check if already running
@@ -101,7 +101,7 @@ async function startLightNVR(): Promise<void> {
       headers: { 'Authorization': 'Basic ' + Buffer.from('admin:admin').toString('base64') }
     });
     if (response.ok) {
-      console.log('lightNVR already running');
+      console.log('oneberry already running');
       return;
     }
   } catch (e) {
@@ -109,7 +109,7 @@ async function startLightNVR(): Promise<void> {
   }
   
   // Remove any stale PID file before starting
-  const pidFile = `${TEST_DIR}/lightnvr.pid`;
+  const pidFile = `${TEST_DIR}/oneberry.pid`;
   if (existsSync(pidFile)) {
     rmSync(pidFile);
   }
@@ -120,20 +120,20 @@ async function startLightNVR(): Promise<void> {
     detached: true,
   });
 
-  // Store PID in a separate file for teardown (not the same as lightNVR's PID file)
-  writeFileSync(`${TEST_DIR}/test-lightnvr.pid`, String(lightnvrProcess.pid));
+  // Store PID in a separate file for teardown (not the same as oneberry's PID file)
+  writeFileSync(`${TEST_DIR}/test-oneberry.pid`, String(lightnvrProcess.pid));
   
   // Log output for debugging
   lightnvrProcess.stdout?.on('data', (data) => {
-    if (process.env.DEBUG) console.log(`[lightnvr] ${data}`);
+    if (process.env.DEBUG) console.log(`[oneberry] ${data}`);
   });
   lightnvrProcess.stderr?.on('data', (data) => {
-    if (process.env.DEBUG) console.error(`[lightnvr] ${data}`);
+    if (process.env.DEBUG) console.error(`[oneberry] ${data}`);
   });
   
-  console.log(`lightNVR started with PID: ${lightnvrProcess.pid}`);
+  console.log(`oneberry started with PID: ${lightnvrProcess.pid}`);
   
-  // Wait for lightNVR to be ready (with auth)
+  // Wait for oneberry to be ready (with auth)
   const authHeader = 'Basic ' + Buffer.from('admin:admin').toString('base64');
   const ready = await waitForService(
     `http://localhost:${LIGHTNVR_PORT}/api/system`,
@@ -144,28 +144,28 @@ async function startLightNVR(): Promise<void> {
   if (!ready) {
     // Check if the process is still running
     if (lightnvrProcess && !lightnvrProcess.killed) {
-      console.error('lightNVR process is still running but not responding');
+      console.error('oneberry process is still running but not responding');
     } else {
-      console.error('lightNVR process has exited');
+      console.error('oneberry process has exited');
     }
 
     // Try to read logs
-    const logPath = '/tmp/lightnvr-test/lightnvr.log';
+    const logPath = '/tmp/oneberry-test/oneberry.log';
     if (existsSync(logPath)) {
       const logs = readFileSync(logPath, 'utf8');
       const lastLines = logs.split('\n').slice(-30).join('\n');
-      console.error('Last 30 lines of lightNVR log:\n' + lastLines);
+      console.error('Last 30 lines of oneberry log:\n' + lastLines);
     }
 
-    throw new Error('lightNVR failed to start within 45 seconds');
+    throw new Error('oneberry failed to start within 45 seconds');
   }
-  console.log('lightNVR is ready');
+  console.log('oneberry is ready');
 }
 
 async function waitForGo2rtc(): Promise<void> {
   console.log('Waiting for go2rtc on port ' + GO2RTC_API_PORT + '...');
 
-  // LightNVR needs time to start go2rtc, so we use a longer timeout
+  // Oneberry needs time to start go2rtc, so we use a longer timeout
   const ready = await waitForService(
     `http://localhost:${GO2RTC_API_PORT}/api/streams`,
     60000  // 60 seconds timeout - go2rtc startup can take a while
@@ -173,12 +173,12 @@ async function waitForGo2rtc(): Promise<void> {
 
   if (!ready) {
     // Try to get more diagnostic information
-    console.error('go2rtc failed to start. Checking lightNVR logs...');
-    const logPath = '/tmp/lightnvr-test/lightnvr.log';
+    console.error('go2rtc failed to start. Checking oneberry logs...');
+    const logPath = '/tmp/oneberry-test/oneberry.log';
     if (existsSync(logPath)) {
       const logs = readFileSync(logPath, 'utf8');
       const lastLines = logs.split('\n').slice(-50).join('\n');
-      console.error('Last 50 lines of lightNVR log:\n' + lastLines);
+      console.error('Last 50 lines of oneberry log:\n' + lastLines);
     }
 
     // Check if go2rtc binary exists
@@ -211,7 +211,7 @@ async function registerTestStreamsWithGo2rtc(): Promise<void> {
 }
 
 async function addStreamsToLightNVR(): Promise<void> {
-  console.log('Adding test streams to lightNVR...');
+  console.log('Adding test streams to oneberry...');
 
   const authHeader = 'Basic ' + Buffer.from('admin:admin').toString('base64');
 
@@ -243,22 +243,22 @@ async function addStreamsToLightNVR(): Promise<void> {
       });
 
       if (response.ok || response.status === 201) {
-        console.log(`  ✓ Added to lightNVR: ${stream.name}`);
+        console.log(`  ✓ Added to oneberry: ${stream.name}`);
       } else if (response.status === 409) {
-        console.log(`  ⚠ Already exists in lightNVR: ${stream.name}`);
+        console.log(`  ⚠ Already exists in oneberry: ${stream.name}`);
       } else {
         const text = await response.text();
-        console.log(`  ✗ Failed to add to lightNVR: ${stream.name} (${response.status}: ${text})`);
+        console.log(`  ✗ Failed to add to oneberry: ${stream.name} (${response.status}: ${text})`);
       }
     } catch (e) {
-      console.log(`  ✗ Error adding to lightNVR: ${stream.name} - ${e}`);
+      console.log(`  ✗ Error adding to oneberry: ${stream.name} - ${e}`);
     }
   }
 }
 
 async function globalSetup(): Promise<void> {
   console.log('\n========================================');
-  console.log('LightNVR Integration Test Setup');
+  console.log('Oneberry Integration Test Setup');
   console.log('========================================\n');
 
   // Create test-results directory for screenshots
@@ -272,10 +272,10 @@ async function globalSetup(): Promise<void> {
   await waitForGo2rtc();
 
   // Order matters here:
-  // 1. First add streams to lightNVR (which syncs RTSP URLs to go2rtc)
+  // 1. First add streams to oneberry (which syncs RTSP URLs to go2rtc)
   // 2. Then re-register virtual sources with go2rtc (overwriting the RTSP URLs)
   await addStreamsToLightNVR();
-  await sleep(2000); // Wait for lightNVR's sync to complete
+  await sleep(2000); // Wait for oneberry's sync to complete
   await registerTestStreamsWithGo2rtc();
 
   console.log('\n✓ Test environment ready\n');

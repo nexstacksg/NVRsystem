@@ -59,7 +59,7 @@ static int generate_random_string(char *buffer, size_t length) {
     
     // Seed the random number generator
     if (mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy,
-                              (const unsigned char *)"lightnvr", 8) != 0) {
+                              (const unsigned char *)"oneberry", 8) != 0) {
         log_error("Failed to seed random number generator");
         mbedtls_ctr_drbg_free(&ctr_drbg);
         mbedtls_entropy_free(&entropy);
@@ -261,7 +261,7 @@ int db_auth_create_user(const char *username, const char *password, const char *
     
     // Seed the random number generator
     if (mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy,
-                              (const unsigned char *)"lightnvr", 8) != 0) {
+                              (const unsigned char *)"oneberry", 8) != 0) {
         log_error("Failed to seed random number generator");
         mbedtls_ctr_drbg_free(&ctr_drbg);
         mbedtls_entropy_free(&entropy);
@@ -478,7 +478,7 @@ int db_auth_change_password(int64_t user_id, const char *new_password) {
     
     // Seed the random number generator
     if (mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy,
-                              (const unsigned char *)"lightnvr", 8) != 0) {
+                              (const unsigned char *)"oneberry", 8) != 0) {
         log_error("Failed to seed random number generator");
         mbedtls_ctr_drbg_free(&ctr_drbg);
         mbedtls_entropy_free(&entropy);

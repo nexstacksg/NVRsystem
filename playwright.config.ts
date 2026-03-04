@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * LightNVR Integration Test Configuration
+ * Oneberry Integration Test Configuration
  *
  * Usage:
  *   npx playwright test                    # Run all tests headless

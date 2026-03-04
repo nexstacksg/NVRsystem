@@ -1,5 +1,5 @@
 /**
- * LightNVR Web Interface Stream Delete Modal Component
+ * Oneberry Web Interface Stream Delete Modal Component
  * Preact component for the stream delete modal
  */
 

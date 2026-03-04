@@ -1,18 +1,18 @@
 #!/bin/bash
 
 ##
-# LightNVR Documentation Media Update Script
+# Oneberry Documentation Media Update Script
 #
 # This script automates the process of capturing screenshots and videos
-# for the LightNVR documentation. It can be run locally or in CI/CD.
+# for the Oneberry documentation. It can be run locally or in CI/CD.
 #
 # Usage:
 #   ./scripts/update-documentation-media.sh [options]
 #
 # Options:
-#   --local              Run against local LightNVR instance
-#   --docker             Start LightNVR in Docker first
-#   --url <url>          Custom LightNVR URL
+#   --local              Run against local Oneberry instance
+#   --docker             Start Oneberry in Docker first
+#   --url <url>          Custom Oneberry URL
 #   --screenshots-only   Only capture screenshots
 #   --videos-only        Only capture videos
 #   --all-themes         Capture all theme variations
@@ -75,7 +75,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-echo -e "${GREEN}LightNVR Documentation Media Update${NC}"
+echo -e "${GREEN}Oneberry Documentation Media Update${NC}"
 echo "===================================="
 echo ""
 echo "Configuration:"
@@ -109,18 +109,18 @@ fi
 
 # Start Docker if requested
 if [ "$USE_DOCKER" = true ]; then
-  echo -e "${YELLOW}Starting LightNVR in Docker...${NC}"
+  echo -e "${YELLOW}Starting Oneberry in Docker...${NC}"
   docker-compose up -d
   
-  echo "Waiting for LightNVR to start..."
+  echo "Waiting for Oneberry to start..."
   sleep 15
   
-  # Wait for LightNVR to be ready
+  # Wait for Oneberry to be ready
   MAX_RETRIES=30
   RETRY_COUNT=0
   while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
     if curl -s -o /dev/null -w "%{http_code}" "$LIGHTNVR_URL/login.html" | grep -q "200"; then
-      echo -e "${GREEN}✓ LightNVR is ready${NC}"
+      echo -e "${GREEN}✓ Oneberry is ready${NC}"
       break
     fi
     RETRY_COUNT=$((RETRY_COUNT + 1))
@@ -129,20 +129,20 @@ if [ "$USE_DOCKER" = true ]; then
   done
   
   if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
-    echo -e "${RED}Error: LightNVR did not start in time${NC}"
+    echo -e "${RED}Error: Oneberry did not start in time${NC}"
     exit 1
   fi
   echo ""
 fi
 
-# Check if LightNVR is accessible
-echo -e "${YELLOW}Checking LightNVR accessibility...${NC}"
+# Check if Oneberry is accessible
+echo -e "${YELLOW}Checking Oneberry accessibility...${NC}"
 if ! curl -s -o /dev/null -w "%{http_code}" "$LIGHTNVR_URL/login.html" | grep -q "200"; then
-  echo -e "${RED}Error: Cannot access LightNVR at $LIGHTNVR_URL${NC}"
-  echo "Make sure LightNVR is running and accessible."
+  echo -e "${RED}Error: Cannot access Oneberry at $LIGHTNVR_URL${NC}"
+  echo "Make sure Oneberry is running and accessible."
   exit 1
 fi
-echo -e "${GREEN}✓ LightNVR is accessible${NC}"
+echo -e "${GREEN}✓ Oneberry is accessible${NC}"
 echo ""
 
 # Setup demo streams

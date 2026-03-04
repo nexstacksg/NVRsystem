@@ -1,22 +1,22 @@
 /**
- * Global Teardown for LightNVR Integration Tests
+ * Global Teardown for Oneberry Integration Tests
  * 
  * Cleans up after all tests:
- * 1. Stops lightNVR (which stops go2rtc)
+ * 1. Stops oneberry (which stops go2rtc)
  * 2. Optionally cleans up test directories
  */
 
 import { existsSync, readFileSync, rmSync } from 'fs';
 import { execSync } from 'child_process';
 
-const TEST_DIR = '/tmp/lightnvr-test';
+const TEST_DIR = '/tmp/oneberry-test';
 
 async function stopLightNVR(): Promise<void> {
-  console.log('Stopping lightNVR...');
+  console.log('Stopping oneberry...');
 
-  // Try our test PID file first, then fall back to lightNVR's PID file
-  const testPidFile = `${TEST_DIR}/test-lightnvr.pid`;
-  const lightnvrPidFile = `${TEST_DIR}/lightnvr.pid`;
+  // Try our test PID file first, then fall back to oneberry's PID file
+  const testPidFile = `${TEST_DIR}/test-oneberry.pid`;
+  const lightnvrPidFile = `${TEST_DIR}/oneberry.pid`;
   const pidFile = existsSync(testPidFile) ? testPidFile : lightnvrPidFile;
 
   if (existsSync(pidFile)) {
@@ -47,10 +47,10 @@ async function stopLightNVR(): Promise<void> {
       rmSync(testPidFile, { force: true });
       rmSync(lightnvrPidFile, { force: true });
     } catch (e) {
-      console.log(`Error stopping lightNVR: ${e}`);
+      console.log(`Error stopping oneberry: ${e}`);
     }
   } else {
-    console.log('No PID file found, lightNVR may not have been started by tests');
+    console.log('No PID file found, oneberry may not have been started by tests');
   }
 }
 
@@ -74,7 +74,7 @@ async function cleanupTestDirectories(): Promise<void> {
 
 async function globalTeardown(): Promise<void> {
   console.log('\n========================================');
-  console.log('LightNVR Integration Test Teardown');
+  console.log('Oneberry Integration Test Teardown');
   console.log('========================================\n');
   
   await stopLightNVR();

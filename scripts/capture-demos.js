@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 
 /**
- * LightNVR Automated Demo Video Capture
+ * Oneberry Automated Demo Video Capture
  * 
  * This script uses Playwright to automatically capture demo videos and GIFs
- * of key LightNVR features.
+ * of key Oneberry features.
  * 
  * Usage:
  *   npm install --save-dev playwright
  *   node scripts/capture-demos.js [options]
  * 
  * Options:
- *   --url <url>          LightNVR URL (default: http://localhost:8080)
+ *   --url <url>          Oneberry URL (default: http://localhost:8080)
  *   --username <user>    Username (default: admin)
  *   --password <pass>    Password (default: admin)
  *   --output <dir>       Output directory (default: docs/videos)
@@ -279,7 +279,7 @@ async function demoStreamConfiguration(page) {
 }
 
 async function main() {
-  console.log('LightNVR Demo Video Capture Tool');
+  console.log('Oneberry Demo Video Capture Tool');
   console.log('=================================\n');
   console.log('Configuration:');
   console.log(`  URL: ${config.url}`);

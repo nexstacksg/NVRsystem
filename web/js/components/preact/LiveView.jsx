@@ -1,5 +1,5 @@
 /**
- * LightNVR Web Interface LiveView Component
+ * Oneberry Web Interface LiveView Component
  * Preact component for the HLS live view page
  */
 
@@ -35,7 +35,7 @@ export function LiveView({isWebRTCDisabled}) {
       return layoutParam;
     }
     // Check localStorage for persisted layout preference
-    const storedLayout = localStorage.getItem('lightnvr-hls-layout');
+    const storedLayout = localStorage.getItem('oneberry-hls-layout');
     return storedLayout || '4';
   });
 
@@ -224,7 +224,7 @@ export function LiveView({isWebRTCDisabled}) {
     }
 
     // Save layout to localStorage for persistence across sessions
-    localStorage.setItem('lightnvr-hls-layout', layout);
+    localStorage.setItem('oneberry-hls-layout', layout);
 
     if (layout === '1' && selectedStream) {
       sessionStorage.setItem('hls_selected_stream', selectedStream);

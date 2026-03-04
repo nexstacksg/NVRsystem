@@ -1,5 +1,5 @@
 #!/bin/bash
-# Install web assets for LightNVR
+# Install web assets for Oneberry
 # This script builds (if needed) and installs the web interface files
 
 set -e
@@ -26,7 +26,7 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;36m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}=== LightNVR Web Assets Installation ===${NC}\n"
+echo -e "${BLUE}=== Oneberry Web Assets Installation ===${NC}\n"
 
 # Check if running as root
 if [ "$EUID" -ne 0 ]; then 
@@ -42,13 +42,13 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 echo -e "${BLUE}Project root: $PROJECT_ROOT${NC}\n"
 
 # Determine web root from config or use default
-CONFIG_FILE="/etc/lightnvr/lightnvr.ini"
+CONFIG_FILE="/etc/oneberry/oneberry.ini"
 if [ -f "$CONFIG_FILE" ]; then
     WEB_ROOT=$(grep -E "^root\s*=" "$CONFIG_FILE" | sed 's/.*=\s*//' | tr -d ' ')
 fi
 
 if [ -z "$WEB_ROOT" ]; then
-    WEB_ROOT="/var/lib/lightnvr/www"
+    WEB_ROOT="/var/lib/oneberry/www"
     echo -e "${YELLOW}Using default web root: $WEB_ROOT${NC}"
 else
     echo -e "${GREEN}Using web root from config: $WEB_ROOT${NC}"
@@ -58,7 +58,7 @@ echo ""
 # Check if web directory exists in source
 if [ ! -d "$PROJECT_ROOT/web" ]; then
     echo -e "${RED}Error: Web directory not found at $PROJECT_ROOT/web${NC}"
-    echo "Please run this script from the LightNVR source directory"
+    echo "Please run this script from the Oneberry source directory"
     exit 1
 fi
 
@@ -172,10 +172,10 @@ if [ $ALL_PRESENT -eq 1 ]; then
     echo -e "Web assets have been installed to: $WEB_ROOT"
     echo ""
     echo -e "Next steps:"
-    echo -e "  1. Restart LightNVR service:"
-    echo -e "     ${BLUE}sudo systemctl restart lightnvr${NC}"
+    echo -e "  1. Restart Oneberry service:"
+    echo -e "     ${BLUE}sudo systemctl restart oneberry${NC}"
     echo -e "  2. Check service status:"
-    echo -e "     ${BLUE}sudo systemctl status lightnvr${NC}"
+    echo -e "     ${BLUE}sudo systemctl status oneberry${NC}"
     echo -e "  3. Access web interface:"
     echo -e "     ${BLUE}http://your-server-ip:8080${NC}"
     echo -e "  4. Default credentials:"

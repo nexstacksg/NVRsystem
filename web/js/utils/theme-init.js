@@ -1,5 +1,5 @@
 /**
- * Theme initialization script for LightNVR
+ * Theme initialization script for Oneberry
  * This script runs immediately to prevent FOUC (Flash of Unstyled Content)
  * Based on the accounting app's theme system
  */
@@ -157,9 +157,9 @@ export function applyThemeColors(isDark, colorTheme, colorIntensity) {
 export function initTheme() {
   try {
     // Get user preferences from localStorage
-    const savedTheme = localStorage.getItem('lightnvr-theme');
-    const savedColorIntensity = localStorage.getItem('lightnvr-color-intensity');
-    const savedColorTheme = localStorage.getItem('lightnvr-color-theme');
+    const savedTheme = localStorage.getItem('oneberry-theme');
+    const savedColorIntensity = localStorage.getItem('oneberry-color-intensity');
+    const savedColorTheme = localStorage.getItem('oneberry-color-theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
     // Determine final theme
@@ -208,9 +208,9 @@ export function getThemeInitScript() {
   try {
     const COLOR_THEMES = ${JSON.stringify(COLOR_THEMES)};
     
-    const savedTheme = localStorage.getItem('lightnvr-theme');
-    const savedColorIntensity = localStorage.getItem('lightnvr-color-intensity');
-    const savedColorTheme = localStorage.getItem('lightnvr-color-theme');
+    const savedTheme = localStorage.getItem('oneberry-theme');
+    const savedColorIntensity = localStorage.getItem('oneberry-color-intensity');
+    const savedColorTheme = localStorage.getItem('oneberry-color-theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
     let finalTheme = 'light';

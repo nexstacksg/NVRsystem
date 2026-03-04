@@ -23,7 +23,7 @@ This document summarizes all the fixes applied to resolve Docker container issue
 
 **Issue:** Container stuck in restart loop with error:
 ```
-cp: cannot stat '/usr/share/lightnvr/models/*': No such file or directory
+cp: cannot stat '/usr/share/oneberry/models/*': No such file or directory
 ```
 
 **Root Cause:** Script attempted to copy from empty models directory without checking if source has files.
@@ -31,14 +31,14 @@ cp: cannot stat '/usr/share/lightnvr/models/*': No such file or directory
 **Fix:** Added check to verify source directory has files before attempting copy:
 ```bash
 # Before
-if [ -d /usr/share/lightnvr/models ] && [ -z "$(ls -A /var/lib/lightnvr/data/models 2>/dev/null)" ]; then
-    cp -r /usr/share/lightnvr/models/* /var/lib/lightnvr/data/models/
+if [ -d /usr/share/oneberry/models ] && [ -z "$(ls -A /var/lib/oneberry/data/models 2>/dev/null)" ]; then
+    cp -r /usr/share/oneberry/models/* /var/lib/oneberry/data/models/
 fi
 
 # After
-if [ -d /usr/share/lightnvr/models ] && [ -n "$(ls -A /usr/share/lightnvr/models 2>/dev/null)" ]; then
-    if [ -z "$(ls -A /var/lib/lightnvr/data/models 2>/dev/null)" ]; then
-        cp -r /usr/share/lightnvr/models/* /var/lib/lightnvr/data/models/
+if [ -d /usr/share/oneberry/models ] && [ -n "$(ls -A /usr/share/oneberry/models 2>/dev/null)" ]; then
+    if [ -z "$(ls -A /var/lib/oneberry/data/models 2>/dev/null)" ]; then
+        cp -r /usr/share/oneberry/models/* /var/lib/oneberry/data/models/
     fi
 fi
 ```
@@ -59,13 +59,13 @@ fi
 **Fix:** Added check to verify web-template has files before copying:
 ```bash
 # Before
-if [ -d /usr/share/lightnvr/web-template ]; then
-    cp -r /usr/share/lightnvr/web-template/* /var/lib/lightnvr/web/
+if [ -d /usr/share/oneberry/web-template ]; then
+    cp -r /usr/share/oneberry/web-template/* /var/lib/oneberry/web/
 fi
 
 # After
-if [ -d /usr/share/lightnvr/web-template ] && [ -n "$(ls -A /usr/share/lightnvr/web-template 2>/dev/null)" ]; then
-    cp -r /usr/share/lightnvr/web-template/* /var/lib/lightnvr/web/
+if [ -d /usr/share/oneberry/web-template ] && [ -n "$(ls -A /usr/share/oneberry/web-template 2>/dev/null)" ]; then
+    cp -r /usr/share/oneberry/web-template/* /var/lib/oneberry/web/
 fi
 ```
 
@@ -106,7 +106,7 @@ docker-compose logs -f
 # Expected: No errors, container running
 
 # Test 2: Check container status
-docker ps | grep lightnvr
+docker ps | grep oneberry
 
 # Expected: Container running, not restarting
 
@@ -147,13 +147,13 @@ docker-compose restart
 ```
 Build succeeds → Manifest creation fails → Workflow fails
 Error: invalid reference format
-Tag: ghcr.io/opensensor/lightnvr:-a397c50
+Tag: ghcr.io/opensensor/oneberry:-a397c50
 ```
 
 **After:**
 ```
 Build succeeds → Manifest creation succeeds → Workflow succeeds
-Tag: ghcr.io/opensensor/lightnvr:sha-a397c50
+Tag: ghcr.io/opensensor/oneberry:sha-a397c50
 ```
 
 ### Container Startup
@@ -247,11 +247,11 @@ Container runs successfully ✓
 
 5. **Test Published Image:**
    ```bash
-   docker pull ghcr.io/opensensor/lightnvr:latest
-   docker run -d --name lightnvr-test \
+   docker pull ghcr.io/opensensor/oneberry:latest
+   docker run -d --name oneberry-test \
      -p 8080:8080 \
-     ghcr.io/opensensor/lightnvr:latest
-   docker logs -f lightnvr-test
+     ghcr.io/opensensor/oneberry:latest
+   docker logs -f oneberry-test
    ```
 
 ## Related Documentation

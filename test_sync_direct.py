@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Direct database sync script for LightNVR recordings
+Direct database sync script for Oneberry recordings
 This script updates the database with actual file sizes from disk
 """
 
@@ -8,7 +8,7 @@ import sqlite3
 import os
 import sys
 
-DB_PATH = "/var/lib/lightnvr/lightnvr.db"
+DB_PATH = "/var/lib/oneberry/oneberry.db"
 
 def sync_recordings():
     """Sync recording file sizes with actual files on disk"""
@@ -69,8 +69,8 @@ def sync_recordings():
     except sqlite3.OperationalError as e:
         if "readonly" in str(e).lower() or "locked" in str(e).lower():
             print(f"Database error: {e}")
-            print("\nThe database may be locked by the running LightNVR service.")
-            print("Please stop the service first with: sudo systemctl stop lightnvr")
+            print("\nThe database may be locked by the running Oneberry service.")
+            print("Please stop the service first with: sudo systemctl stop oneberry")
             return -1
         else:
             raise

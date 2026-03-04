@@ -1,5 +1,5 @@
 /**
- * LightNVR Toast Notification System
+ * Oneberry Toast Notification System
  * JSX-based toast notifications using Preact
  */
 import { h, render, Component, createContext } from 'preact';

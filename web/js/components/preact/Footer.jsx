@@ -1,5 +1,5 @@
 /**
- * LightNVR Web Interface Footer Component
+ * Oneberry Web Interface Footer Component
  * Preact component for the site footer
  */
 
@@ -21,9 +21,9 @@ export function Footer() {
           Lightweight Network Video Recorder© {year}
         </div>
         <div>
-          <a href="https://github.com/opensensor/lightnvr" class="text-sm no-underline hover:underline"
+          {/* <a href="https://github.com/opensensor/oneberry" class="text-sm no-underline hover:underline"
              style={{color: 'hsl(var(--primary))'}}
-             target="_blank" rel="noopener noreferrer">GitHub</a>
+             target="_blank" rel="noopener noreferrer">GitHub</a> */}
         </div>
       </div>
     </footer>

@@ -24,8 +24,8 @@ WORKDIR /opt
 COPY . .
 
 # Clean any existing build files and build the application
-RUN mkdir -p /etc/lightnvr /var/lib/lightnvr/data /var/log/lightnvr /var/run/lightnvr && \
-    chmod -R 777 /var/lib/lightnvr /var/log/lightnvr /var/run/lightnvr && \
+RUN mkdir -p /etc/oneberry /var/lib/oneberry/data /var/log/oneberry /var/run/oneberry && \
+    chmod -R 777 /var/lib/oneberry /var/log/oneberry /var/run/oneberry && \
     # Clean any existing build files
     rm -rf build/ && \
     # Build the application
@@ -48,15 +48,15 @@ RUN apk update && apk add --no-cache \
     mosquitto-libs
 
 # Create necessary directories in runtime
-RUN mkdir -p /etc/lightnvr /var/lib/lightnvr/data /var/log/lightnvr /var/run/lightnvr && \
-    chmod -R 777 /var/lib/lightnvr /var/log/lightnvr /var/run/lightnvr
+RUN mkdir -p /etc/oneberry /var/lib/oneberry/data /var/log/oneberry /var/run/oneberry && \
+    chmod -R 777 /var/lib/oneberry /var/log/oneberry /var/run/oneberry
 
 # Copy compiled binary and config files from builder stage
-COPY --from=builder /bin/lightnvr /bin/lightnvr
-COPY --from=builder /etc/lightnvr /etc/lightnvr
-COPY --from=builder /var/lib/lightnvr /var/lib/lightnvr
-COPY --from=builder /var/log/lightnvr /var/log/lightnvr
-COPY --from=builder /var/run/lightnvr /var/run/lightnvr
+COPY --from=builder /bin/oneberry /bin/oneberry
+COPY --from=builder /etc/oneberry /etc/oneberry
+COPY --from=builder /var/lib/oneberry /var/lib/oneberry
+COPY --from=builder /var/log/oneberry /var/log/oneberry
+COPY --from=builder /var/run/oneberry /var/run/oneberry
 COPY --from=builder /lib/libsod.so.1.1.9 /lib/libsod.so.1.1.9
 COPY --from=builder /lib/libsod.so.1.1.9 /lib/libsod.so.1
 COPY --from=builder /lib/libsod.so.1 /lib/libsod.so
@@ -65,10 +65,10 @@ COPY --from=builder /lib/libsod.so.1 /lib/libsod.so
 EXPOSE 8080
 
 # Volume for configuration and data persistence
-# /etc/lightnvr - Configuration files
-# /var/lib/lightnvr/data - Persistent data (database, recordings, models, etc.)
-VOLUME /etc/lightnvr
-VOLUME /var/lib/lightnvr/data
+# /etc/oneberry - Configuration files
+# /var/lib/oneberry/data - Persistent data (database, recordings, models, etc.)
+VOLUME /etc/oneberry
+VOLUME /var/lib/oneberry/data
 
 # Command to start the service
-CMD ["/bin/lightnvr", "-c", "/etc/lightnvr/lightnvr.ini"]
+CMD ["/bin/oneberry", "-c", "/etc/oneberry/oneberry.ini"]

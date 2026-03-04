@@ -30,12 +30,12 @@ jobs:
           
           # Custom messages
           custom-notsigned-prcomment: |
-            Thank you for your contribution to lightNVR! 🎉
+            Thank you for your contribution to oneberry! 🎉
             
             Before we can merge your pull request, we need you to sign our [Contributor License Agreement (CLA)](https://github.com/${{ github.repository }}/blob/main/CLA.md).
             
             **Why a CLA?**
-            lightNVR uses a dual-licensing model. While the project is freely available under GPLv3, OpenSensor Engineering also offers commercial licenses. The CLA ensures we can continue offering both options.
+            oneberry uses a dual-licensing model. While the project is freely available under GPLv3, OpenSensor Engineering also offers commercial licenses. The CLA ensures we can continue offering both options.
             
             **To sign the CLA**, please reply to this comment with exactly:
             ```

@@ -1,8 +1,8 @@
 # Contributor License Agreement (CLA)
 
-## lightNVR Individual Contributor License Agreement
+## oneberry Individual Contributor License Agreement
 
-Thank you for your interest in contributing to lightNVR ("the Project"), owned and maintained by OpenSensor Engineering ("the Maintainer").
+Thank you for your interest in contributing to oneberry ("the Project"), owned and maintained by OpenSensor Engineering ("the Maintainer").
 
 This Contributor License Agreement ("Agreement") documents the rights granted by contributors to the Maintainer. This is a legally binding document, so please read it carefully before agreeing to it.
 
@@ -81,6 +81,6 @@ If you have questions about this CLA, please contact: [matt@opensensor.io](mailt
 ---
 
 <p align="center">
-<em>This CLA is based on the Apache Individual Contributor License Agreement and has been modified for the dual-licensing model used by lightNVR.</em>
+<em>This CLA is based on the Apache Individual Contributor License Agreement and has been modified for the dual-licensing model used by oneberry.</em>
 </p>
 

@@ -1,6 +1,6 @@
 # SOD RealNet Integration
 
-This document describes the integration of SOD RealNet face detection into the LightNVR system.
+This document describes the integration of SOD RealNet face detection into the Oneberry system.
 
 ## Overview
 

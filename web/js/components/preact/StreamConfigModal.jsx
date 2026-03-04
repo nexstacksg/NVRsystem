@@ -495,7 +495,7 @@ export function StreamConfigModal({
                                   http://localhost:9001/detect
                                 </p>
                                 <p className="text-xs mt-2 text-muted-foreground">
-                                  Configured in <code className="px-1 rounded bg-background">lightnvr.ini</code> under <code className="px-1 rounded bg-background">[api_detection]</code>
+                                  Configured in <code className="px-1 rounded bg-background">oneberry.ini</code> under <code className="px-1 rounded bg-background">[api_detection]</code>
                                 </p>
                                 <p className="text-xs mt-2 text-muted-foreground">
                                   ⚠️ Make sure light-object-detect is running on this endpoint

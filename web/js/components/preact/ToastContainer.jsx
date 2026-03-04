@@ -1,5 +1,5 @@
 /**
- * LightNVR Web Interface Toast Container Component
+ * Oneberry Web Interface Toast Container Component
  * Preact component for displaying toast notifications
  */
 

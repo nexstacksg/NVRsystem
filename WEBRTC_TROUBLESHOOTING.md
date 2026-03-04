@@ -83,8 +83,8 @@ const connectionTimeout = setTimeout(() => {
 const pc = new RTCPeerConnection({
   iceTransports: 'all',  // Wrong property name
   bundlePolicy: 'balanced',
-  rtcpCnameCpn: 'LightNVR',  // Non-standard
-  rtcpCnameRtp: 'LightNVR',  // Non-standard
+  rtcpCnameCpn: 'Oneberry',  // Non-standard
+  rtcpCnameRtp: 'Oneberry',  // Non-standard
   iceCandidatePoolSize: 0,
   iceServers: [...]
 });
@@ -155,15 +155,15 @@ Added detailed logging at each stage:
 
 ## Testing the Fixes
 
-### 1. Restart lightNVR
+### 1. Restart oneberry
 
 After rebuilding, restart the service:
 
 ```bash
-sudo systemctl restart lightnvr
+sudo systemctl restart oneberry
 # or if running manually:
-sudo killall lightnvr
-sudo ./lightnvr
+sudo killall oneberry
+sudo ./oneberry
 ```
 
 ### 2. Check Browser Console
@@ -201,11 +201,11 @@ For WebRTC to work properly, ensure:
 
 1. **UDP Port 8555** is accessible (WebRTC media)
 2. **TCP Port 1984** is accessible (go2rtc API)
-3. **TCP Port 8080** is accessible (lightNVR web interface)
+3. **TCP Port 8080** is accessible (oneberry web interface)
 
 ### Local Network (No External Access)
 
-If only using on local network, you can disable STUN in `config/lightnvr.ini`:
+If only using on local network, you can disable STUN in `config/oneberry.ini`:
 
 ```ini
 [go2rtc]
@@ -248,8 +248,8 @@ external_ip = YOUR.EXTERNAL.IP.ADDRESS
 **Solutions**:
 1. Check browser console for ICE candidate logs
 2. Verify port 8555 is accessible
-3. Check go2rtc logs: `journalctl -u lightnvr -f`
-4. Verify go2rtc config: `cat /etc/lightnvr/go2rtc/go2rtc.yaml`
+3. Check go2rtc logs: `journalctl -u oneberry -f`
+4. Verify go2rtc config: `cat /etc/oneberry/go2rtc/go2rtc.yaml`
 
 ### Issue: "Connection timeout" after 30 seconds
 
@@ -296,7 +296,7 @@ The code includes connection quality monitoring. Watch for:
 
 ### 3. Enable Debug Logging
 
-For detailed troubleshooting, enable debug logging in `config/lightnvr.ini`:
+For detailed troubleshooting, enable debug logging in `config/oneberry.ini`:
 
 ```ini
 [general]
@@ -311,7 +311,7 @@ log_level = 3  ; 0=ERROR, 1=WARN, 2=INFO, 3=DEBUG
 
 ## Next Steps
 
-1. **Rebuild and restart** lightNVR (already done)
+1. **Rebuild and restart** oneberry (already done)
 2. **Test connections** from browser console
 3. **Monitor logs** for any remaining issues
 4. **Adjust configuration** based on your network setup

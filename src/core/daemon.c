@@ -21,7 +21,7 @@
 extern volatile bool running; // Reference to the global variable defined in main.c
 
 // Global variable to store PID file path
-static char pid_file_path[256] = "/run/lightnvr.pid";
+static char pid_file_path[256] = "/run/oneberry.pid";
 
 // Forward declarations
 static void daemon_signal_handler(int sig);

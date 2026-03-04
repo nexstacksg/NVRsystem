@@ -1,20 +1,20 @@
-# SOD Integration in LightNVR
+# SOD Integration in Oneberry
 
-This document explains how SOD (an embedded computer vision & machine learning library) is integrated into LightNVR and how to build the project with or without SOD support.
+This document explains how SOD (an embedded computer vision & machine learning library) is integrated into Oneberry and how to build the project with or without SOD support.
 
 ## Overview
 
-SOD is used for object detection in video streams. In previous versions of LightNVR, SOD was directly linked into the binary. Now, SOD is compiled as a standalone library that is optional and used only when available.
+SOD is used for object detection in video streams. In previous versions of Oneberry, SOD was directly linked into the binary. Now, SOD is compiled as a standalone library that is optional and used only when available.
 
 ## Building Options
 
 ### Building with SOD (Default)
 
-By default, LightNVR is built with SOD support. This means:
+By default, Oneberry is built with SOD support. This means:
 
 1. SOD is compiled as a shared library (`libsod.so`)
-2. LightNVR is linked against this library
-3. The SOD code is directly accessible to LightNVR
+2. Oneberry is linked against this library
+3. The SOD code is directly accessible to Oneberry
 
 To build with SOD support:
 
@@ -34,11 +34,11 @@ make -j$(nproc)
 
 ### Building without SOD
 
-You can also build LightNVR without SOD support. In this case:
+You can also build Oneberry without SOD support. In this case:
 
 1. SOD is not compiled
-2. LightNVR is not linked against SOD
-3. LightNVR will attempt to dynamically load `libsod.so` at runtime if it's available
+2. Oneberry is not linked against SOD
+3. Oneberry will attempt to dynamically load `libsod.so` at runtime if it's available
 
 To build without SOD support:
 
@@ -57,25 +57,25 @@ make -j$(nproc)
 
 ### When Built with SOD
 
-When LightNVR is built with SOD support:
+When Oneberry is built with SOD support:
 
 - All SOD functionality is available
 - Detection models that require SOD can be loaded and used
 
 ### When Built without SOD
 
-When LightNVR is built without SOD support:
+When Oneberry is built without SOD support:
 
 - The system will attempt to dynamically load `libsod.so` at runtime
 - If `libsod.so` is found, SOD functionality will be available
-- If `libsod.so` is not found, SOD functionality will be disabled, but LightNVR will still run
+- If `libsod.so` is not found, SOD functionality will be disabled, but Oneberry will still run
 - Detection models that require SOD will not be loadable if SOD is not available
 
 ## Installation Options
 
 ### Installing with SOD (Default)
 
-By default, the installation script will install both LightNVR and the SOD library:
+By default, the installation script will install both Oneberry and the SOD library:
 
 ```bash
 # Build with SOD support first
@@ -90,7 +90,7 @@ sudo ./scripts/install.sh --with-sod
 
 ### Installing without SOD
 
-You can also install LightNVR without the SOD library:
+You can also install Oneberry without the SOD library:
 
 ```bash
 # Build without SOD support first
@@ -102,12 +102,12 @@ sudo ./scripts/install.sh --without-sod
 
 ### Installing SOD Separately
 
-If you build LightNVR without SOD support, you can still install SOD separately:
+If you build Oneberry without SOD support, you can still install SOD separately:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/lightnvr.git
-cd lightnvr
+git clone https://github.com/yourusername/oneberry.git
+cd oneberry
 
 # Build just the SOD library
 mkdir -p build_sod
@@ -122,7 +122,7 @@ sudo ln -sf /usr/local/lib/libsod.so.1 /usr/local/lib/libsod.so
 sudo ldconfig
 ```
 
-This will make SOD available to LightNVR at runtime, even if it was built without SOD support.
+This will make SOD available to Oneberry at runtime, even if it was built without SOD support.
 
 ## Detection Models
 
@@ -137,7 +137,7 @@ TensorFlow Lite models require the TensorFlow Lite library to be available.
 
 ## Unified Detection Interface
 
-LightNVR now includes a unified detection interface that supports both RealNet and CNN model architectures. This allows you to use either model type with the same API, making it easy to switch between models based on your requirements.
+Oneberry now includes a unified detection interface that supports both RealNet and CNN model architectures. This allows you to use either model type with the same API, making it easy to switch between models based on your requirements.
 
 For more information, see [SOD Unified Detection](SOD_UNIFIED_DETECTION.md).
 

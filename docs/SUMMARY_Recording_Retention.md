@@ -1,7 +1,7 @@
 # Recording Retention Policies - Executive Summary
 
 ## Overview
-This document summarizes the comprehensive per-stream recording retention and deletion policy system for lightNVR, designed to provide sophisticated lifecycle management while maintaining lightweight C best practices.
+This document summarizes the comprehensive per-stream recording retention and deletion policy system for oneberry, designed to provide sophisticated lifecycle management while maintaining lightweight C best practices.
 
 ## Architecture Diagram
 

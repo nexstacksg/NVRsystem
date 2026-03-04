@@ -153,7 +153,7 @@ To verify the fix is working:
 
 1. **Check server logs** for the new HLS writer configuration:
    ```bash
-   docker logs lightnvr | grep "HLS writer options"
+   docker logs oneberry | grep "HLS writer options"
    ```
    
    You should see:
@@ -175,13 +175,13 @@ To verify the fix is working:
 3. **Check HLS segments** are properly formatted:
    ```bash
    # SSH into the container
-   docker exec -it lightnvr /bin/sh
+   docker exec -it oneberry /bin/sh
    
    # Check segment files
-   ls -lh /var/lib/lightnvr/data/recordings/hls/<stream_name>/
+   ls -lh /var/lib/oneberry/data/recordings/hls/<stream_name>/
    
    # Verify segments start with keyframes using ffprobe
-   ffprobe -show_frames /var/lib/lightnvr/data/recordings/hls/<stream_name>/segment_0.ts | grep pict_type
+   ffprobe -show_frames /var/lib/oneberry/data/recordings/hls/<stream_name>/segment_0.ts | grep pict_type
    ```
    
    The first frame should be `pict_type=I` (keyframe).

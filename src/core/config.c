@@ -25,17 +25,17 @@ void load_default_config(config_t *config) {
     memset(config, 0, sizeof(config_t));
     
     // General settings
-    snprintf(config->pid_file, MAX_PATH_LENGTH, "/var/run/lightnvr.pid");
-    snprintf(config->log_file, MAX_PATH_LENGTH, "/var/log/lightnvr.log");
+    snprintf(config->pid_file, MAX_PATH_LENGTH, "/var/run/oneberry.pid");
+    snprintf(config->log_file, MAX_PATH_LENGTH, "/var/log/oneberry.log");
     config->log_level = LOG_LEVEL_INFO;
 
     // Syslog settings
     config->syslog_enabled = false;
-    snprintf(config->syslog_ident, sizeof(config->syslog_ident), "lightnvr");
+    snprintf(config->syslog_ident, sizeof(config->syslog_ident), "oneberry");
     config->syslog_facility = LOG_USER;
 
     // Storage settings
-    snprintf(config->storage_path, MAX_PATH_LENGTH, "/var/lib/lightnvr/recordings");
+    snprintf(config->storage_path, MAX_PATH_LENGTH, "/var/lib/oneberry/recordings");
     config->storage_path_hls[0] = '\0'; // Empty by default, will use storage_path if not specified
     config->max_storage_size = 0; // 0 means unlimited
     config->retention_days = 30;
@@ -43,12 +43,12 @@ void load_default_config(config_t *config) {
 
     // MP4 recording settings
     config->record_mp4_directly = false;
-    snprintf(config->mp4_storage_path, sizeof(config->mp4_storage_path), "/var/lib/lightnvr/recordings/mp4");
+    snprintf(config->mp4_storage_path, sizeof(config->mp4_storage_path), "/var/lib/oneberry/recordings/mp4");
     config->mp4_segment_duration = 900; // 15 minutes
     config->mp4_retention_days = 30;
 
     // Models settings
-    snprintf(config->models_path, MAX_PATH_LENGTH, "/var/lib/lightnvr/models");
+    snprintf(config->models_path, MAX_PATH_LENGTH, "/var/lib/oneberry/models");
     
     // API detection settings
     snprintf(config->api_detection_url, MAX_URL_LENGTH, "http://localhost:8000/detect");
@@ -60,11 +60,11 @@ void load_default_config(config_t *config) {
     snprintf(config->default_buffer_strategy, 32, "auto"); // Auto-select buffer strategy
 
     // Database settings
-    snprintf(config->db_path, MAX_PATH_LENGTH, "/var/lib/lightnvr/lightnvr.db");
+    snprintf(config->db_path, MAX_PATH_LENGTH, "/var/lib/oneberry/oneberry.db");
     
     // Web server settings
     config->web_port = 8080;
-    snprintf(config->web_root, MAX_PATH_LENGTH, "/var/lib/lightnvr/www");
+    snprintf(config->web_root, MAX_PATH_LENGTH, "/var/lib/oneberry/www");
     config->web_auth_enabled = true;
     snprintf(config->web_username, 32, "admin");
     snprintf(config->web_password, 32, "admin"); // Default password, should be changed
@@ -87,7 +87,7 @@ void load_default_config(config_t *config) {
     // Memory optimization
     config->buffer_size = 1024; // 1MB buffer size
     config->use_swap = true;
-    snprintf(config->swap_file, MAX_PATH_LENGTH, "/var/lib/lightnvr/swap");
+    snprintf(config->swap_file, MAX_PATH_LENGTH, "/var/lib/oneberry/swap");
     config->swap_size = 128 * 1024 * 1024; // 128MB swap
     
     // Hardware acceleration
@@ -96,7 +96,7 @@ void load_default_config(config_t *config) {
     
     // go2rtc settings
     snprintf(config->go2rtc_binary_path, MAX_PATH_LENGTH, "/usr/local/bin/go2rtc");
-    snprintf(config->go2rtc_config_dir, MAX_PATH_LENGTH, "/etc/lightnvr/go2rtc");
+    snprintf(config->go2rtc_config_dir, MAX_PATH_LENGTH, "/etc/oneberry/go2rtc");
     config->go2rtc_api_port = 1984;
     config->go2rtc_rtsp_port = 8554;  // Default RTSP listen port
 
@@ -132,8 +132,8 @@ void load_default_config(config_t *config) {
     config->mqtt_broker_port = 1883;            // Default MQTT port
     config->mqtt_username[0] = '\0';            // Optional
     config->mqtt_password[0] = '\0';            // Optional
-    snprintf(config->mqtt_client_id, sizeof(config->mqtt_client_id), "lightnvr");
-    snprintf(config->mqtt_topic_prefix, sizeof(config->mqtt_topic_prefix), "lightnvr");
+    snprintf(config->mqtt_client_id, sizeof(config->mqtt_client_id), "oneberry");
+    snprintf(config->mqtt_topic_prefix, sizeof(config->mqtt_topic_prefix), "oneberry");
     config->mqtt_tls_enabled = false;           // No TLS by default
     config->mqtt_keepalive = 60;                // 60 seconds keepalive
     config->mqtt_qos = 1;                       // QoS 1 (at least once)
@@ -782,8 +782,8 @@ int load_config(config_t *config) {
     if (!loaded) {
         // Try to load from config file - ONLY use INI format
         const char *config_paths[] = {
-            "./lightnvr.ini", // Current directory INI format
-            "/etc/lightnvr/lightnvr.ini", // System directory INI format
+            "./oneberry.ini", // Current directory INI format
+            "/etc/oneberry/oneberry.ini", // System directory INI format
             NULL
         };
         
@@ -802,8 +802,8 @@ int load_config(config_t *config) {
     // If no INI config file was found, check for old format and convert if found
     if (!loaded) {
         const char *old_config_paths[] = {
-            "./lightnvr.conf", // Old format
-            "/etc/lightnvr/lightnvr.conf", // Old format
+            "./oneberry.conf", // Old format
+            "/etc/oneberry/oneberry.conf", // Old format
             NULL
         };
         
@@ -815,12 +815,12 @@ int load_config(config_t *config) {
                 // Load the old format config
                 if (load_config_from_file(old_config_paths[i], config) == 0) {
                     // Save in INI format
-                    const char *ini_path = "./lightnvr.ini";
+                    const char *ini_path = "./oneberry.ini";
                     
-                    // Check if /etc/lightnvr exists and is writable
+                    // Check if /etc/oneberry exists and is writable
                     struct stat st;
-                    if (stat("/etc/lightnvr", &st) == 0 && S_ISDIR(st.st_mode) && access("/etc/lightnvr", W_OK) == 0) {
-                        ini_path = "/etc/lightnvr/lightnvr.ini";
+                    if (stat("/etc/oneberry", &st) == 0 && S_ISDIR(st.st_mode) && access("/etc/oneberry", W_OK) == 0) {
+                        ini_path = "/etc/oneberry/oneberry.ini";
                     }
                     
                     if (save_config(config, ini_path) == 0) {
@@ -842,7 +842,7 @@ int load_config(config_t *config) {
     // Set default web root if not specified
     if (strlen(config->web_root) == 0) {
         // Set a default web root path
-        strcpy(config->web_root, "/var/www/lightnvr");  // or another appropriate default
+        strcpy(config->web_root, "/var/www/oneberry");  // or another appropriate default
     }
 
     // Add logging to debug
@@ -995,7 +995,7 @@ int save_config(const config_t *config, const char *path) {
     }
     
     // Write header
-    fprintf(file, "; LightNVR Configuration File (INI format)\n\n");
+    fprintf(file, "; Oneberry Configuration File (INI format)\n\n");
     
     // Write general settings
     fprintf(file, "[general]\n");
@@ -1148,7 +1148,7 @@ int save_config(const config_t *config, const char *path) {
 void print_config(const config_t *config) {
     if (!config) return;
     
-    printf("LightNVR Configuration:\n");
+    printf("Oneberry Configuration:\n");
     printf("  General Settings:\n");
     printf("    PID File: %s\n", config->pid_file);
     printf("    Log File: %s\n", config->log_file);

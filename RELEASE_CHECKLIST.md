@@ -1,6 +1,6 @@
 # Release Checklist
 
-Quick reference for creating a new LightNVR release.
+Quick reference for creating a new Oneberry release.
 
 ## Prerequisites
 
@@ -49,9 +49,9 @@ git push && git push --tags
 
 ## Post-Release
 
-- [ ] Verify GitHub Actions build succeeds: https://github.com/opensensor/lightNVR/actions
-- [ ] Check Docker images published: https://github.com/opensensor/lightNVR/pkgs/container/lightnvr
-- [ ] Test Docker image: `docker pull ghcr.io/opensensor/lightnvr:0.13.0`
+- [ ] Verify GitHub Actions build succeeds: https://github.com/opensensor/oneberry/actions
+- [ ] Check Docker images published: https://github.com/opensensor/oneberry/pkgs/container/oneberry
+- [ ] Test Docker image: `docker pull ghcr.io/opensensor/oneberry:0.13.0`
 - [ ] Update release notes on GitHub (optional)
 
 ## Common Issues

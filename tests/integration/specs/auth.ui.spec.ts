@@ -17,7 +17,7 @@ test.describe('Authentication @ui @auth', () => {
       const loginPage = new LoginPage(page);
       await loginPage.goto();
       
-      await expect(page).toHaveTitle(/LightNVR/i);
+      await expect(page).toHaveTitle(/Oneberry/i);
       expect(await loginPage.isLoginFormVisible()).toBeTruthy();
       await expect(loginPage.usernameInput).toBeVisible();
       await expect(loginPage.passwordInput).toBeVisible();

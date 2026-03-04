@@ -1,5 +1,5 @@
 /**
- * LightNVR Theme Customizer Component
+ * Oneberry Theme Customizer Component
  * Allows users to customize color themes and intensity
  * Based on the accounting app's theme customization system
  */
@@ -22,9 +22,9 @@ export function ThemeCustomizer() {
   useEffect(() => {
     setMounted(true);
     
-    const savedTheme = localStorage.getItem('lightnvr-theme');
-    const savedIntensity = localStorage.getItem('lightnvr-color-intensity');
-    const savedColorTheme = localStorage.getItem('lightnvr-color-theme');
+    const savedTheme = localStorage.getItem('oneberry-theme');
+    const savedIntensity = localStorage.getItem('oneberry-color-intensity');
+    const savedColorTheme = localStorage.getItem('oneberry-color-theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
     // Determine theme
@@ -62,9 +62,9 @@ export function ThemeCustomizer() {
     applyThemeColors(isDark, colorTheme, colorIntensity);
 
     // Save to localStorage
-    localStorage.setItem('lightnvr-theme', isDark ? 'dark' : 'light');
-    localStorage.setItem('lightnvr-color-intensity', colorIntensity.toString());
-    localStorage.setItem('lightnvr-color-theme', colorTheme);
+    localStorage.setItem('oneberry-theme', isDark ? 'dark' : 'light');
+    localStorage.setItem('oneberry-color-intensity', colorIntensity.toString());
+    localStorage.setItem('oneberry-color-theme', colorTheme);
   }, [mounted, isDark, colorIntensity, colorTheme]);
 
   const toggleDarkMode = () => {

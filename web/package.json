@@ -1,7 +1,7 @@
 {
-  "name": "lightnvr-web",
+  "name": "oneberry-web",
   "version": "1.0.0",
-  "description": "LightNVR Web Interface",
+  "description": "Oneberry Web Interface",
   "type": "module",
   "scripts": {
     "start": "vite",

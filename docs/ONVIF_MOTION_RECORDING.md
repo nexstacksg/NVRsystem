@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the ONVIF motion detection recording feature in LightNVR, which enables automated recording triggered by ONVIF motion detection events.
+This document describes the ONVIF motion detection recording feature in Oneberry, which enables automated recording triggered by ONVIF motion detection events.
 
 ## Features
 

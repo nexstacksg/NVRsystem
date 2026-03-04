@@ -113,7 +113,7 @@ parse_args() {
 
 # Main script
 main() {
-    print_info "LightNVR Release Automation"
+    print_info "Oneberry Release Automation"
     print_info "==========================="
     echo
     
@@ -192,7 +192,7 @@ main() {
         print_info "GitHub Actions will now build and publish the Docker images"
         echo
         print_info "Monitor the build at:"
-        print_info "  https://github.com/opensensor/lightNVR/actions"
+        print_info "  https://github.com/opensensor/oneberry/actions"
     else
         print_step "Step 4/4: Skipping push (--no-push flag set)"
         echo

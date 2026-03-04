@@ -166,7 +166,7 @@ void mg_handle_get_system_info(struct mg_connection *c, struct mg_http_message *
         system_used = system_total - system_free;
     }
 
-    // Get memory information for the LightNVR process
+    // Get memory information for the Oneberry process
     cJSON *memory = cJSON_CreateObject();
     if (memory) {
         // Get process memory usage using /proc/self/status
@@ -188,7 +188,7 @@ void mg_handle_get_system_info(struct mg_connection *c, struct mg_http_message *
         // Convert kB to bytes
         unsigned long long used = vm_rss * 1024;
 
-        // Use the system total memory as the total for LightNVR as well
+        // Use the system total memory as the total for Oneberry as well
         // This makes it simpler to understand the memory usage
         unsigned long long total = system_total;
 
@@ -266,7 +266,7 @@ void mg_handle_get_system_info(struct mg_connection *c, struct mg_http_message *
         cJSON_AddItemToObject(info, "systemMemory", system_memory);
     }
 
-    // Get uptime of the LightNVR process
+    // Get uptime of the Oneberry process
     // Use /proc/self/stat to get process start time
     FILE *stat_file = fopen("/proc/self/stat", "r");
     if (stat_file) {
@@ -312,7 +312,7 @@ void mg_handle_get_system_info(struct mg_connection *c, struct mg_http_message *
     // Get disk information for the configured storage path
     struct statvfs disk_info;
     if (statvfs(g_config.storage_path, &disk_info) == 0) {
-        // Create disk object for LightNVR storage
+        // Create disk object for Oneberry storage
         cJSON *disk = cJSON_CreateObject();
         if (disk) {
             // Calculate disk values in bytes for consistency

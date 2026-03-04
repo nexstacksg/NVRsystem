@@ -1,5 +1,5 @@
 /**
- * LightNVR Web Interface Authentication Utilities
+ * Oneberry Web Interface Authentication Utilities
  * Helper functions for managing authentication state and session validation
  */
 

@@ -1,14 +1,14 @@
 # ONVIF Detection
 
-This document describes the ONVIF detection feature in LightNVR, which allows motion detection using ONVIF events from IP cameras.
+This document describes the ONVIF detection feature in Oneberry, which allows motion detection using ONVIF events from IP cameras.
 
 ## Overview
 
-ONVIF (Open Network Video Interface Forum) is a global standard for IP-based security products. Many IP cameras support ONVIF and provide motion detection events through the ONVIF Events service. The ONVIF detection feature in LightNVR allows you to use these events for motion detection without having to process video frames.
+ONVIF (Open Network Video Interface Forum) is a global standard for IP-based security products. Many IP cameras support ONVIF and provide motion detection events through the ONVIF Events service. The ONVIF detection feature in Oneberry allows you to use these events for motion detection without having to process video frames.
 
 ## How It Works
 
-1. LightNVR connects to the camera's ONVIF Events service
+1. Oneberry connects to the camera's ONVIF Events service
 2. It creates a subscription for motion events
 3. It periodically polls for new events
 4. When a motion event is detected, it creates a detection result with a "motion" label
@@ -59,7 +59,7 @@ Some cameras don't require authentication for ONVIF events. For these cameras, y
 }
 ```
 
-**Note:** When credentials are empty, LightNVR will send ONVIF requests without WS-Security authentication headers. This is compatible with cameras that don't require authentication.
+**Note:** When credentials are empty, Oneberry will send ONVIF requests without WS-Security authentication headers. This is compatible with cameras that don't require authentication.
 
 ## Implementation Details
 
@@ -93,7 +93,7 @@ If you encounter issues with ONVIF detection:
 
 1. Check that your camera supports ONVIF Events
 2. Verify your ONVIF credentials (or try without credentials if your camera doesn't require authentication)
-3. Make sure the camera is accessible from LightNVR
+3. Make sure the camera is accessible from Oneberry
 4. Check the logs for error messages
 
 Common error messages:

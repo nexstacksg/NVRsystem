@@ -14,7 +14,7 @@ SOD_DYNAMIC=0
 
 # Default go2rtc settings
 GO2RTC_BINARY_PATH="/usr/local/bin/go2rtc"
-GO2RTC_CONFIG_DIR="/etc/lightnvr/go2rtc"
+GO2RTC_CONFIG_DIR="/etc/oneberry/go2rtc"
 GO2RTC_API_PORT=1984
 
 # Parse command line arguments
@@ -92,7 +92,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --with-go2rtc      Build with go2rtc integration (default)"
             echo "  --without-go2rtc   Build without go2rtc integration"
             echo "  --go2rtc-binary=PATH  Set go2rtc binary path (default: /usr/local/bin/go2rtc)"
-            echo "  --go2rtc-config-dir=DIR  Set go2rtc config directory (default: /etc/lightnvr/go2rtc)"
+            echo "  --go2rtc-config-dir=DIR  Set go2rtc config directory (default: /etc/oneberry/go2rtc)"
             echo "  --go2rtc-api-port=PORT  Set go2rtc API port (default: 1984)"
             echo "  --help             Show this help message"
             exit 0
@@ -258,20 +258,20 @@ cmake -DCMAKE_BUILD_TYPE="$BUILD_TYPE" $SOD_OPTION $TEST_OPTION $GO2RTC_OPTION $
 cd ../..
 
 # Build the project
-echo "Building LightNVR against custom FFmpeg..."
+echo "Building Oneberry against custom FFmpeg..."
 cmake --build "$BUILD_DIR" -- -j$(nproc)
 
 # Report success
 echo "Build completed successfully!"
-echo "Binary location: $BUILD_DIR/bin/lightnvr"
+echo "Binary location: $BUILD_DIR/bin/oneberry"
 
 # Check if the binary is linked to libsod.so when dynamic linking is enabled
 if [ "$ENABLE_SOD" -eq 1 ] && [ "$SOD_DYNAMIC" -eq 1 ]; then
-    echo "Checking if lightnvr is linked to libsod.so..."
-    if ldd "$BUILD_DIR/bin/lightnvr" | grep -q "libsod.so"; then
-        echo "SUCCESS: lightnvr is correctly linked to libsod.so"
+    echo "Checking if oneberry is linked to libsod.so..."
+    if ldd "$BUILD_DIR/bin/oneberry" | grep -q "libsod.so"; then
+        echo "SUCCESS: oneberry is correctly linked to libsod.so"
     else
-        echo "WARNING: lightnvr is not linked to libsod.so"
+        echo "WARNING: oneberry is not linked to libsod.so"
         echo "This might indicate a problem with the dynamic linking setup."
 
         # Check if libsod.so exists in the build output
@@ -282,7 +282,7 @@ if [ "$ENABLE_SOD" -eq 1 ] && [ "$SOD_DYNAMIC" -eq 1 ]; then
 
             # Try to load the library directly
             echo "You can run the application with:"
-            echo "LD_LIBRARY_PATH=\"$(dirname \"$LIBSOD_PATH\"):$LD_LIBRARY_PATH\" $BUILD_DIR/bin/lightnvr"
+            echo "LD_LIBRARY_PATH=\"$(dirname \"$LIBSOD_PATH\"):$LD_LIBRARY_PATH\" $BUILD_DIR/bin/oneberry"
         else
             echo "Could not find libsod.so in the build directory."
             echo "This suggests a problem with building the shared library."
@@ -304,7 +304,7 @@ if [ "$ENABLE_TESTS" -eq 1 ] && [ "$ENABLE_SOD" -eq 1 ]; then
 fi
 
 # Create a symbolic link to the binary in the project root
-if [ -f "$BUILD_DIR/bin/lightnvr" ]; then
-    ln -sf "$BUILD_DIR/bin/lightnvr" lightnvr
-    echo "Created symbolic link: lightnvr -> $BUILD_DIR/bin/lightnvr"
+if [ -f "$BUILD_DIR/bin/oneberry" ]; then
+    ln -sf "$BUILD_DIR/bin/oneberry" oneberry
+    echo "Created symbolic link: oneberry -> $BUILD_DIR/bin/oneberry"
 fi

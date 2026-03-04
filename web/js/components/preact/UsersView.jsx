@@ -1,5 +1,5 @@
 /**
- * LightNVR Web Interface Users View Component
+ * Oneberry Web Interface Users View Component
  * Preact component for the user management page
  */
 

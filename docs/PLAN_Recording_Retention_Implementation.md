@@ -5,7 +5,7 @@ This document provides a detailed, step-by-step implementation plan for the soph
 
 ## Prerequisites
 - SQLite3 development libraries
-- Existing lightNVR codebase with storage_manager and database modules
+- Existing oneberry codebase with storage_manager and database modules
 - Understanding of current retention policy in `storage_manager.c`
 
 ## Phase 1: Database Schema & Core Infrastructure (Week 1)
@@ -644,7 +644,7 @@ graph LR
    - Use efficient data structures (arrays over linked lists)
 
 5. **Code Style**:
-   - Follow existing lightNVR style
+   - Follow existing oneberry style
    - Use descriptive variable names
    - Comment complex logic
    - Keep functions under 100 lines
@@ -671,7 +671,7 @@ graph LR
    - Verify rollback procedure
 
 2. **Deployment**:
-   - Stop lightNVR service
+   - Stop oneberry service
    - Backup database
    - Update binary
    - Start service (migration runs automatically)

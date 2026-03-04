@@ -1,5 +1,5 @@
 /**
- * LightNVR Timeline Ruler Component
+ * Oneberry Timeline Ruler Component
  * Displays the time ruler with hour markers
  */
 
