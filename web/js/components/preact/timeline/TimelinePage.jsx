@@ -9,6 +9,7 @@ import { TimelineRuler } from './TimelineRuler.jsx';
 import { TimelineSegments } from './TimelineSegments.jsx';
 import { TimelineCursor } from './TimelineCursor.jsx';
 import { TimelinePlayer } from './TimelinePlayer.jsx';
+import { SpeedControls } from './SpeedControls.jsx';
 import { showStatusMessage } from '../ToastContainer.jsx';
 import { LoadingIndicator } from '../LoadingIndicator.jsx';
 import { useQuery } from '../../../query-client.js';
@@ -559,9 +560,10 @@ export function TimelinePage() {
         {isLoadingTimeline ? 'Loading...' : 'Recordings auto-load when stream or date changes'}
       </div>
 
-      {/* Current time display */}
+      {/* Current time display + Speed controls */}
       <div className="flex justify-between items-center mb-2">
         <div id="time-display" className="timeline-time-display bg-secondary text-foreground px-3 py-1 rounded font-mono text-base">00:00:00</div>
+        <SpeedControls />
       </div>
 
       {/* Debug info */}

@@ -44,29 +44,32 @@ export function SpeedControls() {
   };
 
   return (
-    <div className="mt-2 mb-4 p-2 border border-primary rounded-lg bg-card text-card-foreground shadow-sm">
-      <div className="flex flex-col items-center">
-        <div className="text-sm font-semibold mb-2 text-foreground">Playback Speed</div>
-
-        <div className="flex flex-wrap justify-center gap-1">
-          {speeds.map(speed => (
-            <button
-              key={`speed-${speed}`}
-              className={`speed-btn px-2 py-1 text-sm rounded-full ${speed === currentSpeed
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'}
-                font-medium transition-all focus:outline-none focus:ring-1 focus:ring-primary focus:ring-opacity-50`}
-              data-speed={speed}
-              onClick={() => setPlaybackSpeed(speed)}
-            >
-              {speed === 1.0 ? '1× (Normal)' : `${speed}×`}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-1 text-xs font-medium text-primary">
-          Current: {currentSpeed}× {currentSpeed === 1.0 ? '(Normal)' : ''}
-        </div>
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '6px'
+    }}>
+      <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--muted-foreground, #64748b)' }}>Speed:</span>
+      <div style={{ display: 'flex', gap: '4px' }}>
+        {speeds.map(speed => (
+          <button
+            key={`speed-${speed}`}
+            className={`speed-btn ${speed === currentSpeed ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'}`}
+            style={{
+              padding: '2px 8px',
+              fontSize: '12px',
+              borderRadius: '6px',
+              border: 'none',
+              cursor: 'pointer',
+              fontWeight: 500,
+              transition: 'all 0.15s ease'
+            }}
+            data-speed={speed}
+            onClick={() => setPlaybackSpeed(speed)}
+          >
+            {speed === 1.0 ? '1×' : `${speed}×`}
+          </button>
+        ))}
       </div>
     </div>
   );

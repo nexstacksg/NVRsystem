@@ -208,12 +208,8 @@ export function TimelineCursor() {
         }
       }
       timelineState.prevCurrentTime = timelineState.currentTime;
-      timelineState.isPlaying = false;
 
-      // Notify listeners
-      timelineState.setState({});
-
-      // Find segment that contains this timestamp
+      // Find segment that contains this timestamp and auto-play
       const segments = timelineState.timelineSegments || [];
       console.log('TimelineCursor: Searching for segment containing timestamp', {
         timestamp,
@@ -243,10 +239,34 @@ export function TimelineCursor() {
 
         // Check if timestamp is within this segment
         if (timestamp >= startTimestamp && timestamp <= endTimestamp) {
-          console.log(`TimelineCursor: Found exact match at segment ${i}`);
-          // Update current segment index without changing the time or starting playback
+          console.log(`TimelineCursor: Found exact match at segment ${i}, auto-playing`);
           timelineState.currentSegmentIndex = i;
+          timelineState.isPlaying = true;
+          timelineState.directVideoControl = true;
           timelineState.setState({});
+
+          // Directly load and play the video
+          const relativeTime = timelineState.currentTime - startTimestamp;
+          const videoElement = document.querySelector('#video-player video');
+          if (videoElement) {
+            videoElement.pause();
+            videoElement.src = `/api/recordings/play/${segment.id}?t=${Date.now()}`;
+            const onMeta = () => {
+              const seekTo = Math.max(0, Math.min(relativeTime, videoElement.duration || relativeTime));
+              videoElement.currentTime = seekTo;
+              videoElement.play().catch(e => console.error('Error playing video:', e));
+              videoElement.removeEventListener('loadedmetadata', onMeta);
+            };
+            videoElement.addEventListener('loadedmetadata', onMeta);
+            videoElement.load();
+          }
+
+          // Reset directVideoControl after a delay
+          setTimeout(() => {
+            timelineState.directVideoControl = false;
+            timelineState.setState({});
+          }, 2000);
+
           foundSegment = true;
           break;
         }
@@ -265,11 +285,13 @@ export function TimelineCursor() {
         if (closestSegment >= 0) {
           console.log(`TimelineCursor: No exact match, using closest segment ${closestSegment}`);
           timelineState.currentSegmentIndex = closestSegment;
+          timelineState.isPlaying = false;
           timelineState.setState({});
         } else {
           console.log('TimelineCursor: No segments found at all');
           // Reset current segment index
           timelineState.currentSegmentIndex = -1;
+          timelineState.isPlaying = false;
           timelineState.setState({});
         }
       }
