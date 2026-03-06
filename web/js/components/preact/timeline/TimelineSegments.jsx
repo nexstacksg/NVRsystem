@@ -94,8 +94,10 @@ export function TimelineSegments({ segments: propSegments }) {
     if (!container) return;
 
     const handleMouseDown = (e) => {
-      // Only handle clicks on the container itself, not on segments
-      if (e.target === container || e.target.classList.contains('timeline-clickable-area')) {
+      // Handle clicks on the container, segments, or clickable areas
+      if (e.target === container ||
+          e.target.classList.contains('timeline-clickable-area') ||
+          e.target.classList.contains('timeline-segment')) {
         isDragging.current = true;
         handleTimelineClick(e);
 
@@ -151,12 +153,10 @@ export function TimelineSegments({ segments: propSegments }) {
     // This allows the user to position the cursor anywhere on the timeline
     timelineState.setState({
       currentTime: clickTimestamp,
-      prevCurrentTime: timelineState.currentTime,
-      // Don't automatically start playing
-      isPlaying: false
+      prevCurrentTime: timelineState.currentTime
     });
 
-    // Find segment that contains this timestamp
+    // Find segment that contains this timestamp and auto-play it
     let foundSegment = false;
     for (let i = 0; i < segments.length; i++) {
       const segment = segments[i];
@@ -165,22 +165,13 @@ export function TimelineSegments({ segments: propSegments }) {
       const endTimestamp = segment.local_end_timestamp || segment.end_timestamp;
 
       if (clickTimestamp >= startTimestamp && clickTimestamp <= endTimestamp) {
-        console.log(`TimelineSegments: Found segment ${i} containing timestamp`);
+        console.log(`TimelineSegments: Found segment ${i} containing timestamp, auto-playing`);
 
-        // Update current segment index without starting playback
-        timelineState.setState({
-          currentSegmentIndex: i
-        });
+        // Calculate relative time within the segment
+        const relativeTime = clickTimestamp - startTimestamp;
 
-        // Only if the user clicked directly on a segment (not the background),
-        // play that segment starting at the clicked time
-        if (event.target.classList.contains('timeline-segment')) {
-          // Calculate relative time within the segment
-          const relativeTime = clickTimestamp - startTimestamp;
-
-          // Play this segment starting at the clicked time
-          playSegment(i, relativeTime);
-        }
+        // Auto-play the segment at the clicked time
+        playSegment(i, relativeTime);
 
         foundSegment = true;
         break;

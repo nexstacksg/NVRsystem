@@ -400,9 +400,6 @@ export function TimelinePlayer() {
           </div>
         </div>
       </div>
-
-      {/* Playback speed controls */}
-      <SpeedControls />
     </>
   );
 }
