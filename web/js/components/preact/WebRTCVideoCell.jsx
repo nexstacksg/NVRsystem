@@ -11,6 +11,7 @@ import { SnapshotButton } from './SnapshotManager.jsx';
 import { LoadingIndicator } from './LoadingIndicator.jsx';
 import { showSnapshotPreview } from './UI.jsx';
 import { PTZControls } from './PTZControls.jsx';
+import { FullscreenTimeline } from './FullscreenTimeline.jsx';
 import { getGo2rtcBaseUrl } from '../../utils/settings-utils.js';
 import adapter from 'webrtc-adapter';
 
@@ -44,6 +45,9 @@ export function WebRTCVideoCell({
   // Audio playback state (for hearing audio from camera)
   const [audioEnabled, setAudioEnabled] = useState(false);
 
+  // Browser fullscreen state (for showing timeline bar)
+  const [isBrowserFullscreen, setIsBrowserFullscreen] = useState(false);
+
   // Effect to directly set the muted property on the video element
   // This is necessary because React/Preact doesn't always update the muted attribute correctly
   useEffect(() => {
@@ -67,6 +71,20 @@ export function WebRTCVideoCell({
 
   // PTZ controls state
   const [showPTZControls, setShowPTZControls] = useState(false);
+
+  // Listen for fullscreenchange on the cell element to show/hide timeline
+  useEffect(() => {
+    const cell = cellRef.current;
+    if (!cell) return;
+
+    const handleFullscreenChange = () => {
+      const isFs = document.fullscreenElement === cell;
+      setIsBrowserFullscreen(isFs);
+    };
+
+    cell.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => cell.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
 
   // Refs
   const videoRef = useRef(null);
@@ -1131,6 +1149,14 @@ export function WebRTCVideoCell({
         isVisible={showPTZControls}
         onClose={() => setShowPTZControls(false)}
       />
+
+      {/* Fullscreen timeline bar */}
+      {isBrowserFullscreen && (
+        <FullscreenTimeline
+          streamName={stream.name}
+          videoRef={videoRef}
+        />
+      )}
 
       {/* Microphone error indicator */}
       {microphoneError && (

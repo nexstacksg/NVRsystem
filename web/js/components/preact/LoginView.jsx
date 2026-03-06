@@ -171,7 +171,13 @@ export function LoginView() {
     <section id="login-page" className="page flex items-center justify-center min-h-screen">
       <div className="login-container w-full max-w-md p-6 bg-card text-card-foreground rounded-lg shadow-lg">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold">Oneberry</h1>
+          <div className="flex justify-center mb-2">
+            <img 
+              src="https://oneberry.com/wp-content/uploads/2021/12/cropped-one_berry_logo-min-159x51.jpg" 
+              alt="Oneberry Logo" 
+              className="h-12 w-auto"
+            />
+          </div>
           <p className="text-muted-foreground">Please sign in to continue</p>
         </div>
 
