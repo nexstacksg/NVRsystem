@@ -860,6 +860,10 @@ static int process_packet(unified_detection_ctx_t *ctx, AVPacket *pkt) {
     // Update statistics
     pthread_mutex_lock(&ctx->mutex);
     ctx->total_packets_processed++;
+    if (ctx->total_packets_processed % 100 == 1) {
+        log_info("[%s] Processed %lu packets. Latest: video=%d, stream=%d, is_key=%d, flags=0x%X",
+                 ctx->stream_name, ctx->total_packets_processed, is_video, pkt->stream_index, is_keyframe, pkt->flags);
+    }
     pthread_mutex_unlock(&ctx->mutex);
 
     // Always add packets to circular buffer (for pre-detection content)

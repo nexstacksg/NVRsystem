@@ -237,28 +237,41 @@ static char* send_soap_request(const char *device_url, const char *soap_action, 
     return response;
 }
 
-// Find a child element by name
+// Find a child element by name, ignoring namespace prefixes
 static ezxml_t find_child(ezxml_t parent, const char *name) {
-    if (!parent) return NULL;
-    return ezxml_child(parent, name);
+    if (!parent || !name) return NULL;
+    
+    const char *req_name = strchr(name, ':');
+    req_name = req_name ? req_name + 1 : name;
+    
+    for (ezxml_t child = parent->child; child; child = child->sibling) {
+        const char *child_name = strchr(child->name, ':');
+        child_name = child_name ? child_name + 1 : child->name;
+        
+        if (strcmp(child_name, req_name) == 0) {
+            return child;
+        }
+    }
+    return NULL;
 }
 
-// Find a child element by name with namespace prefix
+// Find a child element by name with namespace prefix (routes to robust find_child)
 static ezxml_t find_child_with_ns(ezxml_t parent, const char *ns, const char *name) {
-    if (!parent) return NULL;
-    
-    char full_name[256];
-    snprintf(full_name, sizeof(full_name), "%s:%s", ns, name);
-    
-    return ezxml_child(parent, full_name);
+    return find_child(parent, name);
 }
 
-// Find all elements with a specific name
+// Find all elements with a specific name, ignoring namespace prefixes
 static void find_elements_by_name(ezxml_t root, const char *name, ezxml_t *results, int *count, int max_count) {
     if (!root || !name || !results || !count || max_count <= 0) return;
     
+    const char *req_name = strchr(name, ':');
+    req_name = req_name ? req_name + 1 : name;
+    
+    const char *node_name = strchr(root->name, ':');
+    node_name = node_name ? node_name + 1 : root->name;
+    
     // Check if the current element matches
-    if (strcmp(root->name, name) == 0) {
+    if (strcmp(node_name, req_name) == 0) {
         if (*count < max_count) {
             results[*count] = root;
             (*count)++;
