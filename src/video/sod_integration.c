@@ -145,7 +145,7 @@ int detect_with_sod(void *model, const unsigned char *frame_data,
     }
 
     // Use the unified detection function
-    return detect_objects(model, frame_data, width, height, channels, result);
+    return detect_objects(model, frame_data, width, height, channels, result, NULL, 0);
 }
 
 /**

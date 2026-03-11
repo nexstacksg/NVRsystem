@@ -1251,15 +1251,47 @@ int detect_motion(const char *stream_name, const unsigned char *frame_data,
         strncpy(result->detections[0].label, MOTION_LABEL, MAX_LABEL_LENGTH - 1);
         result->detections[0].confidence = motion_score;
 
-        // Set bounding box to cover the entire frame for now
-        // In a more advanced implementation, we could identify the specific motion regions
-        result->detections[0].x = 0.0f;
-        result->detections[0].y = 0.0f;
-        result->detections[0].width = 1.0f;
-        result->detections[0].height = 1.0f;
+        // Compute bounding box from grid cells that have motion
+        if (stream->use_grid_detection && stream->grid_scores) {
+            int min_gx = stream->grid_size, min_gy = stream->grid_size;
+            int max_gx = -1, max_gy = -1;
 
-        log_info("Motion detected in stream %s: score=%.3f, area=%.2f%%, confidence=%.2f",
-                stream_name, motion_score, motion_area * 100.0f, result->detections[0].confidence);
+            for (int gy = 0; gy < stream->grid_size; gy++) {
+                for (int gx = 0; gx < stream->grid_size; gx++) {
+                    if (stream->grid_scores[gy * stream->grid_size + gx] > 0.01f) {
+                        if (gx < min_gx) min_gx = gx;
+                        if (gy < min_gy) min_gy = gy;
+                        if (gx > max_gx) max_gx = gx;
+                        if (gy > max_gy) max_gy = gy;
+                    }
+                }
+            }
+
+            if (max_gx >= 0) {
+                // Tight bounding box around active grid cells (normalized 0-1)
+                result->detections[0].x = (float)min_gx / (float)stream->grid_size;
+                result->detections[0].y = (float)min_gy / (float)stream->grid_size;
+                result->detections[0].width = (float)(max_gx - min_gx + 1) / (float)stream->grid_size;
+                result->detections[0].height = (float)(max_gy - min_gy + 1) / (float)stream->grid_size;
+            } else {
+                // Fallback to full frame
+                result->detections[0].x = 0.0f;
+                result->detections[0].y = 0.0f;
+                result->detections[0].width = 1.0f;
+                result->detections[0].height = 1.0f;
+            }
+        } else {
+            // Simple differencing mode - no grid data, full frame
+            result->detections[0].x = 0.0f;
+            result->detections[0].y = 0.0f;
+            result->detections[0].width = 1.0f;
+            result->detections[0].height = 1.0f;
+        }
+
+        log_info("Motion detected in stream %s: score=%.3f, area=%.2f%%, bbox=[%.2f,%.2f,%.2f,%.2f]",
+                stream_name, motion_score, motion_area * 100.0f,
+                result->detections[0].x, result->detections[0].y,
+                result->detections[0].width, result->detections[0].height);
     } else {
         // Log low motion details for debugging (at debug level)
         log_debug("No motion in stream %s: score=%.3f, area=%.2f%%, threshold=%.2f",

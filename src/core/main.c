@@ -848,15 +848,31 @@ int main(int argc, char *argv[]) {
 
             // Determine the model path - handle API-based detection vs file-based models
             char model_path[MAX_PATH_LENGTH];
+            // log_info("Stream %d (%s) model string: [%s]", i, config.streams[i].name, config.streams[i].detection_model);
+            
+            // Print hex of model string for thorough debugging
+            char hex_buf[MAX_PATH_LENGTH * 3];
+            hex_buf[0] = '\0';
+            for (int k = 0; k < (int)strlen(config.streams[i].detection_model) && k < 32; k++) {
+                char tmp[4];
+                sprintf(tmp, "%02x ", (unsigned char)config.streams[i].detection_model[k]);
+                strcat(hex_buf, tmp);
+            }
+            log_info("[DEBUG] Model HEX: %s", hex_buf);
+
             bool is_api_based = (strcmp(config.streams[i].detection_model, "api-detection") == 0) ||
                                (strncmp(config.streams[i].detection_model, "http://", 7) == 0) ||
-                               (strncmp(config.streams[i].detection_model, "https://", 8) == 0);
+                               (strncmp(config.streams[i].detection_model, "https://", 8) == 0) ||
+                               (strcmp(config.streams[i].detection_model, "motion") == 0) ||
+                               (strcmp(config.streams[i].detection_model, "onvif") == 0);
+            
+            log_info("[DEBUG] is_api_based = %s", is_api_based ? "true" : "false");
 
             if (is_api_based) {
                 // For API-based detection, use the model string as-is
                 strncpy(model_path, config.streams[i].detection_model, MAX_PATH_LENGTH - 1);
                 model_path[MAX_PATH_LENGTH - 1] = '\0';
-                log_info("Using API-based detection for stream %s: %s",
+                log_info("Using built-in or API-based detection for stream %s: %s",
                         config.streams[i].name, model_path);
             } else if (config.streams[i].detection_model[0] != '/') {
                 // Relative path, use configured models path from INI if it exists
@@ -1516,8 +1532,35 @@ static void check_and_ensure_services(void) {
         // Handle detection-based recording - MOVED TO END OF SETUP
         if (config.streams[i].name[0] != '\0' && config.streams[i].enabled && config.streams[i].detection_based_recording) {
             log_info("Ensuring detection-based recording is active for stream: %s", config.streams[i].name);
+            
+            // Build the proper model path
+            char model_path[MAX_PATH_LENGTH];
+            if (config.streams[i].detection_model[0] != '\0') {
+                bool is_api_based = (strcmp(config.streams[i].detection_model, "api-detection") == 0) ||
+                                   (strncmp(config.streams[i].detection_model, "http://", 7) == 0) ||
+                                   (strncmp(config.streams[i].detection_model, "https://", 8) == 0) ||
+                                   (strcmp(config.streams[i].detection_model, "motion") == 0) ||
+                                   (strcmp(config.streams[i].detection_model, "onvif") == 0);
+
+                if (is_api_based) {
+                    strncpy(model_path, config.streams[i].detection_model, MAX_PATH_LENGTH - 1);
+                    model_path[MAX_PATH_LENGTH - 1] = '\0';
+                } else if (config.streams[i].detection_model[0] != '/') {
+                    if (config.models_path && strlen(config.models_path) > 0) {
+                        snprintf(model_path, sizeof(model_path), "%s/%s", config.models_path, config.streams[i].detection_model);
+                    } else {
+                        snprintf(model_path, MAX_PATH_LENGTH, "/etc/oneberry/models/%s", config.streams[i].detection_model);
+                    }
+                } else {
+                    strncpy(model_path, config.streams[i].detection_model, MAX_PATH_LENGTH - 1);
+                    model_path[MAX_PATH_LENGTH - 1] = '\0';
+                }
+            } else {
+                model_path[0] = '\0';
+            }
+
             if (start_unified_detection_thread(config.streams[i].name,
-                                              config.streams[i].detection_model,
+                                              model_path,
                                               config.streams[i].detection_threshold,
                                               config.streams[i].pre_detection_buffer,
                                               config.streams[i].post_detection_buffer) != 0) {

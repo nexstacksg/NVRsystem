@@ -190,7 +190,8 @@ int handle_hls_timeout(const char *url, AVFormatContext **input_ctx) {
  * Run detection on a frame
  */
 int detect_objects(detection_model_t model, const unsigned char *frame_data,
-                  int width, int height, int channels, detection_result_t *result) {
+                  int width, int height, int channels, detection_result_t *result,
+                  const char *stream_name, time_t frame_time) {
     if (!model || !frame_data || !result) {
         log_error("Invalid parameters for detect_objects");
         return -1;
@@ -231,11 +232,13 @@ int detect_objects(detection_model_t model, const unsigned char *frame_data,
             log_error("Failed to get API URL from model");
             ret = -1;
         } else {
-            // We don't have the stream name or threshold here, so we'll pass NULL/-1.0
-            // The stream name will be set by the caller when storing the detections
+            // We don't have the threshold here, so we'll pass -1.0
             // A negative threshold tells detect_objects_api to use the default (0.5)
-            ret = detect_objects_api(api_url, frame_data, width, height, channels, result, NULL, -1.0f);
+            ret = detect_objects_api(api_url, frame_data, width, height, channels, result, stream_name, -1.0f);
         }
+    }
+    else if (strcmp(model_type, MODEL_TYPE_MOTION) == 0) {
+        ret = detect_motion(stream_name, frame_data, width, height, channels, frame_time, result);
     }
     else {
         log_error("Unknown model type: %s", model_type);

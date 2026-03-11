@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
         }
 
         // Run detection using the unified API
-        if (detect_objects(model, blob, gray_img.w, gray_img.h, gray_img.c, &result) != 0) {
+        if (detect_objects(model, blob, gray_img.w, gray_img.h, gray_img.c, &result, NULL, 0) != 0) {
             fprintf(stderr, "RealNet detection failed\n");
             sod_image_free_blob(blob);
             sod_free_image(gray_img);
