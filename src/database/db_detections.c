@@ -786,3 +786,98 @@ int get_detection_labels_summary(const char *stream_name, time_t start_time, tim
 
     return count;
 }
+/**
+ * Get detection intervals for a stream within a time range
+ * Clusters consecutive detections within 2 seconds into a single interval
+ *
+ * @param stream_name Stream name
+ * @param start_time Start time (inclusive)
+ * @param end_time End time (inclusive)
+ * @param intervals Array to store the intervals
+ * @param max_intervals Maximum number of intervals to return
+ * @return Number of intervals found, or -1 on error
+ */
+int get_detection_intervals(const char *stream_name, time_t start_time, time_t end_time,
+                         detection_interval_t *intervals, int max_intervals) {
+    int rc;
+    sqlite3_stmt *stmt;
+    int count = 0;
+
+    sqlite3 *db = get_db_handle();
+    pthread_mutex_t *db_mutex = get_db_mutex();
+
+    if (!db) {
+        log_error("Database not initialized");
+        return -1;
+    }
+
+    if (!stream_name || !intervals || max_intervals <= 0) {
+        log_error("Invalid parameters for get_detection_intervals");
+        return -1;
+    }
+
+    pthread_mutex_lock(db_mutex);
+
+    // Query to get unique timestamps for detections, sorted ascending
+    const char *sql =
+        "SELECT DISTINCT timestamp "
+        "FROM detections "
+        "WHERE stream_name = ? AND timestamp >= ? AND timestamp <= ? "
+        "ORDER BY timestamp ASC;";
+
+    rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if (rc != SQLITE_OK) {
+        log_error("Failed to prepare statement for get_detection_intervals: %s", sqlite3_errmsg(db));
+        pthread_mutex_unlock(db_mutex);
+        return -1;
+    }
+
+    sqlite3_bind_text(stmt, 1, stream_name, -1, SQLITE_STATIC);
+    sqlite3_bind_int64(stmt, 2, (sqlite3_int64)start_time);
+    sqlite3_bind_int64(stmt, 3, (sqlite3_int64)end_time);
+
+    time_t current_start = -1;
+    time_t last_time = -1;
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        time_t ts = (time_t)sqlite3_column_int64(stmt, 0);
+
+        if (current_start == -1) {
+            current_start = ts;
+            last_time = ts;
+        } else if (ts - last_time <= 2) {
+            // Part of the same interval (2 second gap allowed)
+            last_time = ts;
+        } else {
+            // New interval starts, save the previous one
+            if (count < max_intervals) {
+                intervals[count].start_time = current_start;
+                intervals[count].end_time = last_time;
+                count++;
+            }
+            
+            current_start = ts;
+            last_time = ts;
+            
+            if (count >= max_intervals) {
+                log_warn("Maximum number of detection intervals (%d) reached for stream %s", max_intervals, stream_name);
+                break;
+            }
+        }
+    }
+
+    // Add the final interval if exists
+    if (current_start != -1 && count < max_intervals) {
+        intervals[count].start_time = current_start;
+        intervals[count].end_time = last_time;
+        count++;
+    }
+
+    sqlite3_finalize(stmt);
+    pthread_mutex_unlock(db_mutex);
+
+    log_debug("Found %d detection intervals for stream %s in range [%lld, %lld]",
+             count, stream_name, (long long)start_time, (long long)end_time);
+
+    return count;
+}

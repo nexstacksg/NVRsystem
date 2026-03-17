@@ -13,6 +13,7 @@ import { showSnapshotPreview } from './UI.jsx';
 import { PTZControls } from './PTZControls.jsx';
 import { FullscreenTimeline } from './FullscreenTimeline.jsx';
 import { getGo2rtcBaseUrl } from '../../utils/settings-utils.js';
+import { getFullscreenElement } from '../../utils/dom-utils.js';
 import adapter from 'webrtc-adapter';
 
 /**
@@ -78,12 +79,21 @@ export function WebRTCVideoCell({
     if (!cell) return;
 
     const handleFullscreenChange = () => {
-      const isFs = document.fullscreenElement === cell;
+      const isFs = getFullscreenElement() === cell;
       setIsBrowserFullscreen(isFs);
     };
 
     cell.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => cell.removeEventListener('fullscreenchange', handleFullscreenChange);
+    cell.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    cell.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    cell.addEventListener('MSFullscreenChange', handleFullscreenChange);
+    
+    return () => {
+      cell.removeEventListener('fullscreenchange', handleFullscreenChange);
+      cell.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      cell.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      cell.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+    };
   }, []);
 
   // Refs

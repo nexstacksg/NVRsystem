@@ -97,4 +97,25 @@ typedef struct {
 int get_detection_labels_summary(const char *stream_name, time_t start_time, time_t end_time,
                                  detection_label_summary_t *labels, int max_labels);
 
+/**
+ * Structure to hold a detection time interval
+ */
+typedef struct {
+    time_t start_time;
+    time_t end_time;
+} detection_interval_t;
+
+/**
+ * Get detection intervals for a stream within a time range
+ *
+ * @param stream_name Stream name
+ * @param start_time Start time (inclusive)
+ * @param end_time End time (inclusive)
+ * @param intervals Array to store the intervals
+ * @param max_intervals Maximum number of intervals to return
+ * @return Number of intervals found, or -1 on error
+ */
+int get_detection_intervals(const char *stream_name, time_t start_time, time_t end_time,
+                         detection_interval_t *intervals, int max_intervals);
+
 #endif // LIGHTNVR_DB_DETECTIONS_H

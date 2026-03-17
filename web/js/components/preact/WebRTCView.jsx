@@ -10,6 +10,7 @@ import { useFullscreenManager, FullscreenManager } from './FullscreenManager.jsx
 import { useQuery, useQueryClient } from '../../query-client.js';
 import { WebRTCVideoCell } from './WebRTCVideoCell.jsx';
 import { SnapshotManager, useSnapshotManager } from './SnapshotManager.jsx';
+import { getFullscreenElement, requestFullscreen, exitFullscreen } from '../../utils/dom-utils.js';
 
 /**
  * WebRTCView component
@@ -340,15 +341,19 @@ export function WebRTCView() {
       return;
     }
 
-    if (!document.fullscreenElement) {
+    const fullscreenElement = getFullscreenElement();
+
+    if (!fullscreenElement) {
       console.log('Entering fullscreen mode for video cell');
-      cellElement.requestFullscreen().catch(err => {
+      requestFullscreen(cellElement).catch(err => {
         console.error(`Error attempting to enable fullscreen: ${err.message}`);
         showStatusMessage(`Could not enable fullscreen mode: ${err.message}`);
       });
     } else {
       console.log('Exiting fullscreen mode');
-      document.exitFullscreen();
+      exitFullscreen().catch(err => {
+        console.error(`Error attempting to exit fullscreen: ${err.message}`);
+      });
     }
 
     // Prevent event propagation
