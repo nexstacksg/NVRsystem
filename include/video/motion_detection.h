@@ -88,4 +88,19 @@ int set_motion_detection_enabled(const char *stream_name, bool enabled);
  */
 bool is_motion_detection_enabled(const char *stream_name);
 
+/**
+ * Get the current motion grid scores for a stream
+ * Returns the live in-memory grid scores (not from DB) for real-time visualization.
+ * 
+ * @param stream_name The name of the stream
+ * @param out_scores Pointer to float array to fill (must be at least grid_size*grid_size elements)
+ * @param out_grid_size Pointer to receive the grid size
+ * @param out_motion_detected Pointer to receive whether motion is currently detected
+ * @param max_scores Maximum number of scores the out_scores buffer can hold
+ * @return Number of scores written, or -1 on error
+ */
+int get_motion_grid_scores(const char *stream_name, float *out_scores, 
+                           int *out_grid_size, bool *out_motion_detected,
+                           int max_scores);
+
 #endif /* MOTION_DETECTION_H */

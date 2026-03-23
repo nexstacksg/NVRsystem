@@ -160,6 +160,7 @@ static const mg_api_route_t s_api_routes[] = {
     {"OPTIONS", "/api/webrtc/ice", mg_handle_go2rtc_webrtc_ice_options, false},  // OPTIONS requests are fast, no need for threading
 
     // Detection API
+    {"GET", "/api/detection/motion-grid/#", mg_handle_get_motion_grid, true},  // Live grid scores from memory
     {"GET", "/api/detection/results/#", mg_handle_get_detection_results, true},  // Opt out of auto-threading to prevent double threading
     {"GET", "/api/detection/models", mg_handle_get_detection_models, false},
 

@@ -1,6 +1,7 @@
 /**
  * Detection overlay component for LiveView
  * Renders a canvas overlay for displaying detection boxes on video streams
+ * Also renders a real-time motion grid overlay when detection model is 'motion'
  */
 import { h } from 'preact';
 import { useState, useEffect, useRef, useCallback } from 'preact/hooks';
@@ -25,10 +26,14 @@ export const DetectionOverlay = forwardRef(({
   detectionModel = null
 }, ref) => {
   const [detections, setDetections] = useState([]);
+  const [gridData, setGridData] = useState(null);
   const canvasRef = useRef(null);
   const intervalRef = useRef(null);
+  const gridIntervalRef = useRef(null);
   const errorCountRef = useRef(0);
+  const gridErrorCountRef = useRef(0);
   const currentIntervalRef = useRef(1000); // Start with 1 second polling interval
+  const gridIntervalMs = 500; // 500ms for grid polling
 
   // Expose the canvas ref to parent components
   useImperativeHandle(ref, () => ({
@@ -36,7 +41,7 @@ export const DetectionOverlay = forwardRef(({
     getDetections: () => detections
   }));
 
-  // Function to draw bounding boxes
+  // Function to draw bounding boxes and motion grid
   const drawDetectionBoxes = useCallback(() => {
     if (!canvasRef.current || !videoRef.current) return;
 
@@ -51,18 +56,12 @@ export const DetectionOverlay = forwardRef(({
     // Clear previous drawings
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // No detections, just return
-    if (!detections || detections.length === 0) {
-      return;
-    }
-
     // Get the actual video dimensions
     const videoWidth = videoElement.videoWidth;
     const videoHeight = videoElement.videoHeight;
 
     // If video dimensions aren't available yet, skip drawing
     if (!videoWidth || !videoHeight) {
-      console.log('Video dimensions not available yet, skipping detection drawing');
       return;
     }
 
@@ -84,90 +83,174 @@ export const DetectionOverlay = forwardRef(({
       offsetX = (canvas.width - drawWidth) / 2;
     }
 
-    // Draw each detection
-    detections.forEach(detection => {
-      // Calculate pixel coordinates based on normalized values (0-1)
-      // and adjust for the actual display area
-      const x = (detection.x * drawWidth) + offsetX;
-      const y = (detection.y * drawHeight) + offsetY;
-      const width = detection.width * drawWidth;
-      const height = detection.height * drawHeight;
+    // Draw motion grid overlay
+    // Always show grid lines when motion model is enabled, even without score data
+    const isMotionModel = true; // Grid is drawn whenever gridData state exists
+    const gridSize = (gridData && gridData.grid_size > 0) ? gridData.grid_size : 0;
 
-      // Draw bounding box
-      ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
-      ctx.lineWidth = 3;
-      ctx.strokeRect(x, y, width, height);
+    if (gridSize > 0) {
+      const cellWidth = drawWidth / gridSize;
+      const cellHeight = drawHeight / gridSize;
 
-      // Draw label background
-      const label = `${detection.label} (${Math.round(detection.confidence * 100)}%)`;
-      ctx.font = '14px Arial';
-      const textWidth = ctx.measureText(label).width;
-      ctx.fillStyle = 'rgba(255, 0, 0, 0.7)';
-      ctx.fillRect(x, y - 20, textWidth + 10, 20);
+      // First: highlight cells with motion (green tint)
+      if (gridData.scores && gridData.scores.length > 0) {
+        for (let gy = 0; gy < gridSize; gy++) {
+          for (let gx = 0; gx < gridSize; gx++) {
+            const score = gridData.scores[gy * gridSize + gx];
+            
+            if (score > 0.005) {
+              // Green highlight proportional to motion score
+              const alpha = Math.min(0.5, Math.max(0.08, score * 6));
+              
+              const cellX = offsetX + gx * cellWidth;
+              const cellY = offsetY + gy * cellHeight;
 
-      // Draw label text
-      ctx.fillStyle = 'white';
-      ctx.fillText(label, x + 5, y - 5);
-    });
-  }, [detections, videoRef]);
+              ctx.fillStyle = `rgba(34, 197, 94, ${alpha})`;
+              ctx.fillRect(cellX, cellY, cellWidth, cellHeight);
 
-  // Poll for detections
+              // Draw cell border for active cells (brighter green)
+              ctx.strokeStyle = `rgba(34, 197, 94, ${Math.min(0.8, alpha + 0.3)})`;
+              ctx.lineWidth = 1;
+              ctx.strokeRect(cellX, cellY, cellWidth, cellHeight);
+            }
+          }
+        }
+      }
+
+      // Always draw grid lines across the entire frame
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.lineWidth = 0.5;
+
+      for (let i = 1; i < gridSize; i++) {
+        // Vertical lines
+        const vx = offsetX + i * cellWidth;
+        ctx.beginPath();
+        ctx.moveTo(vx, offsetY);
+        ctx.lineTo(vx, offsetY + drawHeight);
+        ctx.stroke();
+
+        // Horizontal lines
+        const hy = offsetY + i * cellHeight;
+        ctx.beginPath();
+        ctx.moveTo(offsetX, hy);
+        ctx.lineTo(offsetX + drawWidth, hy);
+        ctx.stroke();
+      }
+
+      // Draw outer border of the grid
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(offsetX, offsetY, drawWidth, drawHeight);
+    }
+
+    // Draw bounding box detections
+    if (detections && detections.length > 0) {
+      detections.forEach(detection => {
+        // Calculate pixel coordinates based on normalized values (0-1)
+        // and adjust for the actual display area
+        const x = (detection.x * drawWidth) + offsetX;
+        const y = (detection.y * drawHeight) + offsetY;
+        const width = detection.width * drawWidth;
+        const height = detection.height * drawHeight;
+
+        // Draw bounding box
+        ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(x, y, width, height);
+
+        // Draw label background
+        const label = `${detection.label} (${Math.round(detection.confidence * 100)}%)`;
+        ctx.font = '14px Arial';
+        const textWidth = ctx.measureText(label).width;
+        ctx.fillStyle = 'rgba(255, 0, 0, 0.7)';
+        ctx.fillRect(x, y - 20, textWidth + 10, 20);
+
+        // Draw label text
+        ctx.fillStyle = 'white';
+        ctx.fillText(label, x + 5, y - 5);
+      });
+    }
+  }, [detections, gridData, videoRef]);
+
+  // Poll for detections (bounding boxes from DB)
   const pollDetections = useCallback(() => {
     if (!videoRef.current || !videoRef.current.videoWidth) {
-      // Video not loaded yet, skip this cycle
       return;
     }
 
-    // Fetch detection results from API
     fetch(`/api/detection/results/${encodeURIComponent(streamName)}`)
       .then(response => {
         if (!response.ok) {
           throw new Error(`Failed to fetch detection results: ${response.status}`);
         }
-        // Reset error count on success
         errorCountRef.current = 0;
         return response.json();
       })
       .then(data => {
-        // Update detections state if we have detections
         if (data && data.detections) {
           setDetections(data.detections);
         }
       })
       .catch(error => {
         console.error(`Error fetching detection results for ${streamName}:`, error);
-        // Clear detections on error
         setDetections([]);
 
-        // Implement backoff strategy on errors
         errorCountRef.current++;
         if (errorCountRef.current > 3) {
-          // After 3 consecutive errors, slow down polling to avoid overwhelming the server
           clearInterval(intervalRef.current);
-          currentIntervalRef.current = Math.min(5000, currentIntervalRef.current * 2); // Max 5 seconds
+          currentIntervalRef.current = Math.min(5000, currentIntervalRef.current * 2);
           console.log(`Reducing detection polling frequency to ${currentIntervalRef.current}ms due to errors`);
-
-          // Create a new interval with the updated timing
           intervalRef.current = setInterval(pollDetections, currentIntervalRef.current);
+        }
+      });
+  }, [streamName, videoRef]);
+
+  // Poll for motion grid scores (live from memory)
+  const pollMotionGrid = useCallback(() => {
+    if (!videoRef.current || !videoRef.current.videoWidth) {
+      return;
+    }
+
+    fetch(`/api/detection/motion-grid/${encodeURIComponent(streamName)}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Failed to fetch motion grid: ${response.status}`);
+        }
+        gridErrorCountRef.current = 0;
+        return response.json();
+      })
+      .then(data => {
+        if (data) {
+          setGridData(data);
+        }
+      })
+      .catch(error => {
+        console.error(`Error fetching motion grid for ${streamName}:`, error);
+        setGridData(null);
+
+        gridErrorCountRef.current++;
+        if (gridErrorCountRef.current > 5) {
+          // Stop grid polling after too many errors
+          if (gridIntervalRef.current) {
+            clearInterval(gridIntervalRef.current);
+            gridIntervalRef.current = null;
+          }
+          console.log(`Stopped motion grid polling for ${streamName} due to errors`);
         }
       });
   }, [streamName, videoRef]);
 
   // Start/stop detection polling based on enabled prop
   useEffect(() => {
-    // Only start polling if detection is enabled and we have a model
     if (enabled && detectionModel && videoRef.current && canvasRef.current) {
       console.log(`Starting detection polling for stream ${streamName}`);
 
-      // Clear any existing interval
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
 
-      // Start a new polling interval
       intervalRef.current = setInterval(pollDetections, currentIntervalRef.current);
 
-      // Return cleanup function
       return () => {
         console.log(`Cleaning up detection polling for stream ${streamName}`);
         if (intervalRef.current) {
@@ -177,17 +260,48 @@ export const DetectionOverlay = forwardRef(({
       };
     }
 
-    // If not enabled, clean up any existing interval
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
   }, [enabled, detectionModel, streamName, pollDetections, videoRef]);
 
+  // Start/stop motion grid polling (only for 'motion' model)
+  useEffect(() => {
+    const isMotionModel = detectionModel && detectionModel.toLowerCase() === 'motion';
+    
+    if (enabled && isMotionModel && videoRef.current && canvasRef.current) {
+      console.log(`Starting motion grid polling for stream ${streamName}`);
+
+      if (gridIntervalRef.current) {
+        clearInterval(gridIntervalRef.current);
+      }
+
+      gridErrorCountRef.current = 0;
+      gridIntervalRef.current = setInterval(pollMotionGrid, gridIntervalMs);
+
+      return () => {
+        console.log(`Cleaning up motion grid polling for stream ${streamName}`);
+        if (gridIntervalRef.current) {
+          clearInterval(gridIntervalRef.current);
+          gridIntervalRef.current = null;
+        }
+        setGridData(null);
+      };
+    }
+
+    // Not a motion model or not enabled — clean up grid polling
+    if (gridIntervalRef.current) {
+      clearInterval(gridIntervalRef.current);
+      gridIntervalRef.current = null;
+    }
+    setGridData(null);
+  }, [enabled, detectionModel, streamName, pollMotionGrid, videoRef]);
+
   // Draw detections whenever they change
   useEffect(() => {
     drawDetectionBoxes();
-  }, [detections, drawDetectionBoxes]);
+  }, [detections, gridData, drawDetectionBoxes]);
 
   // Handle resize events to redraw detections
   useEffect(() => {

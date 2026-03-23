@@ -28,7 +28,7 @@
 #define DEFAULT_BLUR_RADIUS 1            // Radius for simple box blur
 #define DEFAULT_NOISE_THRESHOLD 10       // Noise filtering threshold
 #define DEFAULT_USE_GRID_DETECTION true  // Use grid-based detection
-#define DEFAULT_GRID_SIZE 6              // Reduced from 8 to 6 for performance
+#define DEFAULT_GRID_SIZE 20             // Dense grid for better motion localization
 #define DEFAULT_DOWNSCALE_ENABLED true   // Enable downscaling for embedded devices
 #define DEFAULT_DOWNSCALE_FACTOR 2       // Downscale factor (2 = half size)
 #define MOTION_LABEL "motion"
@@ -1395,4 +1395,66 @@ int reset_motion_detection_statistics(const char *stream_name) {
     pthread_mutex_unlock(&stream->mutex);
     
     return 0;
+}
+
+/**
+ * Get the current motion grid scores for a stream
+ * Returns the live in-memory grid scores for real-time visualization
+ */
+int get_motion_grid_scores(const char *stream_name, float *out_scores, 
+                           int *out_grid_size, bool *out_motion_detected,
+                           int max_scores) {
+    if (!stream_name || !out_scores || !out_grid_size || !out_motion_detected) {
+        return -1;
+    }
+
+    if (!initialized) {
+        *out_grid_size = 0;
+        *out_motion_detected = false;
+        return 0;
+    }
+
+    // Find the stream without creating a new one
+    motion_stream_t *stream = NULL;
+    pthread_mutex_lock(&motion_streams_mutex);
+    for (int i = 0; i < MAX_MOTION_STREAMS; i++) {
+        if (motion_streams[i] && motion_streams[i]->stream_name[0] != '\0' &&
+            strcmp(motion_streams[i]->stream_name, stream_name) == 0) {
+            stream = motion_streams[i];
+            break;
+        }
+    }
+    pthread_mutex_unlock(&motion_streams_mutex);
+
+    if (!stream) {
+        *out_grid_size = 0;
+        *out_motion_detected = false;
+        return 0;
+    }
+
+    pthread_mutex_lock(&stream->mutex);
+
+    if (!stream->enabled || !stream->use_grid_detection || !stream->grid_scores) {
+        *out_grid_size = 0;
+        *out_motion_detected = false;
+        pthread_mutex_unlock(&stream->mutex);
+        return 0;
+    }
+
+    int total_cells = stream->grid_size * stream->grid_size;
+    int cells_to_copy = (total_cells < max_scores) ? total_cells : max_scores;
+
+    *out_grid_size = stream->grid_size;
+    
+    // Copy the grid scores
+    memcpy(out_scores, stream->grid_scores, cells_to_copy * sizeof(float));
+    
+    // Check if motion was recently detected (within cooldown period)
+    time_t now = time(NULL);
+    *out_motion_detected = (stream->last_detection_time > 0 && 
+                           (now - stream->last_detection_time) < (stream->cooldown_time + 2));
+
+    pthread_mutex_unlock(&stream->mutex);
+
+    return cells_to_copy;
 }

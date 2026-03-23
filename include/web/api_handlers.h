@@ -235,6 +235,15 @@ void mg_handle_hls_segment(struct mg_connection *c, struct mg_http_message *hm);
 void mg_handle_get_detection_results(struct mg_connection *c, struct mg_http_message *hm);
 
 /**
+ * @brief Direct handler for GET /api/detection/motion-grid/:stream
+ * Returns live in-memory motion grid scores for real-time visualization
+ *
+ * @param c Mongoose connection
+ * @param hm Mongoose HTTP message
+ */
+void mg_handle_get_motion_grid(struct mg_connection *c, struct mg_http_message *hm);
+
+/**
  * @brief Direct handler for GET /api/detection/models
  *
  * @param c Mongoose connection
