@@ -57,6 +57,7 @@ function timestampToTimelineHour(timestamp) {
 const timelineState = {
   streams: [],
   timelineSegments: [],
+  timelineDetections: [],
   selectedStream: null,
   selectedDate: null,
   isPlaying: false,
@@ -333,15 +334,17 @@ export function TimelinePage() {
       onSuccess: (data) => {
         console.log('TimelinePage: Timeline data received:', data);
         const timelineSegments = data.segments || [];
-        console.log(`TimelinePage: Received ${timelineSegments.length} segments`);
+        const timelineDetections = data.detections || [];
+        console.log(`TimelinePage: Received ${timelineSegments.length} segments and ${timelineDetections.length} detections`);
 
-        if (timelineSegments.length === 0) {
-          console.log('TimelinePage: No segments found');
+        if (timelineSegments.length === 0 && timelineDetections.length === 0) {
+          console.log('TimelinePage: No recordings or detections found');
           setSegments([]);
 
           // Update global state
           timelineState.setState({
             timelineSegments: [],
+            timelineDetections: [],
             currentSegmentIndex: -1,
             currentTime: null,
             isPlaying: false
@@ -353,6 +356,7 @@ export function TimelinePage() {
 
         // IMPORTANT: Make a deep copy of the segments to avoid reference issues
         const segmentsCopy = JSON.parse(JSON.stringify(timelineSegments));
+        const detectionsCopy = JSON.parse(JSON.stringify(timelineDetections));
 
         // Log the first few segments for debugging
         segmentsCopy.slice(0, 3).forEach((segment, i) => {
@@ -378,6 +382,7 @@ export function TimelinePage() {
         // DIRECT ASSIGNMENT to ensure state is properly set
         console.log('TimelinePage: Directly setting timelineState properties');
         timelineState.timelineSegments = segmentsCopy;
+        timelineState.timelineDetections = detectionsCopy;
         timelineState.currentSegmentIndex = 0;
         timelineState.currentTime = firstSegmentStartTime;
         timelineState.prevCurrentTime = firstSegmentStartTime;

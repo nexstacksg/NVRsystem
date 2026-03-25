@@ -28,7 +28,7 @@
 #define DEFAULT_BLUR_RADIUS 1            // Radius for simple box blur
 #define DEFAULT_NOISE_THRESHOLD 10       // Noise filtering threshold
 #define DEFAULT_USE_GRID_DETECTION true  // Use grid-based detection
-#define DEFAULT_GRID_SIZE 6              // Reduced from 8 to 6 for performance
+#define DEFAULT_GRID_SIZE 20             // Dense grid for better motion localization
 #define DEFAULT_DOWNSCALE_ENABLED true   // Enable downscaling for embedded devices
 #define DEFAULT_DOWNSCALE_FACTOR 2       // Downscale factor (2 = half size)
 #define MOTION_LABEL "motion"
@@ -1251,15 +1251,47 @@ int detect_motion(const char *stream_name, const unsigned char *frame_data,
         strncpy(result->detections[0].label, MOTION_LABEL, MAX_LABEL_LENGTH - 1);
         result->detections[0].confidence = motion_score;
 
-        // Set bounding box to cover the entire frame for now
-        // In a more advanced implementation, we could identify the specific motion regions
-        result->detections[0].x = 0.0f;
-        result->detections[0].y = 0.0f;
-        result->detections[0].width = 1.0f;
-        result->detections[0].height = 1.0f;
+        // Compute bounding box from grid cells that have motion
+        if (stream->use_grid_detection && stream->grid_scores) {
+            int min_gx = stream->grid_size, min_gy = stream->grid_size;
+            int max_gx = -1, max_gy = -1;
 
-        log_info("Motion detected in stream %s: score=%.3f, area=%.2f%%, confidence=%.2f",
-                stream_name, motion_score, motion_area * 100.0f, result->detections[0].confidence);
+            for (int gy = 0; gy < stream->grid_size; gy++) {
+                for (int gx = 0; gx < stream->grid_size; gx++) {
+                    if (stream->grid_scores[gy * stream->grid_size + gx] > 0.01f) {
+                        if (gx < min_gx) min_gx = gx;
+                        if (gy < min_gy) min_gy = gy;
+                        if (gx > max_gx) max_gx = gx;
+                        if (gy > max_gy) max_gy = gy;
+                    }
+                }
+            }
+
+            if (max_gx >= 0) {
+                // Tight bounding box around active grid cells (normalized 0-1)
+                result->detections[0].x = (float)min_gx / (float)stream->grid_size;
+                result->detections[0].y = (float)min_gy / (float)stream->grid_size;
+                result->detections[0].width = (float)(max_gx - min_gx + 1) / (float)stream->grid_size;
+                result->detections[0].height = (float)(max_gy - min_gy + 1) / (float)stream->grid_size;
+            } else {
+                // Fallback to full frame
+                result->detections[0].x = 0.0f;
+                result->detections[0].y = 0.0f;
+                result->detections[0].width = 1.0f;
+                result->detections[0].height = 1.0f;
+            }
+        } else {
+            // Simple differencing mode - no grid data, full frame
+            result->detections[0].x = 0.0f;
+            result->detections[0].y = 0.0f;
+            result->detections[0].width = 1.0f;
+            result->detections[0].height = 1.0f;
+        }
+
+        log_info("Motion detected in stream %s: score=%.3f, area=%.2f%%, bbox=[%.2f,%.2f,%.2f,%.2f]",
+                stream_name, motion_score, motion_area * 100.0f,
+                result->detections[0].x, result->detections[0].y,
+                result->detections[0].width, result->detections[0].height);
     } else {
         // Log low motion details for debugging (at debug level)
         log_debug("No motion in stream %s: score=%.3f, area=%.2f%%, threshold=%.2f",
@@ -1363,4 +1395,66 @@ int reset_motion_detection_statistics(const char *stream_name) {
     pthread_mutex_unlock(&stream->mutex);
     
     return 0;
+}
+
+/**
+ * Get the current motion grid scores for a stream
+ * Returns the live in-memory grid scores for real-time visualization
+ */
+int get_motion_grid_scores(const char *stream_name, float *out_scores, 
+                           int *out_grid_size, bool *out_motion_detected,
+                           int max_scores) {
+    if (!stream_name || !out_scores || !out_grid_size || !out_motion_detected) {
+        return -1;
+    }
+
+    if (!initialized) {
+        *out_grid_size = 0;
+        *out_motion_detected = false;
+        return 0;
+    }
+
+    // Find the stream without creating a new one
+    motion_stream_t *stream = NULL;
+    pthread_mutex_lock(&motion_streams_mutex);
+    for (int i = 0; i < MAX_MOTION_STREAMS; i++) {
+        if (motion_streams[i] && motion_streams[i]->stream_name[0] != '\0' &&
+            strcmp(motion_streams[i]->stream_name, stream_name) == 0) {
+            stream = motion_streams[i];
+            break;
+        }
+    }
+    pthread_mutex_unlock(&motion_streams_mutex);
+
+    if (!stream) {
+        *out_grid_size = 0;
+        *out_motion_detected = false;
+        return 0;
+    }
+
+    pthread_mutex_lock(&stream->mutex);
+
+    if (!stream->enabled || !stream->use_grid_detection || !stream->grid_scores) {
+        *out_grid_size = 0;
+        *out_motion_detected = false;
+        pthread_mutex_unlock(&stream->mutex);
+        return 0;
+    }
+
+    int total_cells = stream->grid_size * stream->grid_size;
+    int cells_to_copy = (total_cells < max_scores) ? total_cells : max_scores;
+
+    *out_grid_size = stream->grid_size;
+    
+    // Copy the grid scores
+    memcpy(out_scores, stream->grid_scores, cells_to_copy * sizeof(float));
+    
+    // Check if motion was recently detected (within cooldown period)
+    time_t now = time(NULL);
+    *out_motion_detected = (stream->last_detection_time > 0 && 
+                           (now - stream->last_detection_time) < (stream->cooldown_time + 2));
+
+    pthread_mutex_unlock(&stream->mutex);
+
+    return cells_to_copy;
 }

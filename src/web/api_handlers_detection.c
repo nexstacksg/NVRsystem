@@ -16,6 +16,7 @@
 #include "mongoose.h"
 #include "video/detection.h"
 #include "video/detection_result.h"
+#include "video/motion_detection.h"
 #include "video/stream_manager.h"
 #include "database/database_manager.h"
 
@@ -156,4 +157,88 @@ void mg_handle_get_detection_results(struct mg_connection *c, struct mg_http_mes
     cJSON_Delete(response);
     
     log_debug("Successfully handled GET /api/detection/results/%s request", stream_name);
+}
+
+/**
+ * @brief Direct handler for GET /api/detection/motion-grid/:stream
+ * Returns live in-memory motion grid scores for real-time visualization
+ */
+void mg_handle_get_motion_grid(struct mg_connection *c, struct mg_http_message *hm) {
+    // Extract stream name from URL
+    char stream_name[MAX_STREAM_NAME];
+    if (mg_extract_path_param(hm, "/api/detection/motion-grid/", stream_name, sizeof(stream_name)) != 0) {
+        log_error("Failed to extract stream name from motion-grid URL");
+        mg_send_json_error(c, 400, "Invalid request path");
+        return;
+    }
+
+    log_debug("Handling GET /api/detection/motion-grid/%s request", stream_name);
+
+    // Check if stream exists
+    stream_handle_t stream = get_stream_by_name(stream_name);
+    if (!stream) {
+        log_error("Stream not found: %s", stream_name);
+        mg_send_json_error(c, 404, "Stream not found");
+        return;
+    }
+
+    // Get live grid scores from memory
+    #define MAX_GRID_SCORES (32 * 32)  // Max grid size is 32x32
+    float scores[MAX_GRID_SCORES];
+    int grid_size = 0;
+    bool motion_detected = false;
+
+    int num_scores = get_motion_grid_scores(stream_name, scores, &grid_size, &motion_detected, MAX_GRID_SCORES);
+
+    // Create JSON response
+    cJSON *response = cJSON_CreateObject();
+    if (!response) {
+        log_error("Failed to create response JSON object");
+        mg_send_json_error(c, 500, "Failed to create response JSON");
+        return;
+    }
+
+    cJSON_AddNumberToObject(response, "grid_size", grid_size);
+    cJSON_AddBoolToObject(response, "motion_detected", motion_detected);
+
+    // Create scores array
+    cJSON *scores_array = cJSON_CreateArray();
+    if (!scores_array) {
+        log_error("Failed to create scores JSON array");
+        cJSON_Delete(response);
+        mg_send_json_error(c, 500, "Failed to create scores JSON");
+        return;
+    }
+
+    for (int i = 0; i < num_scores; i++) {
+        // Round to 4 decimal places to reduce JSON size
+        cJSON_AddItemToArray(scores_array, cJSON_CreateNumber((double)scores[i]));
+    }
+
+    cJSON_AddItemToObject(response, "scores", scores_array);
+
+    // Add timestamp
+    char timestamp[32];
+    time_t now = time(NULL);
+    struct tm *tm_info = localtime(&now);
+    strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", tm_info);
+    cJSON_AddStringToObject(response, "timestamp", timestamp);
+
+    // Convert to string
+    char *json_str = cJSON_PrintUnformatted(response);
+    if (!json_str) {
+        log_error("Failed to convert motion-grid JSON to string");
+        cJSON_Delete(response);
+        mg_send_json_error(c, 500, "Failed to convert response JSON to string");
+        return;
+    }
+
+    // Send response
+    mg_send_json_response(c, 200, json_str);
+
+    // Clean up
+    free(json_str);
+    cJSON_Delete(response);
+
+    log_debug("Successfully handled GET /api/detection/motion-grid/%s request", stream_name);
 }

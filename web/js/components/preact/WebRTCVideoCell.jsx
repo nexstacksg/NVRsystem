@@ -13,6 +13,7 @@ import { showSnapshotPreview } from './UI.jsx';
 import { PTZControls } from './PTZControls.jsx';
 import { FullscreenTimeline } from './FullscreenTimeline.jsx';
 import { getGo2rtcBaseUrl } from '../../utils/settings-utils.js';
+import { getFullscreenElement } from '../../utils/dom-utils.js';
 import adapter from 'webrtc-adapter';
 
 /**
@@ -78,12 +79,21 @@ export function WebRTCVideoCell({
     if (!cell) return;
 
     const handleFullscreenChange = () => {
-      const isFs = document.fullscreenElement === cell;
+      const isFs = getFullscreenElement() === cell;
       setIsBrowserFullscreen(isFs);
     };
 
     cell.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => cell.removeEventListener('fullscreenchange', handleFullscreenChange);
+    cell.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    cell.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    cell.addEventListener('MSFullscreenChange', handleFullscreenChange);
+    
+    return () => {
+      cell.removeEventListener('fullscreenchange', handleFullscreenChange);
+      cell.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      cell.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      cell.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+    };
   }, []);
 
   // Refs
@@ -931,7 +941,7 @@ export function WebRTCVideoCell({
           right: '10px',
           display: 'flex',
           gap: '10px',
-          zIndex: 5,
+          zIndex: 30,
           backgroundColor: 'rgba(0, 0, 0, 0.5)',
           padding: '5px',
           borderRadius: '4px'
@@ -1124,7 +1134,7 @@ export function WebRTCVideoCell({
         )}
         <button
           className="fullscreen-btn"
-          title="Toggle Fullscreen"
+          title={isBrowserFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
           data-id={streamId}
           data-name={stream.name}
           onClick={(e) => onToggleFullscreen(stream.name, e, cellRef.current)}
@@ -1139,7 +1149,13 @@ export function WebRTCVideoCell({
           onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
           onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            {isBrowserFullscreen ? (
+              <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
+            ) : (
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+            )}
+          </svg>
         </button>
       </div>
 

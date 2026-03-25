@@ -42,6 +42,7 @@
 #include "video/detection_model.h"
 #include "video/detection_result.h"
 #include "video/api_detection.h"
+#include "video/motion_detection.h"
 #include "video/mp4_writer.h"
 #include "video/mp4_writer_internal.h"
 #include "video/streams.h"
@@ -103,6 +104,17 @@ static bool is_api_detection(const char *model_path) {
         return true;
     }
     return false;
+}
+
+/**
+ * Check if a model path indicates built-in motion detection
+ * Returns true if the path is "motion"
+ */
+static bool is_motion_detection(const char *model_path) {
+    if (!model_path || model_path[0] == '\0') {
+        return false;
+    }
+    return (strcmp(model_path, "motion") == 0);
 }
 
 /**
@@ -370,6 +382,17 @@ int start_unified_detection_thread(const char *stream_name, const char *model_pa
     atomic_store(&ctx->state, UDT_STATE_INITIALIZING);
     atomic_store(&ctx->last_packet_time, (int_fast64_t)time(NULL));
     atomic_store(&ctx->consecutive_failures, 0);
+
+    // If this is motion detection, auto-enable it for this stream
+    if (is_motion_detection(model_path)) {
+        log_info("[%s] Auto-enabling built-in motion detection", stream_name);
+        init_motion_detection_system();
+        set_motion_detection_enabled(stream_name, true);
+        configure_motion_detection(stream_name, threshold > 0.0f ? threshold : 0.15f, 0.005f, 0);
+        // Override detection interval to 1 for real-time motion detection (every keyframe)
+        ctx->detection_interval = 1;
+        log_info("[%s] Motion detection enabled (sensitivity=%.2f, interval=1, cooldown=0)", stream_name, threshold > 0.0f ? threshold : 0.15f);
+    }
 
     // Store context in slot
     detection_contexts[slot] = ctx;
@@ -977,8 +1000,10 @@ static int process_packet(unified_detection_ctx_t *ctx, AVPacket *pkt) {
             }
             // No detection - check if we should enter post-buffer
             else if (current_state == UDT_STATE_RECORDING) {
-                // Check if enough time has passed since last detection
-                if (now - ctx->last_detection_time > 2) {  // 2 second grace period
+                // For motion detection, transition immediately (no grace period)
+                // For other detection types, use a 2-second grace period
+                int grace_seconds = is_motion_detection(ctx->model_path) ? 0 : 2;
+                if (now - ctx->last_detection_time > grace_seconds) {
                     log_info("[%s] No detection, entering post-buffer (%d seconds)",
                              ctx->stream_name, ctx->post_buffer_seconds);
                     ctx->post_buffer_end_time = now + ctx->post_buffer_seconds;
@@ -1232,6 +1257,100 @@ static bool run_detection_on_frame(unified_detection_ctx_t *ctx, AVPacket *pkt) 
         return detection_triggered;
     }
 
+    // Built-in motion detection - direct path (no model file needed)
+    if (is_motion_detection(ctx->model_path)) {
+        log_debug("[%s] Running built-in motion detection", ctx->stream_name);
+
+        if (!pkt || !ctx->decoder_ctx) {
+            log_warn("[%s] Motion detection skipped: pkt=%p, decoder_ctx=%p", ctx->stream_name, (void*)pkt, (void*)ctx->decoder_ctx);
+            return false;
+        }
+
+        // Decode the packet to get a frame
+        int ret = avcodec_send_packet(ctx->decoder_ctx, pkt);
+        if (ret < 0) {
+            log_warn("[%s] Motion detection: avcodec_send_packet failed (ret=%d)", ctx->stream_name, ret);
+            return false;
+        }
+
+        AVFrame *frame = av_frame_alloc();
+        if (!frame) {
+            log_warn("[%s] Motion detection: failed to allocate frame", ctx->stream_name);
+            return false;
+        }
+
+        ret = avcodec_receive_frame(ctx->decoder_ctx, frame);
+        if (ret < 0) {
+            log_debug("[%s] Motion detection: avcodec_receive_frame returned %d (may need more data)", ctx->stream_name, ret);
+            av_frame_free(&frame);
+            return false;
+        }
+
+        // Convert frame to RGB for motion detection
+        int width = frame->width;
+        int height = frame->height;
+        int channels = 3;  // RGB
+
+        struct SwsContext *sws_ctx = sws_getContext(
+            width, height, frame->format,
+            width, height, AV_PIX_FMT_RGB24,
+            SWS_BILINEAR, NULL, NULL, NULL);
+
+        if (!sws_ctx) {
+            log_error("[%s] Failed to create sws context for motion detection", ctx->stream_name);
+            av_frame_free(&frame);
+            return false;
+        }
+
+        size_t rgb_buffer_size = width * height * channels;
+        uint8_t *rgb_buffer = malloc(rgb_buffer_size);
+        if (!rgb_buffer) {
+            log_error("[%s] Failed to allocate RGB buffer for motion detection", ctx->stream_name);
+            sws_freeContext(sws_ctx);
+            av_frame_free(&frame);
+            return false;
+        }
+
+        uint8_t *rgb_data[4] = {rgb_buffer, NULL, NULL, NULL};
+        int rgb_linesize[4] = {width * channels, 0, 0, 0};
+
+        sws_scale(sws_ctx, (const uint8_t * const *)frame->data, frame->linesize,
+                  0, height, rgb_data, rgb_linesize);
+
+        sws_freeContext(sws_ctx);
+        av_frame_free(&frame);
+
+        // Call detect_motion directly
+        time_t now = time(NULL);
+        int detect_ret = detect_motion(ctx->stream_name, rgb_buffer, width, height, channels, now, &result);
+        free(rgb_buffer);
+
+        if (detect_ret != 0) {
+            log_warn("[%s] Motion detection failed with error %d", ctx->stream_name, detect_ret);
+            return false;
+        }
+
+        // Check if motion was detected
+        bool detection_triggered = false;
+        for (int i = 0; i < result.count; i++) {
+            detection_triggered = true;
+            log_info("[%s] Motion Detection: %s (score=%.3f)",
+                     ctx->stream_name,
+                     result.detections[i].label,
+                     result.detections[i].confidence);
+        }
+
+        // Store detections in database if any were found
+        if (result.count > 0) {
+            if (store_detections_in_db(ctx->stream_name, &result, now) != 0) {
+                log_warn("[%s] Failed to store motion detections in database", ctx->stream_name);
+            }
+            ctx->total_detections += result.count;
+        }
+
+        return detection_triggered;
+    }
+
     // Embedded model detection - requires frame decoding
     if (!pkt || !ctx->decoder_ctx) return false;
 
@@ -1305,7 +1424,8 @@ static bool run_detection_on_frame(unified_detection_ctx_t *ctx, AVPacket *pkt) 
     av_frame_free(&frame);
 
     // Run detection
-    int detect_ret = detect_objects(ctx->model, rgb_buffer, width, height, channels, &result);
+    int detect_ret = detect_objects(ctx->model, rgb_buffer, width, height, channels, &result,
+                                    ctx->stream_name, time(NULL));
 
     free(rgb_buffer);
 

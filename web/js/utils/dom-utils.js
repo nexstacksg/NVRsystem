@@ -269,3 +269,56 @@ export function hideLoading(element) {
     loadingOverlay.style.display = 'none';
   }
 }
+
+/**
+ * Request fullscreen for an element with vendor prefix support
+ * @param {HTMLElement} element - Element to make fullscreen
+ * @returns {Promise} - Promise that resolves when fullscreen is entered
+ */
+export function requestFullscreen(element) {
+  if (!element) return Promise.reject(new Error('No element provided'));
+  
+  if (element.requestFullscreen) {
+    return element.requestFullscreen();
+  } else if (element.webkitRequestFullscreen) {
+    return element.webkitRequestFullscreen();
+  } else if (element.mozRequestFullScreen) {
+    return element.mozRequestFullScreen();
+  } else if (element.msRequestFullscreen) {
+    return element.msRequestFullscreen();
+  }
+  
+  return Promise.reject(new Error('Fullscreen API not supported'));
+}
+
+/**
+ * Exit fullscreen mode with vendor prefix support
+ * @returns {Promise} - Promise that resolves when fullscreen is exited
+ */
+export function exitFullscreen() {
+  if (document.exitFullscreen) {
+    return document.exitFullscreen();
+  } else if (document.webkitExitFullscreen) {
+    return document.webkitExitFullscreen();
+  } else if (document.mozCancelFullScreen) {
+    return document.mozCancelFullScreen();
+  } else if (document.msExitFullscreen) {
+    return document.msExitFullscreen();
+  }
+  
+  return Promise.resolve();
+}
+
+/**
+ * Get the current fullscreen element with vendor prefix support
+ * @returns {Element|null} - The current fullscreen element or null
+ */
+export function getFullscreenElement() {
+  return (
+    document.fullscreenElement ||
+    document.webkitFullscreenElement ||
+    document.mozFullScreenElement ||
+    document.msFullscreenElement ||
+    null
+  );
+}

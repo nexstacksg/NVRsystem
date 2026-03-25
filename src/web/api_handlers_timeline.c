@@ -19,6 +19,7 @@
 #include "mongoose.h"
 #include "database/database_manager.h"
 #include "database/db_recordings.h"
+#include "database/db_detections.h"
 
 // Forward declarations for Mongoose API handlers
 void mg_handle_get_timeline_segments(struct mg_connection *c, struct mg_http_message *hm);
@@ -69,7 +70,10 @@ int get_timeline_segments(const char *stream_name, time_t start_time, time_t end
         segments[i].start_time = recordings[i].start_time;
         segments[i].end_time = recordings[i].end_time;
         segments[i].size_bytes = recordings[i].size_bytes;
-        segments[i].has_detection = false; // Default to false, could be updated with detection info
+        
+        // Check if there are any detections in this segment's time range
+        int has_det = has_detections_in_time_range(stream_name, segments[i].start_time, segments[i].end_time);
+        segments[i].has_detection = (has_det > 0);
     }
     
     // Free recordings
@@ -222,6 +226,13 @@ void mg_handle_get_timeline_segments(struct mg_connection *c, struct mg_http_mes
         mg_send_json_error(c, 500, "Failed to get timeline segments");
         return;
     }
+
+    // Get precise detection intervals
+    detection_interval_t *det_intervals = (detection_interval_t *)malloc(MAX_TIMELINE_SEGMENTS * sizeof(detection_interval_t));
+    int det_count = 0;
+    if (det_intervals) {
+        det_count = get_detection_intervals(stream_name, start_time, end_time, det_intervals, MAX_TIMELINE_SEGMENTS);
+    }
     
     // Create response object
     cJSON *response = cJSON_CreateObject();
@@ -247,6 +258,21 @@ void mg_handle_get_timeline_segments(struct mg_connection *c, struct mg_http_mes
     
     // Add metadata
     cJSON_AddStringToObject(response, "stream", stream_name);
+
+    // Create detections array
+    cJSON *detections_array = cJSON_CreateArray();
+    if (detections_array) {
+        cJSON_AddItemToObject(response, "detections", detections_array);
+        for (int i = 0; i < det_count; i++) {
+            cJSON *det = cJSON_CreateObject();
+            if (det) {
+                cJSON_AddNumberToObject(det, "start_timestamp", (double)det_intervals[i].start_time);
+                cJSON_AddNumberToObject(det, "end_timestamp", (double)det_intervals[i].end_time);
+                cJSON_AddItemToArray(detections_array, det);
+            }
+        }
+    }
+    if (det_intervals) free(det_intervals);
     
     // Format timestamps for display in local time
     char start_time_display[32] = {0};

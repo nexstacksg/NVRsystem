@@ -182,9 +182,33 @@ static void put_stream_worker(put_stream_task_t *task) {
             log_warn("Failed to stop existing unified detection thread for stream %s", task->config.name);
         }
 
-        if (task->config.detection_model[0] != '\0' && task->config.enabled) {
+        if (task->config.detection_based_recording && task->config.detection_model[0] != '\0') {
+            log_info("Detection enabled for updated stream %s, restarting unified detection thread", task->config.name);
+            
+            // Build the proper model path
+            char model_path[MAX_PATH_LENGTH];
+            bool is_api_based = (strcmp(task->config.detection_model, "api-detection") == 0) ||
+                               (strncmp(task->config.detection_model, "http://", 7) == 0) ||
+                               (strncmp(task->config.detection_model, "https://", 8) == 0) ||
+                               (strcmp(task->config.detection_model, "motion") == 0) ||
+                               (strcmp(task->config.detection_model, "onvif") == 0);
+
+            if (is_api_based) {
+                strncpy(model_path, task->config.detection_model, MAX_PATH_LENGTH - 1);
+                model_path[MAX_PATH_LENGTH - 1] = '\0';
+            } else if (task->config.detection_model[0] != '/') {
+                if (g_config.models_path[0] != '\0') {
+                    snprintf(model_path, sizeof(model_path), "%s/%s", g_config.models_path, task->config.detection_model);
+                } else {
+                    snprintf(model_path, MAX_PATH_LENGTH, "/etc/oneberry/models/%s", task->config.detection_model);
+                }
+            } else {
+                strncpy(model_path, task->config.detection_model, MAX_PATH_LENGTH - 1);
+                model_path[MAX_PATH_LENGTH - 1] = '\0';
+            }
+
             if (start_unified_detection_thread(task->config.name,
-                                              task->config.detection_model,
+                                              model_path,
                                               task->config.detection_threshold,
                                               task->config.pre_detection_buffer,
                                               task->config.post_detection_buffer) != 0) {
@@ -590,9 +614,31 @@ void mg_handle_post_stream(struct mg_connection *c, struct mg_http_message *hm) 
             log_info("Detection enabled for new stream %s, starting unified detection thread with model %s",
                     config.name, config.detection_model);
 
+            // Build the proper model path
+            char model_path[MAX_PATH_LENGTH];
+            bool is_api_based = (strcmp(config.detection_model, "api-detection") == 0) ||
+                               (strncmp(config.detection_model, "http://", 7) == 0) ||
+                               (strncmp(config.detection_model, "https://", 8) == 0) ||
+                               (strcmp(config.detection_model, "motion") == 0) ||
+                               (strcmp(config.detection_model, "onvif") == 0);
+
+            if (is_api_based) {
+                strncpy(model_path, config.detection_model, MAX_PATH_LENGTH - 1);
+                model_path[MAX_PATH_LENGTH - 1] = '\0';
+            } else if (config.detection_model[0] != '/') {
+                if (g_config.models_path[0] != '\0') {
+                    snprintf(model_path, sizeof(model_path), "%s/%s", g_config.models_path, config.detection_model);
+                } else {
+                    snprintf(model_path, MAX_PATH_LENGTH, "/etc/oneberry/models/%s", config.detection_model);
+                }
+            } else {
+                strncpy(model_path, config.detection_model, MAX_PATH_LENGTH - 1);
+                model_path[MAX_PATH_LENGTH - 1] = '\0';
+            }
+
             // Start unified detection thread
             if (start_unified_detection_thread(config.name,
-                                              config.detection_model,
+                                              model_path,
                                               config.detection_threshold,
                                               config.pre_detection_buffer,
                                               config.post_detection_buffer) != 0) {
@@ -1036,9 +1082,31 @@ void mg_handle_put_stream(struct mg_connection *c, struct mg_http_message *hm) {
                             if (stream_config.detection_based_recording && stream_config.detection_model[0] != '\0') {
                                 log_info("Starting unified detection thread for enabled stream %s", decoded_id);
 
+                                // Build the proper model path
+                                char model_path[MAX_PATH_LENGTH];
+                                bool is_api_based = (strcmp(stream_config.detection_model, "api-detection") == 0) ||
+                                                   (strncmp(stream_config.detection_model, "http://", 7) == 0) ||
+                                                   (strncmp(stream_config.detection_model, "https://", 8) == 0) ||
+                                                   (strcmp(stream_config.detection_model, "motion") == 0) ||
+                                                   (strcmp(stream_config.detection_model, "onvif") == 0);
+
+                                if (is_api_based) {
+                                    strncpy(model_path, stream_config.detection_model, MAX_PATH_LENGTH - 1);
+                                    model_path[MAX_PATH_LENGTH - 1] = '\0';
+                                } else if (stream_config.detection_model[0] != '/') {
+                                    if (g_config.models_path[0] != '\0') {
+                                        snprintf(model_path, sizeof(model_path), "%s/%s", g_config.models_path, stream_config.detection_model);
+                                    } else {
+                                        snprintf(model_path, MAX_PATH_LENGTH, "/etc/oneberry/models/%s", stream_config.detection_model);
+                                    }
+                                } else {
+                                    strncpy(model_path, stream_config.detection_model, MAX_PATH_LENGTH - 1);
+                                    model_path[MAX_PATH_LENGTH - 1] = '\0';
+                                }
+
                                 // Start unified detection thread
                                 if (start_unified_detection_thread(decoded_id,
-                                                                  stream_config.detection_model,
+                                                                  model_path,
                                                                   stream_config.detection_threshold,
                                                                   stream_config.pre_detection_buffer,
                                                                   stream_config.post_detection_buffer) != 0) {
@@ -1340,9 +1408,31 @@ void mg_handle_post_stream_refresh(struct mg_connection *c, struct mg_http_messa
                     usleep(500000);  // 500ms
                 }
 
+                // Build the proper model path
+                char model_path[MAX_PATH_LENGTH];
+                bool is_api_based = (strcmp(config.detection_model, "api-detection") == 0) ||
+                                   (strncmp(config.detection_model, "http://", 7) == 0) ||
+                                   (strncmp(config.detection_model, "https://", 8) == 0) ||
+                                   (strcmp(config.detection_model, "motion") == 0) ||
+                                   (strcmp(config.detection_model, "onvif") == 0);
+
+                if (is_api_based) {
+                    strncpy(model_path, config.detection_model, MAX_PATH_LENGTH - 1);
+                    model_path[MAX_PATH_LENGTH - 1] = '\0';
+                } else if (config.detection_model[0] != '/') {
+                    if (g_config.models_path[0] != '\0') {
+                        snprintf(model_path, sizeof(model_path), "%s/%s", g_config.models_path, config.detection_model);
+                    } else {
+                        snprintf(model_path, MAX_PATH_LENGTH, "/etc/oneberry/models/%s", config.detection_model);
+                    }
+                } else {
+                    strncpy(model_path, config.detection_model, MAX_PATH_LENGTH - 1);
+                    model_path[MAX_PATH_LENGTH - 1] = '\0';
+                }
+
                 // Start the detection thread
                 if (start_unified_detection_thread(decoded_name,
-                                                   config.detection_model,
+                                                   model_path,
                                                    config.detection_threshold,
                                                    config.pre_detection_buffer,
                                                    config.post_detection_buffer) != 0) {

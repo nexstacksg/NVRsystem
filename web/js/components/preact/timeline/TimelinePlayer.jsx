@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from 'preact/hooks';
 import { timelineState } from './TimelinePage.jsx';
 import { SpeedControls } from './SpeedControls.jsx';
 import { showStatusMessage } from '../ToastContainer.jsx';
+import { PlaybackDetectionOverlay } from './PlaybackDetectionOverlay.jsx';
 
 /**
  * TimelinePlayer component
@@ -388,6 +389,9 @@ export function TimelinePlayer() {
               onEnded={handleEnded}
               onTimeUpdate={handleTimeUpdate}
           ></video>
+
+          {/* Detection and Motion Grid overlay for recordings */}
+          <PlaybackDetectionOverlay videoRef={videoRef} />
 
           {/* Add a message for invalid segments */}
           <div

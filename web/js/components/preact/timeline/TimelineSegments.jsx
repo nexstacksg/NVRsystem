@@ -15,6 +15,7 @@ import { timelineState } from './TimelinePage.jsx';
 export function TimelineSegments({ segments: propSegments }) {
   // Local state
   const [segments, setSegments] = useState(propSegments || []);
+  const [detections, setDetections] = useState([]);
   const [startHour, setStartHour] = useState(0);
   const [endHour, setEndHour] = useState(24);
   const [currentSegmentIndex, setCurrentSegmentIndex] = useState(-1);
@@ -54,6 +55,11 @@ export function TimelineSegments({ segments: propSegments }) {
           lastSegmentsRef.current = [...state.timelineSegments]; // Create a copy
           lastSegmentsUpdateRef.current = Date.now();
         }
+      }
+
+      // Update detections
+      if (state.timelineDetections) {
+        setDetections(state.timelineDetections);
       }
 
       // Always update these lightweight properties
@@ -400,14 +406,49 @@ export function TimelineSegments({ segments: propSegments }) {
           key={`segment-${mergedIndex}`}
           className="timeline-segment absolute rounded-sm transition-all duration-200"
           style={{
-            backgroundColor: segment.has_detection ? 'hsl(var(--danger))' : 'hsl(var(--primary))',
+            backgroundColor: 'hsl(var(--muted))',
             left: `${startPercent}%`,
             width: `${widthPercent}%`,
             height: `${heightPercent}%`,
             top: '50%',
-            transform: 'translateY(-50%)'
+            transform: 'translateY(-50%)',
+            opacity: 0.8
           }}
           title={`${startTimeStr} - ${endTimeStr} (${durationStr})`}
+        ></div>
+      );
+    });
+
+    // Add detection overlays
+    detections.forEach((detection, detIndex) => {
+      const detStart = detection.start_timestamp;
+      const detEnd = detection.end_timestamp;
+
+      const startHourFloat = timelineState.timestampToTimelineHour(detStart);
+      const endHourFloat = timelineState.timestampToTimelineHour(detEnd);
+
+      if (endHourFloat < startHour || startHourFloat > endHour) return;
+
+      const visibleStartHour = Math.max(startHourFloat, startHour);
+      const visibleEndHour = Math.min(endHourFloat, endHour);
+
+      const startPercent = ((visibleStartHour - startHour) / (endHour - startHour)) * 100;
+      const widthPercent = Math.max(0.1, ((visibleEndHour - visibleStartHour) / (endHour - startHour)) * 100);
+
+      visibleSegments.push(
+        <div
+          key={`detection-${detIndex}`}
+          className="timeline-detection absolute rounded-sm z-10"
+          style={{
+            backgroundColor: 'hsl(var(--success))',
+            left: `${startPercent}%`,
+            width: `${widthPercent}%`,
+            height: '80%',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            boxShadow: '0 0 4px hsl(var(--success))'
+          }}
+          title={`Motion: ${new Date(detStart * 1000).toLocaleTimeString()}`}
         ></div>
       );
     });
