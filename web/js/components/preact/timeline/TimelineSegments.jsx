@@ -406,7 +406,6 @@ export function TimelineSegments({ segments: propSegments }) {
           key={`segment-${mergedIndex}`}
           className="timeline-segment absolute rounded-sm transition-all duration-200"
           style={{
-            backgroundColor: 'hsl(var(--muted))',
             left: `${startPercent}%`,
             width: `${widthPercent}%`,
             height: `${heightPercent}%`,
@@ -480,9 +479,10 @@ export function TimelineSegments({ segments: propSegments }) {
 
   return (
     <div
-      className="timeline-segments relative w-full h-16 pt-2"
+      className="timeline-segments"
       ref={containerRef}
     >
+      <div className="timeline-segments-track"></div>
       {renderSegments()}
     </div>
   );

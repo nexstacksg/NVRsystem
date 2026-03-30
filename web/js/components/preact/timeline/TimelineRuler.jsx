@@ -15,6 +15,8 @@ export function TimelineRuler() {
   const [startHour, setStartHour] = useState(0);
   const [endHour, setEndHour] = useState(24);
   const [zoomLevel, setZoomLevel] = useState(1);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [focusHour, setFocusHour] = useState(null);
 
   // Subscribe to timeline state changes
   useEffect(() => {
@@ -71,6 +73,8 @@ export function TimelineRuler() {
       setStartHour(newStartHour);
       setEndHour(newEndHour);
       setZoomLevel(state.zoomLevel);
+      setSelectedDate(state.selectedDate || null);
+      setFocusHour(state.currentTime !== null ? timestampToHour(state.currentTime) : null);
 
       console.log('TimelineRuler: Calculated time range', {
         newStartHour,
@@ -94,6 +98,28 @@ export function TimelineRuler() {
     return () => unsubscribe();
   }, []);
 
+  const timestampToHour = (timestamp) => {
+    const date = new Date(timestamp * 1000);
+    return date.getHours() + (date.getMinutes() / 60) + (date.getSeconds() / 3600);
+  };
+
+  const formatDayLabel = (dateString, offsetDays = 0) => {
+    const base = dateString ? new Date(`${dateString}T00:00:00`) : new Date();
+    base.setDate(base.getDate() + offsetDays);
+    return base.toLocaleDateString(undefined, {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
+
+  const formatHourLabel = (hour) => {
+    const normalized = hour % 24;
+    const suffix = normalized >= 12 ? 'PM' : 'AM';
+    const hour12 = normalized % 12 || 12;
+    return `${hour12} ${suffix}`;
+  };
+
   // Generate hour markers and labels
   const generateHourMarkers = () => {
     const markers = [];
@@ -105,10 +131,13 @@ export function TimelineRuler() {
         const position = ((hour - startHour) / (endHour - startHour)) * 100;
 
         // Add hour marker
+        const isBoundaryHour = hour === 0 || hour === 24;
+        const isFocusedHour = focusHour !== null && Math.abs(hour - focusHour) < 0.5;
+
         markers.push(
           <div
             key={`tick-${hour}`}
-            className="absolute top-0 w-px h-5 bg-foreground"
+            className={`timeline-ruler-tick ${isBoundaryHour ? 'is-boundary' : ''} ${isFocusedHour ? 'is-focused' : ''}`}
             style={{ left: `${position}%` }}
           ></div>
         );
@@ -117,10 +146,10 @@ export function TimelineRuler() {
         markers.push(
           <div
             key={`label-${hour}`}
-            className="absolute top-0 text-xs text-muted-foreground transform -translate-x-1/2"
+            className={`timeline-ruler-label ${isFocusedHour ? 'is-focused' : ''}`}
             style={{ left: `${position}%` }}
           >
-            {hour}:00
+            {hour === 24 ? '12 AM' : formatHourLabel(hour)}
           </div>
         );
 
@@ -130,7 +159,7 @@ export function TimelineRuler() {
           markers.push(
             <div
               key={`tick-${hour}-30`}
-              className="absolute top-2 w-px h-3 bg-muted-foreground"
+              className="timeline-ruler-minor-tick"
               style={{ left: `${halfHourPosition}%` }}
             ></div>
           );
@@ -143,7 +172,7 @@ export function TimelineRuler() {
             markers.push(
               <div
                 key={`tick-${hour}-15`}
-                className="absolute top-3 w-px h-2 bg-muted-foreground"
+                className="timeline-ruler-micro-tick"
                 style={{ left: `${quarterHourPosition1}%` }}
               ></div>
             );
@@ -151,7 +180,7 @@ export function TimelineRuler() {
             markers.push(
               <div
                 key={`tick-${hour}-45`}
-                className="absolute top-3 w-px h-2 bg-muted-foreground"
+                className="timeline-ruler-micro-tick"
                 style={{ left: `${quarterHourPosition3}%` }}
               ></div>
             );
@@ -164,10 +193,16 @@ export function TimelineRuler() {
   };
 
   return (
-    <div className="timeline-ruler relative w-full h-8 bg-muted border-b border-border">
+    <div className="timeline-ruler">
+      <div className="timeline-ruler-day-label timeline-ruler-day-label-left">
+        {formatDayLabel(selectedDate, 0)}
+      </div>
+      <div className="timeline-ruler-day-label timeline-ruler-day-label-right">
+        {formatDayLabel(selectedDate, endHour >= 24 ? 1 : 0)}
+      </div>
       {generateHourMarkers()}
-      <div className="absolute bottom-0 left-0 text-xs text-muted-foreground px-1">
-        Zoom: {zoomLevel}x ({Math.round(24 / zoomLevel)} hours)
+      <div className="timeline-ruler-zoom-label">
+        {Math.round(24 / zoomLevel)}h view
       </div>
     </div>
   );

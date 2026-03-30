@@ -937,8 +937,9 @@ export function WebRTCVideoCell({
         className="stream-controls"
         style={{
           position: 'absolute',
-          bottom: '10px',
-          right: '10px',
+          ...(isBrowserFullscreen 
+            ? { top: '10px', right: '10px' } 
+            : { bottom: '10px', right: '10px' }),
           display: 'flex',
           gap: '10px',
           zIndex: 30,

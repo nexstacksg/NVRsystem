@@ -11,7 +11,7 @@ import { showStatusMessage } from '../ToastContainer.jsx';
  * TimelineControls component
  * @returns {JSX.Element} TimelineControls component
  */
-export function TimelineControls() {
+export function TimelineControls({ compact = false }) {
   // Local state
   const [isPlaying, setIsPlaying] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
@@ -362,55 +362,131 @@ export function TimelineControls() {
     }
   };
 
+  if (compact) {
+    return (
+      <div className="timeline-controls timeline-controls-compact">
+        <div className="timeline-transport-group">
+          <button type="button" className="timeline-icon-button" title="Jump backward 10 seconds">
+            <svg xmlns="http://www.w3.org/2000/svg" className="timeline-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M11 7.82v8.36L5.85 12 11 7.82Z"></path>
+              <path d="M18 7.82v8.36L12.85 12 18 7.82Z"></path>
+            </svg>
+          </button>
+          <button type="button" className="timeline-icon-button" title="Back">
+            <svg xmlns="http://www.w3.org/2000/svg" className="timeline-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M15.5 7.82v8.36L10.35 12 15.5 7.82Z"></path>
+              <path d="M9.5 7.82v8.36L4.35 12 9.5 7.82Z"></path>
+            </svg>
+          </button>
+          <button
+            id="play-button"
+            type="button"
+            className="timeline-icon-button timeline-icon-button-primary"
+            onClick={togglePlayback}
+            title={isPlaying ? 'Pause' : 'Play from current position'}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="timeline-icon" viewBox="0 0 24 24" fill="currentColor">
+              {isPlaying ? (
+                <>
+                  <rect x="7" y="6" width="3.5" height="12" rx="1"></rect>
+                  <rect x="13.5" y="6" width="3.5" height="12" rx="1"></rect>
+                </>
+              ) : (
+                <path d="M8 6v12l9-6-9-6Z"></path>
+              )}
+            </svg>
+          </button>
+          <button type="button" className="timeline-icon-button" title="Forward">
+            <svg xmlns="http://www.w3.org/2000/svg" className="timeline-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8.5 7.82v8.36L13.65 12 8.5 7.82Z"></path>
+              <path d="M14.5 7.82v8.36L19.65 12 14.5 7.82Z"></path>
+            </svg>
+          </button>
+          <button type="button" className="timeline-icon-button" title="Jump forward 10 seconds">
+            <svg xmlns="http://www.w3.org/2000/svg" className="timeline-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 7.82v8.36L11.15 12 6 7.82Z"></path>
+              <path d="M13 7.82v8.36L18.15 12 13 7.82Z"></path>
+            </svg>
+          </button>
+        </div>
+        <div className="timeline-zoom-group">
+          <button
+            id="zoom-out-button"
+            type="button"
+            className="timeline-icon-button"
+            onClick={zoomOut}
+            title="Zoom Out"
+            disabled={zoomLevel <= 1}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="timeline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="8" strokeWidth="2"></circle>
+              <path d="M8 12h8" strokeWidth="2" strokeLinecap="round"></path>
+            </svg>
+          </button>
+          <button
+            id="zoom-in-button"
+            type="button"
+            className="timeline-icon-button"
+            onClick={zoomIn}
+            title="Zoom In"
+            disabled={zoomLevel >= 8}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="timeline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="8" strokeWidth="2"></circle>
+              <path d="M8 12h8M12 8v8" strokeWidth="2" strokeLinecap="round"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="timeline-controls flex justify-between items-center mb-2">
-      <div className="flex items-center">
+    <div className="timeline-controls">
+      <div className="timeline-controls-main">
         <button
           id="play-button"
-          className="w-10 h-10 rounded-full btn-success flex items-center justify-center focus:outline-none focus:ring-1 focus:ring-green-500 focus:ring-offset-1 transition-colors shadow-sm mr-2"
+          className="timeline-icon-button timeline-icon-button-primary"
           onClick={togglePlayback}
           title={isPlaying ? 'Pause' : 'Play from current position'}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" className="timeline-icon" viewBox="0 0 24 24" fill="currentColor">
             {isPlaying ? (
               <>
-                {/* Pause icon - two vertical bars */}
-                <rect x="6" y="6" width="4" height="12" rx="1" fill="white" />
-                <rect x="14" y="6" width="4" height="12" rx="1" fill="white" />
+                <rect x="7" y="6" width="3.5" height="12" rx="1"></rect>
+                <rect x="13.5" y="6" width="3.5" height="12" rx="1"></rect>
               </>
             ) : (
-              <>
-                {/* Play icon - triangle */}
-                <path d="M8 5.14v14l11-7-11-7z" fill="white" />
-              </>
+              <path d="M8 6v12l9-6-9-6Z"></path>
             )}
           </svg>
         </button>
-        <span className="text-xs text-muted-foreground">Play from current position</span>
+        <span className="timeline-controls-label">Play from current position</span>
       </div>
 
-      <div className="flex items-center gap-1">
-        <span className="text-xs text-muted-foreground mr-1">Zoom:</span>
+      <div className="timeline-zoom-group">
         <button
           id="zoom-out-button"
-          className="w-6 h-6 rounded bg-secondary text-secondary-foreground hover:bg-secondary/80 flex items-center justify-center focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
+          className="timeline-icon-button"
           onClick={zoomOut}
           title="Zoom Out (Show more time)"
           disabled={zoomLevel <= 1}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg xmlns="http://www.w3.org/2000/svg" className="timeline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="8" strokeWidth="2"></circle>
+            <path d="M8 12h8" strokeWidth="2" strokeLinecap="round"></path>
           </svg>
         </button>
         <button
           id="zoom-in-button"
-          className="w-6 h-6 rounded bg-secondary text-secondary-foreground hover:bg-secondary/80 flex items-center justify-center focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
+          className="timeline-icon-button"
           onClick={zoomIn}
           title="Zoom In (Show less time)"
           disabled={zoomLevel >= 8}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg xmlns="http://www.w3.org/2000/svg" className="timeline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="8" strokeWidth="2"></circle>
+            <path d="M8 12h8M12 8v8" strokeWidth="2" strokeLinecap="round"></path>
           </svg>
         </button>
       </div>

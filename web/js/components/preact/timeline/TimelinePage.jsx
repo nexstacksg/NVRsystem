@@ -491,23 +491,51 @@ export function TimelinePage() {
         {/* Video player */}
         <TimelinePlayer />
 
-        {/* Playback controls */}
-        <TimelineControls />
-
-        {/* Timeline */}
         <div
           id="timeline-container"
-          className="relative w-full h-24 bg-secondary border border-input rounded-lg mb-6 overflow-hidden"
+          className="timeline-shell"
           ref={timelineContainerRef}
         >
-          <TimelineRuler />
-          <TimelineSegments segments={segments} />
-          <TimelineCursor />
-
-          {/* Instructions for cursor */}
-          <div className="absolute bottom-1 right-2 text-xs text-muted-foreground bg-card text-card-foreground bg-opacity-75 dark:bg-opacity-75 px-2 py-1 rounded">
-            Drag the orange dial to navigate
+          <div className="timeline-shell-side timeline-shell-side-left">
+            <TimelineControls compact />
+            <div id="time-display" className="timeline-time-display">00:00:00</div>
           </div>
+
+          <div className="timeline-shell-main">
+            <TimelineRuler />
+            <TimelineSegments segments={segments} />
+            <TimelineCursor />
+          </div>
+
+          <div className="timeline-shell-side timeline-shell-side-right">
+            <div className="timeline-status-group">
+              <button type="button" className="timeline-status-chip is-live">LIVE</button>
+              <button type="button" className="timeline-status-chip">SYNC</button>
+            </div>
+            <div className="timeline-meta-actions">
+              <button type="button" className="timeline-icon-button" title="Audio">
+                <svg xmlns="http://www.w3.org/2000/svg" className="timeline-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M5 9v6h4l5 4V5l-5 4H5Z"></path>
+                  <path d="M17 9.5a4.5 4.5 0 0 1 0 5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"></path>
+                </svg>
+              </button>
+              <button type="button" className="timeline-icon-button" title="Snapshot">
+                <svg xmlns="http://www.w3.org/2000/svg" className="timeline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <rect x="4" y="6" width="16" height="12" rx="2" strokeWidth="1.8"></rect>
+                  <circle cx="12" cy="12" r="3" strokeWidth="1.8"></circle>
+                </svg>
+              </button>
+              <button type="button" className="timeline-icon-button" title="Fullscreen">
+                <svg xmlns="http://www.w3.org/2000/svg" className="timeline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M8 4H4v4M16 4h4v4M8 20H4v-4M20 20h-4v-4" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"></path>
+                </svg>
+              </button>
+            </div>
+            <div className="timeline-side-note">Drag the marker to seek</div>
+          </div>
+        </div>
+        <div className="timeline-footer-row">
+          <SpeedControls />
         </div>
       </>
     );
@@ -565,34 +593,8 @@ export function TimelinePage() {
         {isLoadingTimeline ? 'Loading...' : 'Recordings auto-load when stream or date changes'}
       </div>
 
-      {/* Current time display + Speed controls */}
-      <div className="flex justify-between items-center mb-2">
-        <div id="time-display" className="timeline-time-display bg-secondary text-foreground px-3 py-1 rounded font-mono text-base">00:00:00</div>
-        <SpeedControls />
-      </div>
-
-      {/* Debug info */}
-      <div className="mb-2 text-xs text-muted-foreground">
-        Debug - isLoading: {isLoadingTimeline ? 'true' : 'false'},
-        Streams: {streamsList.length},
-        Segments: {segments.length}
-      </div>
-
       {/* Content */}
       {renderContent()}
-
-      {/* Instructions */}
-      <div className="mt-6 p-4 bg-secondary rounded">
-        <h3 className="text-lg font-semibold mb-2">How to use the timeline:</h3>
-        <ul className="list-disc pl-5">
-          <li>Select a stream and date to load recordings</li>
-          <li>Click on the timeline to position the cursor at a specific time</li>
-          <li>Drag the orange cursor to navigate precisely</li>
-          <li>Click on a segment (blue bar) to play that recording</li>
-          <li>Use the play button to start playback from the current cursor position</li>
-          <li>Use the zoom buttons to adjust the timeline scale</li>
-        </ul>
-      </div>
     </div>
   );
 }

@@ -434,26 +434,16 @@ export function TimelineCursor() {
   return (
     <div
       ref={cursorRef}
-      className="timeline-cursor absolute top-0 h-full z-50 transition-all duration-100 cursor-ew-resize"
+      className="timeline-cursor"
       style={{
         left: `${position}%`,
         display: visible ? 'block' : 'none',
-        pointerEvents: 'auto',
-        width: '7px',
-        marginLeft: '-3.5px'
+        pointerEvents: 'auto'
       }}
     >
-      {/* Invisible wider clickable area */}
-      <div className="absolute top-0 bottom-0 left-0 w-full"></div>
-
-      {/* Skinnier needle with no middle chunk - perfectly centered */}
-      <div className="absolute top-0 bottom-0 w-0.5 bg-orange-500 left-0 right-0 mx-auto pointer-events-none"></div>
-
-      {/* Top handle (black) - perfectly centered */}
-      <div className="absolute top-0 left-0 right-0 mx-auto w-4 h-4 bg-black rounded-full transform -translate-y-1/2 shadow-md pointer-events-none"></div>
-
-      {/* Bottom handle (black) - perfectly centered */}
-      <div className="absolute bottom-0 left-0 right-0 mx-auto w-4 h-4 bg-black rounded-full transform translate-y-1/2 shadow-md pointer-events-none"></div>
+      <div className="timeline-cursor-hitbox"></div>
+      <div className="timeline-cursor-line"></div>
+      <div className="timeline-cursor-handle"></div>
     </div>
   );
 }

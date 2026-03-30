@@ -10,7 +10,9 @@ import { SnapshotButton } from './SnapshotManager.jsx';
 import { LoadingIndicator } from './LoadingIndicator.jsx';
 import { showSnapshotPreview } from './UI.jsx';
 import { PTZControls } from './PTZControls.jsx';
+import { FullscreenTimeline } from './FullscreenTimeline.jsx';
 import { getGo2rtcBaseUrl } from '../../utils/settings-utils.js';
+import { getFullscreenElement } from '../../utils/dom-utils.js';
 import Hls from 'hls.js';
 
 /**
@@ -40,6 +42,32 @@ export function HLSVideoCell({
 
   // PTZ controls state
   const [showPTZControls, setShowPTZControls] = useState(false);
+
+  // Browser fullscreen state (for showing timeline bar)
+  const [isBrowserFullscreen, setIsBrowserFullscreen] = useState(false);
+
+  // Listen for fullscreenchange on the cell element to show/hide timeline
+  useEffect(() => {
+    const cell = cellRef.current;
+    if (!cell) return;
+
+    const handleFullscreenChange = () => {
+      const isFs = getFullscreenElement() === cell;
+      setIsBrowserFullscreen(isFs);
+    };
+
+    cell.addEventListener('fullscreenchange', handleFullscreenChange);
+    cell.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    cell.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    cell.addEventListener('MSFullscreenChange', handleFullscreenChange);
+    
+    return () => {
+      cell.removeEventListener('fullscreenchange', handleFullscreenChange);
+      cell.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      cell.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      cell.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+    };
+  }, []);
 
   // Refs
   const videoRef = useRef(null);
@@ -492,8 +520,9 @@ export function HLSVideoCell({
         className="stream-controls"
         style={{
           position: 'absolute',
-          bottom: '10px',
-          right: '10px',
+          ...(isBrowserFullscreen 
+            ? { top: '10px', right: '10px' } 
+            : { bottom: '10px', right: '10px' }),
           display: 'flex',
           gap: '10px',
           zIndex: 30,
@@ -609,6 +638,14 @@ export function HLSVideoCell({
         isVisible={showPTZControls}
         onClose={() => setShowPTZControls(false)}
       />
+
+      {/* Fullscreen timeline bar */}
+      {isBrowserFullscreen && (
+        <FullscreenTimeline
+          streamName={stream.name}
+          videoRef={videoRef}
+        />
+      )}
 
       {/* Loading indicator */}
       {isLoading && (
